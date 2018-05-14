@@ -5,10 +5,9 @@ services:
     build: ./docker/nginx
     volumes:
       - .:/app
-    depends_on:
-      - app
     links:
-      - app:app
+      - app_node1:app_node1
+      - app_node2:app_node2
     ports:
       - 80:80
       - 443:443
@@ -16,14 +15,25 @@ services:
 #      store:
 #        ipv4_address: 192.168.50.10
 
-  app:
+  app_node1:
     build: .
     volumes:
       - .:/app
     ports:
       - 10080:8080
-      - 10443:8443
-#    networks:
+    environment:
+      - HOST=app_node1
+      - PORT=10080
+  app_node2:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 10081:8081
+    environment:
+      - HOST=app_node2
+      - PORT=10081
+  #    networks:
 #      store:
 #        ipv4_address: 192.168.50.20
 

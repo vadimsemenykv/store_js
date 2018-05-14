@@ -1,19 +1,23 @@
 'use strict';
 
+
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
+
 const express = require('express');
-
-// Constants
-const PORT = 10080;
-const HOST = 'app';
-
-// App
 const app = express();
+
 app.get('/', (req, res) => {
-    res.send('Hello world\n');
+    res.send(`${HOST}:${PORT}`);
 });
 app.get('/ads', (req, res) => {
-    res.send('ads\n');
+    res.send(`${HOST}:${PORT}`);
 });
 
 app.listen(PORT, HOST);
+
 console.log(`Running on http://${HOST}:${PORT}`);
+
+process.on('SIGINT', function() {
+    console.log(`graceful shutdown`);
+});
