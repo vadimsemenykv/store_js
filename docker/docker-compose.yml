@@ -2,7 +2,7 @@ version: "3"
 
 services:
   nginx:
-    build: ./docker/nginx
+    build: nginx
     volumes:
       - .:/app
     links:
@@ -16,7 +16,7 @@ services:
 #        ipv4_address: 192.168.50.10
 
   app_node1:
-    build: .
+    build: ./app/Dockerfile
     volumes:
       - .:/app
     ports:
@@ -25,7 +25,7 @@ services:
       - HOST=app_node1
       - PORT=10080
   app_node2:
-    build: .
+    build: ./app/Dockerfile
     volumes:
       - .:/app
     ports:

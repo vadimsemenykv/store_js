@@ -2,6 +2,4 @@ apps:
   - script: 'server.js'
     name: 'APP'
     exec_mode: 'cluster'
-#    watch: true
-#    ignore_watch: ["node_modules"]
     instances: 1

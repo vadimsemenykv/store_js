@@ -1,1 +1,6 @@
-document.getElementById('root').innerHTML	=	'Привет,	я	готов.';
+import React from 'react';
+import { render } from 'react-dom';
+
+import Landing from './components/Landing';
+
+render(<Landing />, document.getElementById('root'));
