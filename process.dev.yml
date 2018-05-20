@@ -2,4 +2,6 @@ apps:
   - script: './build/server/index.js'
     name: 'APP'
     exec_mode: 'cluster'
+    watch: ["build"]
+    ignore_watch: ["node_modules"]
     instances: 1
