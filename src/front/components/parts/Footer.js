@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Collapse, Container, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink, DropdownToggle, DropdownMenu, UncontrolledDropdown} from 'reactstrap';
+import { Container, Row, Col, NavbarBrand, Nav, NavLink } from 'reactstrap';
 
-import './Header.sass';
+import './Footer.sass';
 
 let links = [
     {
@@ -47,37 +47,18 @@ let links = [
 ];
 
 export default class Header extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            isOpen: false
-        };
-    };
-
-    toggleNavbar() {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
-    };
-
     render() {
         return (
-            <header className="header">
-                <Navbar className='main-menu-wrapper' fixed="top" color="faded" light expand="lg">
-                    <Container>
-                        <NavbarBrand href="/" className="mr-auto">GrainStore</NavbarBrand>
-                        <NavbarToggler onClick={::this.toggleNavbar} className="mr-2" />
-                        <Collapse isOpen={this.state.isOpen} navbar>
-                            <Nav navbar className="ml-auto">
-                                <SubMenu key={0} toggler={links[0].toggler} links={links[0].links}/>
-                                <SubMenu key={1} toggler={links[1].toggler} links={links[1].links}/>
-                                <SubMenu key={2} toggler={links[2].toggler} links={links[2].links}/>
-                            </Nav>
-                        </Collapse>
-                    </Container>
-                </Navbar>
-            </header>
+            <footer className="footer">
+                <Container>
+                    <Row>
+                        <SubMenu key={0} toggler={links[0].toggler} links={links[0].links}/>
+                        <SubMenu key={1} toggler={links[1].toggler} links={links[1].links}/>
+                        <SubMenu key={2} toggler={links[2].toggler} links={links[2].links}/>
+                    </Row>
+                    <NavbarBrand href="/" className="mr-auto text-dark">GrainStore</NavbarBrand>
+                </Container>
+            </footer>
         );
     }
 }
@@ -97,25 +78,19 @@ class SubMenu extends React.Component {
     };
 
     render() {
+        let toggler = this.props.toggler;
         let links = this.props.links;
         let linkTpl = links.map(function(item, index) {
             let tpl;
             if (item.divider !== undefined) {
                 tpl = <div key={index} className="divider"/>;
             } else {
-                tpl = <NavLink key={index} href={item.link}>{item.label}</NavLink>
+                tpl = <NavLink className="sub-link text-secondary" key={index} href={item.link}>{item.label}</NavLink>
             }
             return	tpl
         });
         return (
-            <UncontrolledDropdown nav inNavbar size="lg">
-                <DropdownToggle nav caret>{this.props.toggler}</DropdownToggle>
-                <DropdownMenu right>
-                    <Nav vertical>
-                        {linkTpl}
-                    </Nav>
-                </DropdownMenu>
-            </UncontrolledDropdown>
+            <Col className="sub-menu"><p>{ toggler }</p><Nav vertical>{ linkTpl }</Nav></Col>
         );
     }
 }

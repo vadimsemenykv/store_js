@@ -1,18 +1,20 @@
-.main-menu
-  background-color: #e3f2fd
-  .main-menu-wrapper
-    max-width: 1240px
-    margin: 0 auto
+.header
+    .main-menu-wrapper
+        background-color: #f8fcff
+        border-bottom: 2px solid #d7dbde
+        .dropdown-menu
+            padding: 10px 10px
 
+            .divider
+                height: 0
+                margin: .5rem 0
+                overflow: hidden
 
-    .dropdown-menu
-      padding: 10px 10px
-
-    a
-      white-space: nowrap
-    @media screen and (min-width: 992px)
-      .dropdown-toggle::after
-        display: none
-      .dropdown:hover > .dropdown-menu
-        display: block
+        a
+            white-space: nowrap
+        @media screen and (min-width: 992px)
+            .dropdown-toggle::after
+                display: none
+            .dropdown:hover > .dropdown-menu
+                display: block
 

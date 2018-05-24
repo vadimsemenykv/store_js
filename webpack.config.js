@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     devtool: 'inline-source-map',
+    mode: "development",
     entry: {
         landing: './src/front/landing.js',
         login: './src/front/login.js'

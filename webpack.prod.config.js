@@ -6,7 +6,7 @@ const webpack = require('webpack');
 
 module.exports = {
     devtool: 'source-map',
-
+    mode: "production",
     entry: {
         landing: './src/front/landing.js',
         login: './src/front/login.js'
@@ -60,14 +60,15 @@ module.exports = {
                 include: path.join(__dirname, 'src'),
                 exclude: /node_modules/,
                 query: {
-                    presets: ['es2015', 'react']
+                    presets: ['es2015', 'stage-0', 'react']
                 }
             },
             {
-                test: /\.css$/,
+                test: /\.(css|sass)$/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    "css-loader"
+                    "css-loader",
+                    "sass-loader"
                 ]
             }
             // {
