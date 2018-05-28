@@ -7,7 +7,8 @@ module.exports = {
     mode: "development",
     entry: {
         landing: './src/front/landing.js',
-        login: './src/front/login.js'
+        login: './src/front/login.js',
+        registration: './src/front/registration.js'
     },
     output: {
         filename: '[name].js',

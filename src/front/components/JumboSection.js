@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, Container } from 'reactstrap';
 
-import './JumboSection.sass';
+import 'bootstrap/dist/css/bootstrap-reboot.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/Common.sass';
+import '../styles/JumboSection.sass';
 
 export default class JumboSection extends React.Component {
     static propTypes = {

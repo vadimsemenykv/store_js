@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
 import { Row, Col } from 'reactstrap';
-import Header from './parts/Header';
-import JumboSection from "./parts/JumboSection";
-import Footer from "./parts/Footer";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+
+import Header from '../components/Header';
+import JumboSection from "../components/JumboSection";
+import Footer from "../components/Footer";
+import * as loginActions from "../actions/LoginActions";
 
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Landing.sass';
+import '../styles/Common.sass';
+import '../styles/Landing.sass';
 
 let sections = [
     {
@@ -70,19 +75,36 @@ let sections = [
     }
 ];
 
-export default class Landing extends Component {
+class Landing extends Component {
     render () {
+        const headerLinks = this.props.header;
+        const footerLinks = this.props.footer;
         return (
             <Row className="landing">
                 <Col className="wrapper">
-                    <Header />
+                    <Header isFixed={true} topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
                     <JumboSection lead={sections[0].lead} description={sections[0].description} button={sections[0].button}/>
                     <JumboSection lead={sections[1].lead} description={sections[1].description} button={sections[1].button}/>
                     <JumboSection lead={sections[2].lead} description={sections[2].description} button={sections[2].button}/>
                     <JumboSection lead={sections[3].lead} description={sections[3].description} button={sections[3].button}/>
-                    <Footer />
+                    <Footer links={footerLinks} />
                 </Col>
             </Row>
         )
     }
-};
+}
+
+function mapStateToProps(state) {
+    return {
+        header: state.header,
+        footer: state.footer
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        pageActions: bindActionCreators(loginActions, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Landing)

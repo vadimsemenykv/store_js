@@ -11,17 +11,24 @@
     "build:watch:client": "webpack --config ./webpack.config.js/ --watch",
     "build:prod": "npm run build:server && npm run build:client",
     "start": "npm run build:prod && NODE_ENV=production node ./build/server/index.js",
+    "start:server:dev": "parallelshell 'npm run build:watch:server' 'nodemon ./build/server/index.js'",
     "start:dev": "parallelshell 'npm run build:watch:server' 'npm run build:watch:client' 'nodemon ./build/server/index.js'",
     "start:dev:pm": "parallelshell 'npm run build:watch:server' 'npm run build:watch:client' 'pm2-runtime process.dev.yml'"
   },
   "dependencies": {
+    "availity-reactstrap-validation": "^2.0.2",
     "bootstrap": "^4.1.1",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "express-named-router-url-generator": "^1.0.9",
     "prop-types": "^15.6.1",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
-    "reactstrap": "^6.0.1"
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-redux": "^5.0.7",
+    "reactstrap": "^6.0.1",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0",
+    "validator": "^10.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

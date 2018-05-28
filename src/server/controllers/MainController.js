@@ -1,46 +1,45 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
+import { Provider } from 'react-redux'
+import configureLandingStore from '../../front/store/configureLandingStore'
+import getLinksState from '../state/Links';
 
-import Landing from '../../front/components/Landing';
-import Login from '../../front/components/Login';
+import Landing from '../../front/containers/Landing';
 
 export default class MainController {}
 
 MainController.index = (req, res) => {
+    const linksState = getLinksState();
+
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+    };
+
+    const store = configureLandingStore(preloadedState);
+
     const html = renderToString(
-        <Landing />
+        <Provider store={store} >
+            <Landing />
+        </Provider>
     );
 
-    res.status(200).send(renderFullPage({
-        title: 'Main',
-        html: html,
-        cssTop: [
-            '<link rel="stylesheet" href="/assets/landing.css"/>'
-        ],
-        jsBottom: [
-            '<script src="/assets/landing.js"></script>'
-        ]
-    }, {}));
-};
+    const finalState = store.getState();
 
-MainController.login = (req, res) => {
-    const html = renderToString(
-        <Login />
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Main',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/landing.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/landing.js"></script>'
+                ]
+            },
+            finalState
+        )
     );
-
-    res.status(200).send(renderFullPage({
-        title: 'Login',
-        html: html,
-        cssTop: [
-            '<link rel="stylesheet" href="/assets/login.css"/>'
-        ],
-        jsBottom: [
-            '<script src="/assets/login.js"></script>'
-        ]
-    }, {}));
-};
-
-MainController.register = (req, res) => {
-    res.status(200).send('NOT IMPLEMENTED:');
 };

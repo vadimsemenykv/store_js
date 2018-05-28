@@ -1,10 +1,9 @@
 import express from 'express';
-import MainController from '../controllers/MainController'
+import MainController from '../controllers/MainController';
+import NamedRouter from 'express-named-router-url-generator';
 
-let Router = express.Router();
+let Router = NamedRouter(express);
 
-Router.get('/', MainController.index);
-Router.get('/login', MainController.login);
-Router.get('/register', MainController.register);
+Router.get('/', MainController.index, { name: "main"});
 
-export default Router;
+export default Router.expressRouter;

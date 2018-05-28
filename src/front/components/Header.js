@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Collapse, Container, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink, DropdownToggle, DropdownMenu, UncontrolledDropdown} from 'reactstrap';
+import { Collapse, Container, Row, Col, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink, DropdownToggle, DropdownMenu, UncontrolledDropdown} from 'reactstrap';
 
-import './Header.sass';
+import 'bootstrap/dist/css/bootstrap-reboot.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/Common.sass';
+import '../styles/Header.sass';
 
 let links = [
     {
@@ -47,6 +50,44 @@ let links = [
 ];
 
 export default class Header extends React.Component {
+    static propTypes = {
+        isFixed: PropTypes.bool,
+        topLinks: PropTypes.arrayOf(
+            PropTypes.shape({
+                toggler: PropTypes.shape({
+                    label: PropTypes.string.isRequired,
+                    link: PropTypes.string,
+                }).isRequired,
+                links: PropTypes.arrayOf(PropTypes.oneOfType([
+                    PropTypes.shape({
+                        label: PropTypes.string.isRequired,
+                        link: PropTypes.string.isRequired,
+                    }),
+                    PropTypes.shape({
+                        divider: PropTypes.bool.isRequired
+                    })
+                ])).isRequired
+            })
+        ),
+        bottomLinks: PropTypes.arrayOf(
+            PropTypes.shape({
+                toggler: PropTypes.shape({
+                    label: PropTypes.string.isRequired,
+                    link: PropTypes.string,
+                }).isRequired,
+                links: PropTypes.arrayOf(PropTypes.oneOfType([
+                    PropTypes.shape({
+                        label: PropTypes.string.isRequired,
+                        link: PropTypes.string.isRequired,
+                    }),
+                    PropTypes.shape({
+                        divider: PropTypes.bool.isRequired
+                    })
+                ])).isRequired
+            })
+        )
+    };
+
     constructor(props) {
         super(props);
 
@@ -62,18 +103,34 @@ export default class Header extends React.Component {
     };
 
     render() {
+        const isFixed = this.props.isFixed;
+        const topLinks = this.props.topLinks;
+        const bottomLinks = this.props.bottomLinks;
+
+        let linksTplRender = function (links) {
+            let tpl;
+            if (links) {
+                tpl = links.map(function (item, index) {
+                    return <SubMenu key={index} toggler={item.toggler} links={item.links}/>
+                });
+                tpl = <div className="nav-group clearfix"><Nav navbar className="nav-row">{ tpl }</Nav></div>
+            } else {
+                tpl = <div />;
+            }
+            return tpl;
+        };
+
         return (
             <header className="header">
-                <Navbar className='main-menu-wrapper' fixed="top" color="faded" light expand="lg">
+                <Navbar className='main-menu-wrapper' fixed={ isFixed !== undefined ? "top" : '' } color="faded" light expand="lg">
                     <Container>
                         <NavbarBrand href="/" className="mr-auto">GrainStore</NavbarBrand>
                         <NavbarToggler onClick={::this.toggleNavbar} className="mr-2" />
                         <Collapse isOpen={this.state.isOpen} navbar>
-                            <Nav navbar className="ml-auto">
-                                <SubMenu key={0} toggler={links[0].toggler} links={links[0].links}/>
-                                <SubMenu key={1} toggler={links[1].toggler} links={links[1].links}/>
-                                <SubMenu key={2} toggler={links[2].toggler} links={links[2].links}/>
-                            </Nav>
+                            <Container>
+                                {linksTplRender(topLinks)}
+                                {linksTplRender(bottomLinks)}
+                            </Container>
                         </Collapse>
                     </Container>
                 </Navbar>
@@ -84,8 +141,11 @@ export default class Header extends React.Component {
 
 class SubMenu extends React.Component {
     static propTypes = {
-        toggler: PropTypes.string.isRequired,
-        links: PropTypes.arrayOf(PropTypes.oneOf([
+        toggler: PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            link: PropTypes.string,
+        }).isRequired,
+        links: PropTypes.arrayOf(PropTypes.oneOfType([
             PropTypes.shape({
                 label: PropTypes.string.isRequired,
                 link: PropTypes.string.isRequired,
@@ -109,7 +169,10 @@ class SubMenu extends React.Component {
         });
         return (
             <UncontrolledDropdown nav inNavbar size="lg">
-                <DropdownToggle nav caret>{this.props.toggler}</DropdownToggle>
+                <DropdownToggle nav caret>
+                    {/*<NavLink href={this.props.toggler.link !== undefined ? this.props.toggler.link : ""} >{ this.props.toggler.label }</NavLink>*/}
+                    { this.props.toggler.label }
+                </DropdownToggle>
                 <DropdownMenu right>
                     <Nav vertical>
                         {linkTpl}
