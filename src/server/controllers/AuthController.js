@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
+import {urlFor} from 'express-named-router-url-generator';
 
 import { Provider } from 'react-redux'
 import configureLoginStore from '../../front/store/configureLoginStore'
@@ -83,4 +84,9 @@ AuthController.registration = (req, res) => {
             finalState
         )
     );
+};
+
+AuthController.registrationSubmit = (req, res) => {
+    console.log(req.body);
+    res.status(200).send({status:'success', redirect: urlFor('main')});
 };
