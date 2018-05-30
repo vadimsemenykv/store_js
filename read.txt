@@ -2,3 +2,6 @@ kill -9 $(fuser 8080/tcp 2>/dev/null)
 npm run start:dev
 
 npm run build:client
+
+docker-compose up -d --build
+docker-compose run app_node1 nmp run build:watch:all
