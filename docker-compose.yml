@@ -2,12 +2,15 @@ version: "3"
 
 services:
   nginx:
-    build: nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+#    build: ./nginx/Dockerfile
     volumes:
       - .:/app
     links:
       - app_node1:app_node1
-      - app_node2:app_node2
+#      - app_node2:app_node2
     ports:
       - 80:80
       - 443:443
@@ -16,7 +19,10 @@ services:
 #        ipv4_address: 192.168.50.10
 
   app_node1:
-    build: ./app/Dockerfile
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile
+    build: .
     volumes:
       - .:/app
     ports:
@@ -24,15 +30,17 @@ services:
     environment:
       - HOST=app_node1
       - PORT=10080
-  app_node2:
-    build: ./app/Dockerfile
-    volumes:
-      - .:/app
-    ports:
-      - 10081:8081
-    environment:
-      - HOST=app_node2
-      - PORT=10081
+
+#  app_node2:
+#    build: ./app/Dockerfile
+#    volumes:
+#      - .:/app
+#    ports:
+#      - 10081:8081
+#    environment:
+#      - HOST=app_node2
+#      - PORT=10081
+
   #    networks:
 #      store:
 #        ipv4_address: 192.168.50.20
