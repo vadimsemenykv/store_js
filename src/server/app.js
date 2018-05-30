@@ -12,6 +12,7 @@ const assets = express.static(path.join(__dirname, '../'));
 
 app.disable('x-powered-by');
 app.use(cors());
+app.options('*', cors());
 app.use(bodyParser.json());
 app.use(assets);
 
