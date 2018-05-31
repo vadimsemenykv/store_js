@@ -14,9 +14,6 @@ services:
     ports:
       - 80:80
       - 443:443
-#    networks:
-#      store:
-#        ipv4_address: 192.168.50.10
 
   app_node1:
 #    build:
@@ -30,6 +27,10 @@ services:
     environment:
       - HOST=app_node1
       - PORT=10080
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
 
 #  app_node2:
 #    build: ./app/Dockerfile
@@ -40,16 +41,17 @@ services:
 #    environment:
 #      - HOST=app_node2
 #      - PORT=10081
-
-  #    networks:
-#      store:
-#        ipv4_address: 192.168.50.20
-
-#networks:
-#  store:
-#    driver: bridge
-#    ipam:
-#      driver: default
-#      config:
-#      - subnet: 192.168.50.0/24
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_USER="user"
+      - MONGODB_PASS="pass"
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
 

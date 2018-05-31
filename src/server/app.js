@@ -21,8 +21,4 @@ app.use('/', MainRouter);
 app.use('/', AuthRouter);
 app.use('/', PageRouter);
 
-process.on('SIGINT', function() {
-    console.log(`graceful shutdown!!!!!!!!!!!!`);
-});
-
 export default app;

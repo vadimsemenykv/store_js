@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import validator from 'validator';
+import RegistrationFormValidator from './../validation/registrationFormRules'
 
 /** Components */
 import { Form, FormGroup, Label, FormFeedback, Input, Button } from 'reactstrap';
@@ -36,62 +37,10 @@ class RegisterForm extends Component {
         this.setState({ likePassword: !this.state.likePassword});
     }
 
-    rules() {
-        return {
-            firstName: [
-                {
-                    rule: value => validator.isByteLength(value, { min: 1 }),
-                    message: "Name is required"
-                },
-                {
-                    rule: value => validator.isByteLength(value, { min: 4 }),
-                    message: "Name must be at least 4 characters"
-                }
-            ],
-            email: [
-                {
-                    rule: value => validator.isByteLength(value, { min: 1 }),
-                    message: "Email is required"
-                },
-                {
-                    rule: value => validator.isEmail(value),
-                    message: "Email is not valid"
-                }
-            ],
-            password: [
-                {
-                    rule: value => validator.isByteLength(value, { min: 1 }),
-                    message: "Password is required"
-                },
-                {
-                    rule: value => validator.isByteLength(value, { min: 4 }),
-                    message: "Password must be at least 4 characters"
-                }
-            ]
-        };
-    };
-
-    validate() {
-        let errors = {};
-        const rules = this.rules();
-        for (const field in rules) {
-            for (let i = 0; i < rules[field].length; i++) {
-                if (!rules[field][i].rule(this.state[field])) {
-                    if (!errors[field]) {
-                        errors[field] = [];
-                    }
-                    errors[field].push(rules[field][i].message)
-                }
-            }
-        }
-
-        return errors;
-    }
-
     handleSubmit(e) {
         e.preventDefault();
 
-        if (Object.getOwnPropertyNames(this.validate()).length > 0) {
+        if (Object.getOwnPropertyNames(RegisterForm.validate(this.state)).length > 0) {
             this.setState({interacted: {firstName: true, email: true, password: true}, clearStart: false});
             return false;
         }
@@ -103,8 +52,9 @@ class RegisterForm extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                firstParam: 'yourValue',
-                secondParam: 'yourOtherValue',
+                firstName: this.state.firstName,
+                email: this.state.email,
+                password: this.state.password
             })
         })
             .then(response => response.json())
@@ -124,7 +74,7 @@ class RegisterForm extends Component {
 
     render () {
         const id = this.props.id;
-        const errors = this.state.clearStart ? [] : this.validate();
+        const errors = this.state.clearStart ? [] : RegisterForm.validate(this.state);
 
         return (
             <Form id={id} >
@@ -178,10 +128,11 @@ RegisterForm.propTypes = {
 RegisterForm.formateFormErrorFeedback = (field, errors = []) => {
     if (errors && errors[field] && errors[field][0]) {
         return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
-        // return errors[field].map(function (item, index) {
-        //     return <FormFeedback key={index} >{ item }</FormFeedback>
-        // });
     }
+};
+
+RegisterForm.validate = () => {
+    return RegistrationFormValidator.run();
 };
 
 function mapStateToProps(state) {

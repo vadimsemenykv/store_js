@@ -2,6 +2,14 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
 import {urlFor} from 'express-named-router-url-generator';
+import passwordHash from 'password-hash';
+
+/** Validators */
+import RegistrationFormValidator from './../../front/validation/registrationFormRules'
+
+/** Models */
+import UserModel from '../model/User';
+
 
 import { Provider } from 'react-redux'
 import configureLoginStore from '../../front/store/configureLoginStore'
@@ -87,6 +95,28 @@ AuthController.registration = (req, res) => {
 };
 
 AuthController.registrationSubmit = (req, res) => {
-    console.log(req.body);
+    // validate input
+    const errors = RegistrationFormValidator.run({
+        firstName: req.body.firstName,
+        email: req.body.email,
+        password: req.body.password,
+    });
+
+    //TODO validate for same email
+
+    if (Object.getOwnPropertyNames(errors).length > 0) {
+        res.status(200).send({status:'fail', validationErrors: errors});
+        return;
+    }
+
+    UserModel.create(
+        {
+            firstName: req.body.firstName,
+            email: req.body.email,
+            password: passwordHash.generate(req.body.password)
+
+        }, function (err, small) {if (err) return console.log(err);}
+    );
+
     res.status(200).send({status:'success', redirect: urlFor('main')});
 };
