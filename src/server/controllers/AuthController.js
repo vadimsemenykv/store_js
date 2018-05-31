@@ -109,11 +109,17 @@ AuthController.registrationSubmit = (req, res) => {
         return;
     }
 
+    if (UserModel.findOne({email: req.body.email})) {
+        errors.email = ['User with such email already registered'];
+        res.status(200).send({status:'fail', validationErrors: errors});
+        return;
+    }
+
     UserModel.create(
         {
             firstName: req.body.firstName,
             email: req.body.email,
-            password: passwordHash.generate(req.body.password)
+            password: passwordHash.generate(req.body.password, {algorithm:'md5'})
 
         }, function (err, small) {if (err) return console.log(err);}
     );

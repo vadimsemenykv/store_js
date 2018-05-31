@@ -3,5 +3,5 @@ apps:
     name: 'APP'
     exec_mode: 'cluster'
     watch: ["build"]
-    ignore_watch: ["node_modules"]
+    ignore_watch: ["node_modules", "data"]
     instances: 1

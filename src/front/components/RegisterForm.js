@@ -29,7 +29,8 @@ class RegisterForm extends Component {
             firstName: '',
             email: '',
             password: '',
-            interacted: {}
+            interacted: {},
+            serverValidationErrors: {}
         };
     }
 
@@ -58,13 +59,18 @@ class RegisterForm extends Component {
             })
         })
             .then(response => response.json())
+            .then(response => {
+                this.setState({serverValidationErrors: response.validationErrors});
+            })
             .catch(error => console.log(error));
     }
 
     handleChangeInput(e) {
         const name = e.target.name;
         const value = e.target.value;
-        this.setState({[name]: value, clearStart: false});
+        let serverValidationErrors = this.state.serverValidationErrors;
+        serverValidationErrors[name] = false;
+        this.setState({[name]: value, clearStart: false, serverValidationErrors: serverValidationErrors});
     }
 
     handleFocusOut(e) {
@@ -74,7 +80,9 @@ class RegisterForm extends Component {
 
     render () {
         const id = this.props.id;
-        const errors = this.state.clearStart ? [] : RegisterForm.validate(this.state);
+        const errors = this.state.serverValidationErrors
+            ? this.state.serverValidationErrors
+            : this.state.clearStart ? [] : RegisterForm.validate(this.state);
 
         return (
             <Form id={id} >
@@ -115,7 +123,7 @@ class RegisterForm extends Component {
                     { this.state.interacted.password ? RegisterForm.formateFormErrorFeedback("password", errors) : "" }
                 </FormGroup>
                 <ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>
-                <Button type="submit" onClick={::this.handleSubmit}>Login</Button>
+                <Button type="submit" onClick={::this.handleSubmit}>Register</Button>
             </Form>
         );
     }
@@ -131,8 +139,8 @@ RegisterForm.formateFormErrorFeedback = (field, errors = []) => {
     }
 };
 
-RegisterForm.validate = () => {
-    return RegistrationFormValidator.run();
+RegisterForm.validate = (fields) => {
+    return RegistrationFormValidator.run(fields);
 };
 
 function mapStateToProps(state) {

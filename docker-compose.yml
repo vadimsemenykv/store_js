@@ -27,6 +27,7 @@ services:
     environment:
       - HOST=app_node1
       - PORT=10080
+      - MONGO_DB_URL=mongodb://mongodb:27017/grain_db
     links:
       - mongodb
     depends_on:
@@ -54,4 +55,16 @@ services:
     ports:
       - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null # --quiet
+
+  mongoclient:
+    image: mongoclient/mongoclient:latest
+    hostname: mongoclient
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/grain_db
+    depends_on:
+      - mongodb
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 3300:3000
 
