@@ -31,8 +31,12 @@ export default class Header extends React.Component {
         const renderTop = function (topLinks) {
             let tpl;
             if (topLinks) {
-                console.log(user);
-                return '';
+                if (user && Object.getOwnPropertyNames(user).length > 0) {
+                    return <div className="nav-group clearfix">
+                        <Nav navbar className="nav-row navbar-nav"><NavLink key={0} href={topLinks.link}>{topLinks.label}</NavLink></Nav>
+                    </div>
+                }
+
                 tpl = topLinks.map(function (item, index) {
                     return <SubMenu key={index} toggler={item.toggler} links={item.links}/>
                 });
@@ -76,7 +80,7 @@ export default class Header extends React.Component {
 }
 Header.propTypes = {
     isFixed: PropTypes.bool,
-    user: PropTypes.shape,
+    // user: PropTypes.shape(),
     topLinks: PropTypes.arrayOf(
         PropTypes.shape({
             toggler: PropTypes.shape({
