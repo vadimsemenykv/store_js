@@ -31,7 +31,7 @@ class Registration extends Component {
                     <Container className="wrapper">
                         <Row>
                             <Col md={{ size: '7' }} sm={{ size: '12' }} className="cm-bordered cm-content form-wrapper" >
-                                <RegisterForm id="registration-form" />
+                                <RegisterForm id="registration-form" registrationUrl={extraLinks.registrationUrl} />
                             </Col>
                             <Col md={{ size: '4', offset: 1 }} sm={{ size: '12' }} className="cm-bordered cm-content register-prop-wrapper" >
                                 <Card className="cm-no-border" >
@@ -55,9 +55,7 @@ function mapStateToProps(state) {
     return {
         header: state.header,
         footer: state.footer,
-        // registrationForm: state.registrationForm,
-        extraLinks: state.extraLinks,
-        // formErrors: state.formErrors
+        extraLinks: state.extraLinks
     }
 }
 

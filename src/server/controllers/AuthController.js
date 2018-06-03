@@ -15,7 +15,7 @@ import { Provider } from 'react-redux'
 import configureLoginStore from '../../front/store/configureLoginStore'
 import configureRegistrationStore from '../../front/store/configureRegistrationStore'
 
-import getLinksState from '../state/Links';
+import { getLinks as getHeaderLinks, getRegistrationUrl, getLoginUrl} from '../infrastructure/url/HeaderLinks';
 
 import Login from '../../front/containers/Login';
 import Registration from '../../front/containers/Registration';
@@ -23,7 +23,7 @@ import Registration from '../../front/containers/Registration';
 export default class AuthController {}
 
 AuthController.login = (req, res) => {
-    const linksState = getLinksState();
+    const linksState = getHeaderLinks();
 
     let preloadedState = {
         header: linksState.header,
@@ -59,21 +59,17 @@ AuthController.login = (req, res) => {
 };
 
 AuthController.registration = (req, res) => {
-    const linksState = getLinksState();
+    const linksState = getHeaderLinks();
 
     let preloadedState = {
         header: linksState.header,
         footer: linksState.footer,
-        extraLinks: { loginUrl: linksState.loginUrl }
+        extraLinks: { loginUrl: getLoginUrl(), registrationUrl: getRegistrationUrl() }
     };
 
     const store = configureRegistrationStore(preloadedState);
 
-    const html = renderToString(
-        <Provider store={store} >
-            <Registration />
-        </Provider>
-    );
+    const html = renderToString(<Provider store={store} ><Registration /></Provider>);
 
     const finalState = store.getState();
 
@@ -102,27 +98,57 @@ AuthController.registrationSubmit = (req, res) => {
         password: req.body.password,
     });
 
-    //TODO validate for same email
-
     if (Object.getOwnPropertyNames(errors).length > 0) {
-        res.status(200).send({status:'fail', validationErrors: errors});
+        res.status(200).send({success: false, validationErrors: errors});
         return;
     }
 
-    if (UserModel.findOne({email: req.body.email})) {
-        errors.email = ['User with such email already registered'];
-        res.status(200).send({status:'fail', validationErrors: errors});
-        return;
+    UserModel.findOne({email: req.body.email}, function(err, results) {
+        if (err){
+            // console.log(err);
+            res.status(500).send({
+                success: false,
+                error: err
+            });
+            return;
+        }
+
+        if (results) {
+            errors.email = ['User with such email already registered'];
+            res.status(200).send({success: false, validationErrors: errors});
+            return;
+        }
+
+        UserModel.create(
+            {
+                firstName: req.body.firstName,
+                email: req.body.email,
+                password: passwordHash.generate(req.body.password, {algorithm:'md5'})
+
+            }, function (err, small) {
+                if (err) {
+                    res.status(500).send({
+                        success: false,
+                        error: err
+                    });
+                    return console.log(err);
+                }
+                req.session.userId = small._id;
+                res.status(200).send({success: true, id: small._id, redirect: urlFor('main')});
+            }
+        );
+    });
+};
+
+AuthController.logout = (req, res, next) => {
+    if (req.session) {
+        // delete session object
+        req.session.destroy(function(err) {
+            if(err) {
+                return next(err);
+            } else {
+                return res.redirect('/');
+            }
+        });
     }
-
-    UserModel.create(
-        {
-            firstName: req.body.firstName,
-            email: req.body.email,
-            password: passwordHash.generate(req.body.password, {algorithm:'md5'})
-
-        }, function (err, small) {if (err) return console.log(err);}
-    );
-
-    res.status(200).send({status:'success', redirect: urlFor('main')});
 };

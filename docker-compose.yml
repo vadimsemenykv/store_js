@@ -1,5 +1,9 @@
 version: "3"
 
+volumes:
+  mongo:
+  redis:
+
 services:
   nginx:
     build:
@@ -28,10 +32,15 @@ services:
       - HOST=app_node1
       - PORT=10080
       - MONGO_DB_URL=mongodb://mongodb:27017/grain_db
+      - SESSION_SECRET=shhhhhhh2342g3v
+      - REDIS_SESSION_URL=redis
+      - REDIS_SESSION_PORT=6379
     links:
       - mongodb
+      - redis
     depends_on:
       - mongodb
+      - redis
 
 #  app_node2:
 #    build: ./app/Dockerfile
@@ -51,7 +60,7 @@ services:
       - MONGODB_USER="user"
       - MONGODB_PASS="pass"
     volumes:
-      - ./data/db:/data/db
+      - mongo:/data/db
     ports:
       - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null # --quiet
@@ -64,7 +73,12 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - ./data/db:/data/db
+      - mongo:/data/db
     ports:
       - 3300:3000
+
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+      - redis:/data
 

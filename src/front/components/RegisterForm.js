@@ -19,7 +19,7 @@ import '../styles/Common.sass';
 // import * as FormErrorsActions from "../actions/FormErrorsActions";
 // import formErrors from "../reducers/formErrors";
 
-class RegisterForm extends Component {
+export default class RegisterForm extends Component {
     constructor(props) {
         super(props);
 
@@ -46,8 +46,10 @@ class RegisterForm extends Component {
             return false;
         }
 
-        fetch('/registration', {
+        const registrationUrl = this.props.registrationUrl;
+        fetch(registrationUrl, {
             method: 'POST',
+            credentials: "same-origin",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -60,6 +62,9 @@ class RegisterForm extends Component {
         })
             .then(response => response.json())
             .then(response => {
+                if (response.success) {
+                    window.location.replace(response.redirect);
+                }
                 this.setState({serverValidationErrors: response.validationErrors});
             })
             .catch(error => console.log(error));
@@ -69,7 +74,7 @@ class RegisterForm extends Component {
         const name = e.target.name;
         const value = e.target.value;
         let serverValidationErrors = this.state.serverValidationErrors;
-        serverValidationErrors[name] = false;
+        delete serverValidationErrors[name];
         this.setState({[name]: value, clearStart: false, serverValidationErrors: serverValidationErrors});
     }
 
@@ -80,7 +85,7 @@ class RegisterForm extends Component {
 
     render () {
         const id = this.props.id;
-        const errors = this.state.serverValidationErrors
+        const errors = Object.getOwnPropertyNames(this.state.serverValidationErrors).length > 0
             ? this.state.serverValidationErrors
             : this.state.clearStart ? [] : RegisterForm.validate(this.state);
 
@@ -130,7 +135,8 @@ class RegisterForm extends Component {
 }
 
 RegisterForm.propTypes = {
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    registrationUrl: PropTypes.string.isRequired
 };
 
 RegisterForm.formateFormErrorFeedback = (field, errors = []) => {
@@ -143,16 +149,16 @@ RegisterForm.validate = (fields) => {
     return RegistrationFormValidator.run(fields);
 };
 
-function mapStateToProps(state) {
-    return {
-        // formErrors: state.formErrors
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        // formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm)
+// function mapStateToProps(state) {
+//     return {
+//         // formErrors: state.formErrors
+//     }
+// }
+//
+// function mapDispatchToProps(dispatch) {
+//     return {
+//         // formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
+//     }
+// }
+//
+// export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm)

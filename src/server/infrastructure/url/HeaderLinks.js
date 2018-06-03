@@ -1,6 +1,6 @@
 import {urlFor} from 'express-named-router-url-generator';
 
-function getLinksState() {
+export function getLinks(user) {
     const headerBottom = [
         {
             toggler: { label: "Buy / Sell" },
@@ -53,10 +53,11 @@ function getLinksState() {
             ]
         }
     ];
+    const logout = { link: getLogOutUrl(), label: "Sign Out" };
 
     return {
         header: {
-            top: login,
+            top: user ? logout : login,
             bottom: headerBottom
         },
         footer: footer,
@@ -65,11 +66,11 @@ function getLinksState() {
     };
 }
 
-
-export default getLinksState;
-
 export function getLoginUrl() {
     return urlFor('login');
+}
+export function getLogOutUrl() {
+    return urlFor('logout');
 }
 export function getRegistrationUrl() {
     return urlFor('registration');
