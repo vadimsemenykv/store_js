@@ -9,9 +9,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RegisterForm from "../components/RegisterForm";
 
-/** Actions */
-import * as FormErrorsActions from '../actions/FormErrorsActions';
-
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -61,7 +58,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
+        // formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
     }
 }
 

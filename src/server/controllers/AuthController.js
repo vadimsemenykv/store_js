@@ -8,7 +8,7 @@ import passwordHash from 'password-hash';
 import RegistrationFormValidator from './../../front/validation/registrationFormRules'
 
 /** Models */
-import UserModel from '../model/User';
+import UserDao from '../dao/User';
 
 
 import { Provider } from 'react-redux'
@@ -28,7 +28,7 @@ AuthController.login = (req, res) => {
     let preloadedState = {
         header: linksState.header,
         footer: linksState.footer,
-        extraLinks: { registrationUrl: linksState.registrationUrl }
+        extraLinks: { loginUrl: getLoginUrl(), registrationUrl: getRegistrationUrl() }
     };
 
     const store = configureLoginStore(preloadedState);
@@ -56,6 +56,19 @@ AuthController.login = (req, res) => {
             finalState
         )
     );
+};
+
+AuthController.loginSubmit = (req, res) => {
+    UserDao.findOne({ email: req.body.email })
+        .catch(err => console.log(err))
+        .then(user => {
+            if (!user || !passwordHash.verify(req.body.password, user.password)) {
+                res.status(200).send({success: false, validationErrors: 'Incorrect username or password.' });
+            }
+
+            req.session.userId = user._id;
+            res.status(200).send({ success: true, redirect: urlFor('account:statusAndNotifications', {id: user._id}) });
+        })
 };
 
 AuthController.registration = (req, res) => {
@@ -103,7 +116,7 @@ AuthController.registrationSubmit = (req, res) => {
         return;
     }
 
-    UserModel.findOne({email: req.body.email}, function(err, results) {
+    UserDao.findOne({email: req.body.email}, function(err, results) {
         if (err){
             // console.log(err);
             res.status(500).send({
@@ -119,7 +132,7 @@ AuthController.registrationSubmit = (req, res) => {
             return;
         }
 
-        UserModel.create(
+        UserDao.create(
             {
                 firstName: req.body.firstName,
                 email: req.body.email,

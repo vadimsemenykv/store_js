@@ -28,13 +28,17 @@ services:
       - .:/app
     ports:
       - 10080:8080
+      - 5858:5858
+      - 9229:9229
     environment:
-      - HOST=app_node1
+#      - HOST=app_node1
       - PORT=10080
       - MONGO_DB_URL=mongodb://mongodb:27017/grain_db
       - SESSION_SECRET=shhhhhhh2342g3v
       - REDIS_SESSION_URL=redis
       - REDIS_SESSION_PORT=6379
+#      - NODE_ENV=development
+#      - DEBUG_PORT=5858
     links:
       - mongodb
       - redis

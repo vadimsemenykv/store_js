@@ -1,9 +1,6 @@
 /** Common */
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
-import validator from 'validator';
 import RegistrationFormValidator from './../validation/registrationFormRules'
 
 /** Components */
@@ -14,10 +11,6 @@ import ToggleSwitcher from './ToggleSwitcher';
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
-
-/** Actions */
-// import * as FormErrorsActions from "../actions/FormErrorsActions";
-// import formErrors from "../reducers/formErrors";
 
 export default class RegisterForm extends Component {
     constructor(props) {
@@ -128,7 +121,7 @@ export default class RegisterForm extends Component {
                     { this.state.interacted.password ? RegisterForm.formateFormErrorFeedback("password", errors) : "" }
                 </FormGroup>
                 <ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>
-                <Button type="submit" onClick={::this.handleSubmit}>Register</Button>
+                <Button type="submit" onClick={::this.handleSubmit} >Register</Button>
             </Form>
         );
     }
@@ -138,27 +131,11 @@ RegisterForm.propTypes = {
     id: PropTypes.string.isRequired,
     registrationUrl: PropTypes.string.isRequired
 };
-
 RegisterForm.formateFormErrorFeedback = (field, errors = []) => {
     if (errors && errors[field] && errors[field][0]) {
         return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
     }
 };
-
 RegisterForm.validate = (fields) => {
     return RegistrationFormValidator.run(fields);
 };
-
-// function mapStateToProps(state) {
-//     return {
-//         // formErrors: state.formErrors
-//     }
-// }
-//
-// function mapDispatchToProps(dispatch) {
-//     return {
-//         // formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
-//     }
-// }
-//
-// export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm)

@@ -8,9 +8,14 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import RedisStore from 'connect-redis'
 
+import Secure from './infrastructure/auth/Secure';
+
 import MainRouter from './routes/Main';
 import AuthRouter from './routes/Auth';
+import AccountRouter from './routes/Account';
 import PageRouter from './routes/Page';
+
+import Mongoose from 'mongoose';
 import DB from "./db";
 
 const app = express();
@@ -52,10 +57,14 @@ app.use((req, res, next) => {
     }
     next();
 });
+app.use(Secure);
 
 // Routes
 app.use('/', MainRouter);
 app.use('/', AuthRouter);
+app.use('/', AccountRouter);
 app.use('/', PageRouter);
+
+Mongoose.Promise = Promise;
 
 export default app;

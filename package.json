@@ -12,7 +12,7 @@
     "build:prod": "npm run build:server && npm run build:client",
     "build:watch:all": "parallelshell 'npm run build:watch:server' 'npm run build:watch:client'",
     "start": "npm run build:prod && NODE_ENV=production node ./build/server/index.js",
-    "start:server:dev": "parallelshell 'npm run build:watch:server' 'nodemon ./build/server/index.js'",
+    "start:server:dev": "nodemon --inspect ./build/server/index.js",
     "start:dev": "parallelshell 'npm run build:watch:server' 'npm run build:watch:client' 'nodemon ./build/server/index.js'",
     "start:dev:pm": "parallelshell 'npm run build:watch:server' 'npm run build:watch:client' 'pm2-runtime process.dev.yml'"
   },
@@ -35,6 +35,7 @@
     "reactstrap": "^6.0.1",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
+    "route-parser": "0.0.5",
     "validator": "^10.2.0"
   },
   "devDependencies": {

@@ -8,17 +8,11 @@ import { getLinks as getHeaderLinks } from "../infrastructure/url/HeaderLinks";
 import Landing from '../../front/containers/Landing';
 
 /** Models */
-import UserModel from '../model/User';
+import UserModel from '../dao/User';
 
 export default class MainController {}
 
 MainController.index = (req, res) => {
-
-
-    if (req.session.userId) {
-
-    }
-
     UserModel.findOne({_id: req.session.userId}, function (err, user) {
         if (err){
             // console.log(err);
@@ -66,6 +60,4 @@ MainController.index = (req, res) => {
             )
         );
     });
-
-
 };

@@ -6,7 +6,6 @@ import {connect} from "react-redux";
 import Header from '../components/Header';
 import JumboSection from "../components/JumboSection";
 import Footer from "../components/Footer";
-import * as loginActions from "../actions/LoginActions";
 
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -105,7 +104,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        pageActions: bindActionCreators(loginActions, dispatch)
+        // pageActions: bindActionCreators(loginActions, dispatch)
     }
 }
 
