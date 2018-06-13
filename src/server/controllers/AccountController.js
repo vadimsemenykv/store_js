@@ -17,8 +17,7 @@ import configureRegistrationStore from '../../front/store/configureRegistrationS
 
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
-import Login from '../../front/containers/Login';
-import Registration from '../../front/containers/Registration';
+import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
 
 export default class AccountController {}
 
@@ -30,43 +29,35 @@ AccountController.statusAndNotifications = (req, res) => {
         footer: linksState.footer
     };
 
-    res.status(200).send(preloadedState);
+    const store = configureLoginStore(preloadedState);
+
+    const html = renderToString(
+        <Provider store={store} >
+            <AccountStatusAndNotifications />
+        </Provider>
+    );
+
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Account - Status & Notifications',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/account-status-and-notifications.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/account-status-and-notifications.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
 };
 
-// AuthController.login = (req, res) => {
-//     const linksState = getHeaderLinks();
-//
-//     let preloadedState = {
-//         header: linksState.header,
-//         footer: linksState.footer,
-//         extraLinks: { loginUrl: getLoginUrl(), registrationUrl: getRegistrationUrl() }
-//     };
-//
-//     const store = configureLoginStore(preloadedState);
-//
-//     const html = renderToString(
-//         <Provider store={store} >
-//             <Login />
-//         </Provider>
-//     );
-//
-//     const finalState = store.getState();
-//
-//     res.status(200).send(
-//         renderFullPage(
-//             {
-//                 title: 'Login',
-//                 html: html,
-//                 cssTop: [
-//                     '<link rel="stylesheet" href="/assets/login.css"/>'
-//                 ],
-//                 jsBottom: [
-//                     '<script src="/assets/login.js"></script>'
-//                 ]
-//             },
-//             finalState
-//         )
-//     );
+
+
 // };
 //
 // AuthController.loginSubmit = (req, res) => {

@@ -147,7 +147,7 @@ AuthController.registrationSubmit = (req, res) => {
                     return console.log(err);
                 }
                 req.session.userId = small._id;
-                res.status(200).send({success: true, id: small._id, redirect: urlFor('main')});
+                res.status(200).send({success: true, redirect: urlFor('account:statusAndNotifications', {id: small._id}) });
             }
         );
     });
