@@ -81,7 +81,7 @@ class Landing extends Component {
         const user = this.props.user;
         return (
             <Row className="landing">
-                <Col className="wrapper">
+                <Col className="cm-container wrapper">
                     <Header isFixed={true} user={user} topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
                     <JumboSection lead={sections[0].lead} description={sections[0].description} button={sections[0].button}/>
                     <JumboSection lead={sections[1].lead} description={sections[1].description} button={sections[1].button}/>

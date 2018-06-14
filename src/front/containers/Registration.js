@@ -25,7 +25,7 @@ class Registration extends Component {
             <Row className="register" >
                 <Col>
                     <Header topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
-                    <Container className="wrapper">
+                    <Container className="cm-container wrapper">
                         <Row>
                             <Col md={{ size: '7' }} sm={{ size: '12' }} className="cm-bordered cm-content form-wrapper" >
                                 <RegisterForm id="registration-form" registrationUrl={extraLinks.registrationUrl} />

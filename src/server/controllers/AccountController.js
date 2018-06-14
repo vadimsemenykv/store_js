@@ -18,6 +18,7 @@ import configureRegistrationStore from '../../front/store/configureRegistrationS
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
 import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
+import MyAccount from '../../front/containers/MyAccount';
 
 export default class AccountController {}
 
@@ -49,6 +50,41 @@ AccountController.statusAndNotifications = (req, res) => {
                 ],
                 jsBottom: [
                     '<script src="/assets/account-status-and-notifications.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};
+
+AccountController.myAccount  = (req, res) => {
+    const linksState = getHeaderLinks();
+
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer
+    };
+
+    const store = configureLoginStore(preloadedState);
+
+    const html = renderToString(
+        <Provider store={store} >
+            <MyAccount />
+        </Provider>
+    );
+
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'My account',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/my-account.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/my-account.js"></script>'
                 ]
             },
             finalState

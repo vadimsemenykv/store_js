@@ -25,7 +25,7 @@ class Login extends Component {
             <Row className="login" >
                 <Col>
                     <Header topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
-                    <Container className="wrapper">
+                    <Container className="cm-container wrapper">
                         <Row>
                             <Col md={{ size: '7' }} sm={{ size: '12' }} className="cm-bordered cm-content form-wrapper" ><LoginForm id='login' loginUrl={extraLinks.loginUrl}/></Col>
                             <Col md={{ size: '4', offset: 1 }} sm={{ size: '12' }} className="cm-bordered cm-content register-prop-wrapper" >

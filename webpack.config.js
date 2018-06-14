@@ -9,7 +9,8 @@ module.exports = {
         landing: './src/front/landing.js',
         login: './src/front/login.js',
         registration: './src/front/registration.js',
-        'account-status-and-notifications': './src/front/account-status-and-notifications.js'
+        'account-status-and-notifications': './src/front/account-status-and-notifications.js',
+        'my-account': './src/front/my-account.js',
     },
     output: {
         filename: '[name].js',

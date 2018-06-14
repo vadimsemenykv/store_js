@@ -4,10 +4,11 @@ import NamedRouter from 'express-named-router-url-generator';
 
 let Router = NamedRouter(express);
 
+Router.get('/my/account', AccountController.myAccount, { name: "account:myAccount" });
 Router.get(
-    '/account/:id/status-and-notifications',
+    '/my/account/status-and-notifications',
     AccountController.statusAndNotifications,
-    { name: "account:statusAndNotifications", where: { id:  NamedRouter.ALPHA_NUMBER } }
+    { name: "account:statusAndNotifications" }
 );
 
 export default Router.expressRouter;

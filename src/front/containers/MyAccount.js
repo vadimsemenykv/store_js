@@ -24,9 +24,9 @@ import SideMenu from '../components/SideMenu';
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
-import '../styles/AccountStatusAndNotifications.sass';
+import '../styles/MyAccount.sass';
 
-class AccountStatusAndNotifications extends Component {
+class MyAccount extends Component {
     constructor(props) {
         super(props);
 
@@ -221,4 +221,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountStatusAndNotifications)
+export default connect(mapStateToProps, mapDispatchToProps)(MyAccount)
