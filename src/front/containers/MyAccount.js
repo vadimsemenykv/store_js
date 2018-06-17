@@ -14,7 +14,20 @@ import {
     CardBody,
     NavbarBrand,
     NavbarToggler,
-    Collapse, Nav, NavLink, Navbar, CardHeader, CardLink, Badge, Progress, CustomInput, Form
+    Collapse,
+    Nav,
+    NavLink,
+    Navbar,
+    CardHeader,
+    CardLink,
+    Badge,
+    Progress,
+    CustomInput,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    FormFeedback
 } from 'reactstrap';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -25,6 +38,9 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
 import '../styles/MyAccount.sass';
+import CompletionBar from "../components/CompletionBar";
+import user from "../reducers/user";
+import AccessForm from "../components/account/AccessForm";
 
 class MyAccount extends Component {
     constructor(props) {
@@ -35,89 +51,76 @@ class MyAccount extends Component {
         };
     };
 
-    toggleNavbar() {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
-    };
-
     render () {
         const headerLinks = this.props.header;
         const footerLinks = this.props.footer;
-        const extraLinks = this.props.extraLinks;
+        const user = this.props.user;
 
         return (
             <Row>
                 <Col>
-                    <Header topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
+                    <Header user={user} topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
                     <Container className="cm-container wrapper">
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className='content-title'>Account Status</h3>
-                                <Card className="" >
-                                    <CardHeader> Welcome, </CardHeader>
+                                <h3 className='content-title'>My account</h3>
+                                <Card>
+                                    <CardHeader>Website Access</CardHeader>
                                     <CardBody>
-                                        <div className="account-status-policy-link" >
-                                            <CardLink className="sub-link text-secondary" href="/" > Please read our Website Code of Conduct Policy </CardLink>
-                                        </div>
-                                        <div className="text-secondary account-status-badge" >Your account is <Badge color="success" > Active </Badge></div>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} />
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >Status</div></Col>
-                                            <Col xs={{ size: 6 }} ><div className="text-secondary success" >Type of Access Granted</div></Col>
-                                        </Row>
-                                        <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >Initial Registration</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="100" />
-                                                </Progress>
-                                            </Col>
-                                            <Col xs={{ size: 6 }} >You can view the OTC Order Book as well as access any informational website content.</Col>
-                                        </Row>
-                                        <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >My Account Information</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">3/11 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="3" max="11" />
-                                                    <Progress bar color="warning" value="8" max="11" />
-                                                    <Progress bar color="danger" value="0" max="11" />
-                                                </Progress>
-                                            </Col>
-                                            <Col xs={{ size: 6 }} >You have full access to all functions of the website, including creating new buy/sell orders, submitting offers and entering into binding contracts.</Col>
-                                        </Row>
-                                        <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >KYC Verification</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">0/3 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="0" max="3" />
-                                                    <Progress bar color="warning" value="0" max="3" />
-                                                    <Progress bar color="danger" value="3" max="3" />
-                                                </Progress>
-                                            </Col>
-                                            <Col xs={{ size: 6 }} >KYC Verification is not due until you enter into a contract, at which point you have to complete our KYC verification.</Col>
-                                        </Row>
-                                        <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >Bank Wire Instructions</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">5/5 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="5" max="5" />
-                                                    <Progress bar color="warning" value="0" max="5" />
-                                                    <Progress bar color="danger" value="0" max="5" />
-                                                </Progress>
-                                            </Col>
-                                            <Col xs={{ size: 6 }} >Bank Wire Instructions are due when a Merchant - BUY order is created. AND, upon entering into a contract.</Col>
-                                        </Row>
-                                        <div className="dropdown-divider"/>
+                                        <CardTitle tag='h6'>Account Access</CardTitle>
+                                        <AccessForm id={'access-form'} user={user}/>
+                                    </CardBody>
+                                </Card>
+                                <Card>
+                                    <CardHeader>Account Information</CardHeader>
+                                    <CardBody>
+                                        <CardTitle tag='h6'>Your Contact Information</CardTitle>
+                                        <Form className='private-access-form'>
+                                            <Row className="completion-bar">
+                                                <Col xs={{ size: 6 }} ><div className="label text-secondary success">Your Account Registration is</div></Col>
+                                                <Col xs={{ size: 6 }} className={'bar-wrapper'}>
+                                                    <CompletionBar maxValue={11} doneValue={3}/>
+                                                </Col>
+                                                <Col xs={{ size: 0 }} >{''}</Col>
+                                            </Row>
+                                            <FormGroup>
+                                                <Row>
+                                                    <Col xs={{ size: 3 }}><Label className='form-text label float-right'>Password</Label></Col>
+                                                    <Col xs={{ size: 4 }}>
+                                                        {/*<Input*/}
+                                                            {/*type="password"*/}
+                                                            {/*name="password"*/}
+                                                            {/*placeholder="Enter password"*/}
+                                                            {/*// onChange={ ::this.handleChangeInput }*/}
+                                                            {/*// onBlur={ ::this.handleFocusOut }*/}
+                                                            {/*// invalid={ this.state.interacted.password && !!errors["password"] }*/}
+                                                        {/*/>*/}
+                                                        <div className='form-text value'>••••••••</div>
+                                                    </Col>
+                                                    <Col xs={{ size: 5 }}></Col>
+                                                </Row>
+                                                {/*{ this.state.interacted.password ? LoginForm.formateFormErrorFeedback("password", errors) : "" }*/}
+                                            </FormGroup>
+                                            <Row>
+                                                <Col xs={{ size: 3 }}><div className='form-text label float-right'>Unique User ID</div></Col>
+                                                <Col xs={{ size: 4 }}>
+                                                    <div className='form-text value'>asd6asf87af87asf</div>
+                                                </Col>
+                                                <Col xs={{ size: 5 }}/>
+                                            </Row>
+                                            <Row className='form-btn-group'>
+                                                <Col xs={{ size: 4, offset: 8 }}>
+                                                    <Button color="success">Save</Button>{' '}
+                                                    <Button color="warning">Cancel</Button>
+                                                </Col>
+                                            </Row>
+                                            <Row className='form-btn-group'>
+                                                <Col xs={{ size: 4, offset: 8 }}>
+                                                    <Button color="warning">Edit</Button>
+                                                </Col>
+                                            </Row>
+                                        </Form>
                                     </CardBody>
                                 </Card>
 
@@ -131,19 +134,19 @@ class MyAccount extends Component {
                                             </Col>
                                         </Row>
                                         <Form>
-                                            <Row className="">
+                                            <Row >
                                                 <Col xs={{ size: 7 }} ><div className="text-secondary success" >Sign up for our Newsletter</div></Col>
                                                 <Col xs={{ size: 5 }} >
                                                     <CustomInput disabled id="user[weekly_mailing]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="success">Save</Button>{' '}
                                                     <Button color="warning">Cancel</Button>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="warning">Edit</Button>
                                                 </Col>
@@ -163,19 +166,19 @@ class MyAccount extends Component {
                                         <Form>
                                             <Row className='confirms'>
                                                 <Col>
-                                                    <Row className="">
+                                                    <Row >
                                                         <Col xs={{ size: 7 }} ><div className="text-secondary success" >Receive email confirmation when A</div></Col>
                                                         <Col xs={{ size: 5 }} >
                                                             <CustomInput disabled checked id="user[notify][when_a]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
                                                         </Col>
                                                     </Row>
-                                                    <Row className="">
+                                                    <Row >
                                                         <Col xs={{ size: 7 }} ><div className="text-secondary success" >Receive email confirmation when B</div></Col>
                                                         <Col xs={{ size: 5 }} >
                                                             <CustomInput id="user[notify][when_b]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
                                                         </Col>
                                                     </Row>
-                                                    <Row className="">
+                                                    <Row >
                                                         <Col xs={{ size: 7 }} ><div className="text-secondary success" >Receive email confirmation when C</div></Col>
                                                         <Col xs={{ size: 5 }} >
                                                             <CustomInput id="user[notify][when_c]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
@@ -183,13 +186,13 @@ class MyAccount extends Component {
                                                     </Row>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="success">Save</Button>{' '}
                                                     <Button color="warning">Cancel</Button>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="warning">Edit</Button>
                                                 </Col>
@@ -211,7 +214,7 @@ function mapStateToProps(state) {
     return {
         header: state.header,
         footer: state.footer,
-        extraLinks: state.extraLinks
+        user: state.user
     }
 }
 

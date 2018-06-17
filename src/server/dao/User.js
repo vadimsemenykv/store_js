@@ -21,6 +21,12 @@ User.pre('save', function(next) {
     next()
 });
 
+User.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.password;
+    return obj;
+};
+
 mongoose.model('User', User);
 
 export default mongoose.model('User');

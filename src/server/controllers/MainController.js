@@ -8,12 +8,12 @@ import { getLinks as getHeaderLinks } from "../infrastructure/url/HeaderLinks";
 import Landing from '../../front/containers/Landing';
 
 /** Models */
-import UserModel from '../dao/User';
+import UserDao from '../dao/User';
 
 export default class MainController {}
 
 MainController.index = (req, res) => {
-    UserModel.findOne({_id: req.session.userId}, function (err, user) {
+    UserDao.findOne({_id: req.session.userId}, function (err, user) {
         if (err){
             // console.log(err);
             res.status(500).send({

@@ -7,6 +7,7 @@ import { Collapse, Col, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink } from 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/SideMenu.sass';
 
 class SideMenu extends Component {
     constructor(props) {
@@ -31,24 +32,24 @@ class SideMenu extends Component {
                     <NavbarToggler onClick={::this.toggleNavbar} className="mr-2" />
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav vertical >
-                            <NavLink className="sub-link text-secondary" href='/my/account'> My Account </NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/account'>My Account</NavLink>
                             <div className="dropdown-divider"/>
-                            <NavLink className="sub-link text-secondary" href='/my/account/status-and-notifications'> Status & Notifications </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/account/kyc'> Know Your Client (KYC) </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/account/bank-wire-instructions'> Bank Wire Instructions </NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/account/status-and-notifications'>Status & Notifications</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/account/kyc'>Know Your Client (KYC)</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/account/bank-wire-instructions'>Bank Wire Instructions</NavLink>
                             <div className="dropdown-divider"/>
-                            <NavLink className="sub-link text-secondary" href='/catalog'> View OTC Order Book </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/catalog/create-new'> New Buy/Sell Contract </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/deliveries'> Grain Deliveries </NavLink>
+                            <NavLink className="sub-link text-secondary" href='/catalog'>View OTC Order Book</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/catalog/create-new'>New Buy/Sell Contract</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/deliveries'>Grain Deliveries</NavLink>
                             <div className="dropdown-divider"/>
-                            <NavLink className="sub-link text-secondary" href='/my/orders'> My Orders </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/offers'> My Offers </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/contracts'> My Contracts </NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/orders'>My Orders</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/offers'>My Offers</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/contracts'>My Contracts</NavLink>
                             <div className="dropdown-divider"/>
-                            <NavLink className="sub-link text-secondary" href='/my/tracker'> ACTIONs Tracker </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/my/payments'> Payment History </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/forms-policies'> Forms & Policies </NavLink>
-                            <NavLink className="sub-link text-secondary" href='/social'> Social & Coffee Chats </NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/tracker'>ACTIONs Tracker</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/my/payments'>Payment History</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/forms-policies'>Forms & Policies</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/social'>Social & Coffee Chats</NavLink>
                         </Nav>
                     </Collapse>
                 </Navbar>

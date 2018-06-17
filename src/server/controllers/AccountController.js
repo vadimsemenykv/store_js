@@ -1,3 +1,4 @@
+/** Common */
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
@@ -12,13 +13,12 @@ import UserDao from '../dao/User';
 
 
 import { Provider } from 'react-redux'
-import configureLoginStore from '../../front/store/configureLoginStore'
-import configureRegistrationStore from '../../front/store/configureRegistrationStore'
 
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
 import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/MyAccount';
+import configureLandingStore from "../../front/store/configureLandingStore";
 
 export default class AccountController {}
 
@@ -30,7 +30,7 @@ AccountController.statusAndNotifications = (req, res) => {
         footer: linksState.footer
     };
 
-    const store = configureLoginStore(preloadedState);
+    const store = configureLandingStore(preloadedState);
 
     const html = renderToString(
         <Provider store={store} >
@@ -58,38 +58,52 @@ AccountController.statusAndNotifications = (req, res) => {
 };
 
 AccountController.myAccount  = (req, res) => {
-    const linksState = getHeaderLinks();
+    UserDao.findOne({_id: req.session.userId}, function (err, user) {
+        if (err){
+            // console.log(err);
+            res.status(500).send({
+                success: false,
+                error: err
+            });
+            return;
+        }
+        if (!user) {
+            res.redirect(urlFor('main'));
+        }
 
-    let preloadedState = {
-        header: linksState.header,
-        footer: linksState.footer
-    };
+        const linksState = getHeaderLinks(req.session.userId);
+        let preloadedState = {
+            header: linksState.header,
+            footer: linksState.footer,
+            user: user
+        };
 
-    const store = configureLoginStore(preloadedState);
+        const store = configureLandingStore(preloadedState);
 
-    const html = renderToString(
-        <Provider store={store} >
-            <MyAccount />
-        </Provider>
-    );
+        const html = renderToString(
+            <Provider store={store} >
+                <MyAccount />
+            </Provider>
+        );
 
-    const finalState = store.getState();
+        const finalState = store.getState();
 
-    res.status(200).send(
-        renderFullPage(
-            {
-                title: 'My account',
-                html: html,
-                cssTop: [
-                    '<link rel="stylesheet" href="/assets/my-account.css"/>'
-                ],
-                jsBottom: [
-                    '<script src="/assets/my-account.js"></script>'
-                ]
-            },
-            finalState
-        )
-    );
+        res.status(200).send(
+            renderFullPage(
+                {
+                    title: 'My account',
+                    html: html,
+                    cssTop: [
+                        '<link rel="stylesheet" href="/assets/my-account.css"/>'
+                    ],
+                    jsBottom: [
+                        '<script src="/assets/my-account.js"></script>'
+                    ]
+                },
+                finalState
+            )
+        );
+    });
 };
 
 

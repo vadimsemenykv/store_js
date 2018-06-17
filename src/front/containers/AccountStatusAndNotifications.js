@@ -25,6 +25,7 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
 import '../styles/AccountStatusAndNotifications.sass';
+import CompletionBar from "../components/CompletionBar";
 
 class AccountStatusAndNotifications extends Component {
     constructor(props) {
@@ -55,7 +56,7 @@ class AccountStatusAndNotifications extends Component {
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
                                 <h3 className='content-title'>Account Status</h3>
-                                <Card className="" >
+                                <Card>
                                     <CardHeader> Welcome, </CardHeader>
                                     <CardBody>
                                         <div className="account-status-policy-link" >
@@ -68,52 +69,34 @@ class AccountStatusAndNotifications extends Component {
                                             <Col xs={{ size: 6 }} ><div className="text-secondary success" >Type of Access Granted</div></Col>
                                         </Row>
                                         <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >Initial Registration</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="100" />
-                                                </Progress>
+                                        <Row className="completion-bar">
+                                            <Col xs={{ size: 3 }} ><div className="label text-secondary success" >Initial Registration</div></Col>
+                                            <Col xs={{ size: 3 }} className={'bar-wrapper'}>
+                                                <CompletionBar maxValue={1} doneValue={1} customValueText={'Complete'}/>
                                             </Col>
                                             <Col xs={{ size: 6 }} >You can view the OTC Order Book as well as access any informational website content.</Col>
                                         </Row>
                                         <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >My Account Information</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">3/11 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="3" max="11" />
-                                                    <Progress bar color="warning" value="8" max="11" />
-                                                    <Progress bar color="danger" value="0" max="11" />
-                                                </Progress>
+                                        <Row className="completion-bar">
+                                            <Col xs={{ size: 3 }} ><div className="label text-secondary success" >My Account Information</div></Col>
+                                            <Col xs={{ size: 3 }} className={'bar-wrapper'}>
+                                                <CompletionBar maxValue={11} doneValue={3}/>
                                             </Col>
                                             <Col xs={{ size: 6 }} >You have full access to all functions of the website, including creating new buy/sell orders, submitting offers and entering into binding contracts.</Col>
                                         </Row>
                                         <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >KYC Verification</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">0/3 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="0" max="3" />
-                                                    <Progress bar color="warning" value="0" max="3" />
-                                                    <Progress bar color="danger" value="3" max="3" />
-                                                </Progress>
+                                        <Row className="completion-bar">
+                                            <Col xs={{ size: 3 }} ><div className="label text-secondary success" >KYC Verification</div></Col>
+                                            <Col xs={{ size: 3 }} className={'bar-wrapper'}>
+                                                <CompletionBar maxValue={3} doneValue={0}/>
                                             </Col>
                                             <Col xs={{ size: 6 }} >KYC Verification is not due until you enter into a contract, at which point you have to complete our KYC verification.</Col>
                                         </Row>
                                         <div className="dropdown-divider"/>
-                                        <Row>
-                                            <Col xs={{ size: 3 }} ><div className="text-secondary success" >Bank Wire Instructions</div></Col>
-                                            <Col xs={{ size: 3 }} >
-                                                <div className="text-center text-secondary">5/5 Complete</div>
-                                                <Progress multi>
-                                                    <Progress bar color="success" value="5" max="5" />
-                                                    <Progress bar color="warning" value="0" max="5" />
-                                                    <Progress bar color="danger" value="0" max="5" />
-                                                </Progress>
+                                        <Row className="completion-bar">
+                                            <Col xs={{ size: 3 }} ><div className="label text-secondary success" >Bank Wire Instructions</div></Col>
+                                            <Col xs={{ size: 3 }} className={'bar-wrapper'}>
+                                                <CompletionBar maxValue={5} doneValue={5}/>
                                             </Col>
                                             <Col xs={{ size: 6 }} >Bank Wire Instructions are due when a Merchant - BUY order is created. AND, upon entering into a contract.</Col>
                                         </Row>
@@ -137,13 +120,13 @@ class AccountStatusAndNotifications extends Component {
                                                     <CustomInput disabled id="user[weekly_mailing]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="success">Save</Button>{' '}
                                                     <Button color="warning">Cancel</Button>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="warning">Edit</Button>
                                                 </Col>
@@ -183,13 +166,13 @@ class AccountStatusAndNotifications extends Component {
                                                     </Row>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="success">Save</Button>{' '}
                                                     <Button color="warning">Cancel</Button>
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            <Row className='form-btn-group'>
                                                 <Col xs={{ size: 4, offset: 8 }}>
                                                     <Button color="warning">Edit</Button>
                                                 </Col>

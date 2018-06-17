@@ -1,7 +1,7 @@
 import React from 'react';
 import { hydrate } from 'react-dom';
 import {Provider} from 'react-redux'
-import configureStore from './store/configureRegistrationStore' /* TODO */
+import configureStore from './store/configureLandingStore' /* TODO */
 
 import MyAccount from './containers/MyAccount';
 

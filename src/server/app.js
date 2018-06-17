@@ -15,6 +15,8 @@ import AuthRouter from './routes/Auth';
 import AccountRouter from './routes/Account';
 import PageRouter from './routes/Page';
 
+import ApiUserRouter from './routes/api/User';
+
 import Mongoose from 'mongoose';
 import DB from "./db";
 
@@ -64,6 +66,8 @@ app.use('/', MainRouter);
 app.use('/', AuthRouter);
 app.use('/', AccountRouter);
 app.use('/', PageRouter);
+
+app.use('/', ApiUserRouter);
 
 Mongoose.Promise = Promise;
 

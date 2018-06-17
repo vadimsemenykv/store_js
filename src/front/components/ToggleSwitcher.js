@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/ToggleSwitcher.sass';
-import PropTypes from "prop-types";
 
 export default class ToggleSwitcher extends React.Component {
     render() {

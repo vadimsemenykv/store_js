@@ -78,44 +78,44 @@ export default class Header extends React.Component {
         );
     }
 }
-Header.propTypes = {
-    isFixed: PropTypes.bool,
-    // user: PropTypes.shape(),
-    topLinks: PropTypes.arrayOf(
-        PropTypes.shape({
-            toggler: PropTypes.shape({
-                label: PropTypes.string.isRequired,
-                link: PropTypes.string,
-            }).isRequired,
-            links: PropTypes.arrayOf(PropTypes.oneOfType([
-                PropTypes.shape({
-                    label: PropTypes.string.isRequired,
-                    link: PropTypes.string.isRequired,
-                }),
-                PropTypes.shape({
-                    divider: PropTypes.bool.isRequired
-                })
-            ])).isRequired
-        })
-    ),
-    bottomLinks: PropTypes.arrayOf(
-        PropTypes.shape({
-            toggler: PropTypes.shape({
-                label: PropTypes.string.isRequired,
-                link: PropTypes.string,
-            }).isRequired,
-            links: PropTypes.arrayOf(PropTypes.oneOfType([
-                PropTypes.shape({
-                    label: PropTypes.string.isRequired,
-                    link: PropTypes.string.isRequired,
-                }),
-                PropTypes.shape({
-                    divider: PropTypes.bool.isRequired
-                })
-            ])).isRequired
-        })
-    )
-}
+// Header.propTypes = {
+//     isFixed: PropTypes.bool,
+//     // user: PropTypes.shape(),
+//     topLinks: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             toggler: PropTypes.shape({
+//                 label: PropTypes.string.isRequired,
+//                 link: PropTypes.string,
+//             }).isRequired,
+//             links: PropTypes.arrayOf(PropTypes.oneOfType([
+//                 PropTypes.shape({
+//                     label: PropTypes.string.isRequired,
+//                     link: PropTypes.string.isRequired,
+//                 }),
+//                 PropTypes.shape({
+//                     divider: PropTypes.bool.isRequired
+//                 })
+//             ])).isRequired
+//         })
+//     ),
+//     bottomLinks: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             toggler: PropTypes.shape({
+//                 label: PropTypes.string.isRequired,
+//                 link: PropTypes.string,
+//             }).isRequired,
+//             links: PropTypes.arrayOf(PropTypes.oneOfType([
+//                 PropTypes.shape({
+//                     label: PropTypes.string.isRequired,
+//                     link: PropTypes.string.isRequired,
+//                 }),
+//                 PropTypes.shape({
+//                     divider: PropTypes.bool.isRequired
+//                 })
+//             ])).isRequired
+//         })
+//     )
+// }
 
 class SubMenu extends React.Component {
     render() {
