@@ -75,7 +75,8 @@ AccountController.myAccount  = (req, res) => {
         let preloadedState = {
             header: linksState.header,
             footer: linksState.footer,
-            user: user
+            user: user,
+            extraLinks: { userChange: urlFor('api:user') }
         };
 
         const store = configureLandingStore(preloadedState);

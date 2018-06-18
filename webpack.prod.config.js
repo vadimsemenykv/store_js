@@ -2,6 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 const webpack = require('webpack');
 
 module.exports = {
@@ -18,7 +19,10 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: "[name].css",
-        })
+        }),
+        // new CompressionPlugin({
+        //     algorithm: 'gzip'
+        // })
     ],
     optimization: {
         minimizer: [
@@ -33,22 +37,32 @@ module.exports = {
             new OptimizeCSSAssetsPlugin({})
         ],
         // splitChunks: {
-        //     chunks: "async",
-        //     minSize: 150,
+        //     chunks: "all",
+        //     minSize: 30000,
         //     minChunks: 1,
         //     maxAsyncRequests: 5,
         //     maxInitialRequests: 3,
         //     name: true,
         //     cacheGroups: {
-        //         vendors: {
-        //             test: /[\\/]node_modules[\\/]/,
-        //             priority: -10
+        //         vendor: {
+        //             chunks: 'initial',
+        //             name: 'vendor',
+        //             test: 'vendor',
+        //             enforce: true
         //         },
-        //         default: {
-        //             minChunks: 2,
-        //             priority: -20,
-        //             reuseExistingChunk: true
-        //         }
+        //         // vendors: {
+        //         //     test: /[\\/]node_modules[\\/]/,
+        //         //     priority: -10,
+        //         //     name: "vendor",
+        //         //     chunks: "all",
+        //         //     minChunks: 4
+        //         // },
+        //         // default: {
+        //         //     minChunks: 2,
+        //         //     priority: -20,
+        //         //     reuseExistingChunk: true,
+        //         //     name: "common"
+        //         // }
         //     }
         // }
     },

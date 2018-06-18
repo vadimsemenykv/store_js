@@ -1,12 +1,10 @@
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import rootReducer from '../reducers/pages/landingPage'
+import accountRootReducer from '../reducers/pages/account'
 
-
-//TODO move to ConfigureStore
-export default function configureStore(preloadedState) {
+export function configureAccountStore(preloadedState) {
     return createStore(
-        rootReducer,
+        accountRootReducer,
         preloadedState,
         applyMiddleware(
             thunkMiddleware

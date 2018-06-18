@@ -214,7 +214,8 @@ function mapStateToProps(state) {
     return {
         header: state.header,
         footer: state.footer,
-        user: state.user
+        user: state.user,
+        extraLinks: state.extraLinks
     }
 }
 

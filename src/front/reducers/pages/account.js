@@ -2,9 +2,11 @@ import { combineReducers } from 'redux'
 import header from '../header'
 import footer from '../footer'
 import user from '../user'
-//TODO rename with uppercase
+import extraLinks from "../extraLinks";
+
 export default combineReducers({
     header,
     footer,
-    user
+    user,
+    extraLinks
 })
