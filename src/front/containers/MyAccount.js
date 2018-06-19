@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import user from "../reducers/user";
 
 /** Components */
 import {
@@ -32,15 +33,14 @@ import {
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SideMenu from '../components/SideMenu';
+import CompletionBar from "../components/CompletionBar";
+import AccessForm from "../components/account/AccessForm";
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
 import '../styles/MyAccount.sass';
-import CompletionBar from "../components/CompletionBar";
-import user from "../reducers/user";
-import AccessForm from "../components/account/AccessForm";
 
 class MyAccount extends Component {
     constructor(props) {
@@ -55,6 +55,7 @@ class MyAccount extends Component {
         const headerLinks = this.props.header;
         const footerLinks = this.props.footer;
         const user = this.props.user;
+        const submitUrl = this.props.extraLinks.submitUrl;
 
         return (
             <Row>
@@ -69,7 +70,7 @@ class MyAccount extends Component {
                                     <CardHeader>Website Access</CardHeader>
                                     <CardBody>
                                         <CardTitle tag='h6'>Account Access</CardTitle>
-                                        <AccessForm id={'access-form'} user={user}/>
+                                        <AccessForm id={'access_form'} user={user} submitUrl={submitUrl}/>
                                     </CardBody>
                                 </Card>
                                 <Card>

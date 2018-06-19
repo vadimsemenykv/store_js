@@ -8,24 +8,21 @@ class AccountAccesForm extends DefaultForm{
 }
 
 AccountAccesForm.rules = {
-    email: [
-        {
-            rule: value => validator.isByteLength(value, { min: 1 }),
-            message: "Email is required"
-        },
-        {
-            rule: value => validator.isEmail(value),
-            message: "Email is not valid"
-        }
-    ],
     password: [
         {
             rule: value => validator.isByteLength(value, { min: 1 }),
             message: "Password is required"
         },
         {
-            rule: value => validator.isByteLength(value, { min: 4 }),
-            message: "Password must be at least 4 characters"
+            rule: value => validator.isByteLength(value, { min: 8 }),
+            message: "Password must be at least 8 characters"
+        },
+        {
+            rule: value => {
+                const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()])/;
+                return regExp.test(value);
+            },
+            message: "Password must contain at least one letter, upper case letter, number and symbol"
         }
     ]
 };

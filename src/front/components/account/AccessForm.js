@@ -1,6 +1,7 @@
 /** Common */
 import React, { Component } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import AccountAccessFormValidation from '../../forms/AccountAccesForm';
 
 /** Components */
 import {
@@ -44,6 +45,7 @@ export default class AccessForm extends Component{
             password: '',
             isEditMode: false,
             likePassword: true,
+            clearStart: true
         };
     };
 
@@ -58,28 +60,31 @@ export default class AccessForm extends Component{
     handleSubmit(e) {
         e.preventDefault();
 
-        if (Object.getOwnPropertyNames(LoginForm.validate(this.state)).length > 0) {
-            this.setState({interacted: {firstName: true, email: true, password: true}, clearStart: false});
+        if (
+            Object.getOwnPropertyNames(
+                AccountAccessFormValidation.runValidation({password: this.state.password})
+            ).length > 0
+        ) {
+            this.setState({interacted: {password: true}, clearStart: false});
             return false;
         }
 
-        const url = '/';
+        const url = this.props.submitUrl;
         fetch(url, {
-            method: 'POST',
+            method: 'PATCH',
             credentials: "same-origin",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                password: this.state.password
+                access_form: {password: this.state.password}
             })
         })
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
-                    //TODO success
-                    // window.location.replace(response.redirect);
+                    this.setState({isEditMode: false});
                 } else {
                     this.setState({serverValidationError: response.validationErrors});
                 }
@@ -101,6 +106,16 @@ export default class AccessForm extends Component{
     render() {
         const id = this.props.id;
         const user = this.props.user;
+        const isEditMode = this.state.isEditMode;
+        const changeEditModeFunc = ::this.changeEditMode;
+        const handleSubmitFunc = ::this.handleSubmit;
+
+        function renderButtonGroup() {
+            if (isEditMode) {
+                return <div><Button onClick={handleSubmitFunc} color="success">Save</Button>{' '}<Button onClick={changeEditModeFunc} color="warning">Cancel</Button></div>;
+            }
+            return <div><Button onClick={changeEditModeFunc} color="warning">Edit</Button></div>;
+        }
 
         return (
             <Form id={id} className='private-access-form'>
@@ -122,7 +137,7 @@ export default class AccessForm extends Component{
                                                    type={ this.state.likePassword ? "password" : "text" }
                                                    name="password"
                                                    placeholder="Enter password"
-                                                // onChange={ ::this.handleChangeInput }
+                                                   onChange={ ::this.handleChangeInput }
                                                 // onBlur={ ::this.handleFocusOut }
                                                 // invalid={ this.state.interacted.password && !!errors["password"] }
                                             />
@@ -145,11 +160,7 @@ export default class AccessForm extends Component{
                 </Row>
                 <Row className='form-btn-group'>
                     <Col xs={{ size: 4, offset: 8 }}>
-                        {
-                            this.state.isEditMode
-                                ? <div><Button color="success">Save</Button>{' '}<Button onClick={::this.changeEditMode} color="warning">Cancel</Button></div>
-                                : <div><Button onClick={::this.changeEditMode} color="warning">Edit</Button></div>
-                        }
+                        { renderButtonGroup() }
                     </Col>
                 </Row>
             </Form>
@@ -159,5 +170,6 @@ export default class AccessForm extends Component{
 
 AccessForm.propTypes = {
     id: PropTypes.string.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    submitUrl: PropTypes.string.isRequired
 };

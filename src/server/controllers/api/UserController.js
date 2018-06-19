@@ -89,7 +89,7 @@ UserController.change = (req, res) => {
     UserDao.findOneAndUpdate(
         { _id: req.session.userId },
         {
-            email: 'vadimsemenykv+3@gmail.com'
+            email: 'vadimsemenykv+4@gmail.com'
         }
     ).catch(err => {
         res.status(500).send({

@@ -19,6 +19,7 @@ import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/MyAccount';
 import configureLandingStore from "../../front/store/configureLandingStore";
+import { configureAccountStore } from "../../front/store/configureStore";
 
 export default class AccountController {}
 
@@ -30,7 +31,7 @@ AccountController.statusAndNotifications = (req, res) => {
         footer: linksState.footer
     };
 
-    const store = configureLandingStore(preloadedState);
+    const store = configureAccountStore(preloadedState);
 
     const html = renderToString(
         <Provider store={store} >
@@ -76,10 +77,11 @@ AccountController.myAccount  = (req, res) => {
             header: linksState.header,
             footer: linksState.footer,
             user: user,
-            extraLinks: { userChange: urlFor('api:user') }
+            extraLinks: { submitUrl: urlFor('api:user') }
         };
+        //TODO pass userChange and use it at form
 
-        const store = configureLandingStore(preloadedState);
+        const store = configureAccountStore(preloadedState);
 
         const html = renderToString(
             <Provider store={store} >
