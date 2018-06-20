@@ -20,8 +20,9 @@ import ToggleSwitcher from "../ToggleSwitcher";
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/AccessForm.sass';
+import CompletionBar from "../CompletionBar";
 
-export default class AccessForm extends Component{
+export default class UserInfoForm extends Component{
     constructor(props) {
         super(props);
 
@@ -125,27 +126,118 @@ export default class AccessForm extends Component{
         }
 
         return (
-            <Form id={id} className='private-access-form'>
-                <Row>
-                    <Col xs={{ size: 4 }}><div className='form-text label float-right'>Email</div></Col>
-                    <Col xs={{ size: 8 }}>
-                        <div className='form-text value'>{ user.email }</div>
+            <Form id={id} className='user-info-form'>
+                <Row className="completion-bar">
+                    <Col xs={{ size: 6 }} ><div className="label text-secondary success">Your Account Registration is</div></Col>
+                    <Col xs={{ size: 6 }} className={'bar-wrapper'}>
+                        <CompletionBar maxValue={11} doneValue={3}/>
                     </Col>
+                    <Col xs={{ size: 0 }} >{''}</Col>
                 </Row>
                 <FormGroup>
                     <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Password</Label></Col>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>First Name</Label></Col>
                         <Col xs={{ size: 8 }}>
                             { passwordInput }
                         </Col>
                     </Row>
                 </FormGroup>
-                <Row>
-                    <Col xs={{ size: 4 }}><div className='form-text label float-right'>Unique User ID</div></Col>
-                    <Col xs={{ size: 8 }}>
-                        <div className='form-text value'>{ user._id.toString() }</div>
-                    </Col>
-                </Row>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Last Name</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Company</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Country</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Street</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Other (If Applicable)</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>City</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Province / State</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Postal Code / Zip</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Phone</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Primary Email</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Secondary Email</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            { passwordInput }
+                        </Col>
+                    </Row>
+                </FormGroup>
                 <Row className='form-btn-group'>
                     <Col xs={{ size: 4, offset: 8 }}>
                         { buttonGroup }
@@ -156,13 +248,13 @@ export default class AccessForm extends Component{
     }
 }
 
-AccessForm.propTypes = {
+UserInfoForm.propTypes = {
     id: PropTypes.string.isRequired,
     user: PropTypes.object.isRequired,
     submitUrl: PropTypes.string.isRequired
 };
 
-AccessForm.formateFormErrorFeedback = (field, errors = []) => {
+UserInfoForm.formateFormErrorFeedback = (field, errors = []) => {
     if (errors && errors[field] && errors[field][0]) {
         return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
     }

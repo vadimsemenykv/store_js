@@ -3,6 +3,7 @@ import {urlFor} from 'express-named-router-url-generator';
 import passwordHash from "password-hash";
 import RegistrationFormValidator from "../../../front/validation/registrationFormRules";
 import UserDao from "../../dao/User";
+import AccountAccesForm from "../../../front/forms/AccountAccesForm";
 
 export default class UserController {}
 
@@ -86,24 +87,37 @@ UserController.change = (req, res) => {
     // if password - hash password
     //if file - send it to storage and save result to user
 
-    UserDao.findOneAndUpdate(
-        { _id: req.session.userId },
-        {
-            email: 'vadimsemenykv+4@gmail.com'
-        }
-    ).catch(err => {
-        res.status(500).send({
+    const validators = {
+        access_form: AccountAccesForm,
+        user_info: AccountAccesForm
+    };
+    const formName = req.body.form.name;
+    const data = req.body.form.data;
+
+    if (!formName || !validators[formName]
+        || Object.getOwnPropertyNames(validators[formName].runValidation(data)).length > 0
+    ) {
+        res.status(400).send({
             success: false,
-            error: err
+            error: 'malformed_data'
         });
-    }).then(user => {
-        if (!user) {
+        return;
+    }
+
+    UserDao.findOneAndUpdate({ _id: req.session.userId }, data)
+        .catch(err => {
             res.status(500).send({
                 success: false,
-                error: new Error('Failed to fetch user')
+                error: err.toString()
             });
-        }
+        }).then(user => {
+            if (!user) {
+                res.status(400).send({
+                    success: false,
+                    error: (new Error('Failed to fetch user')).toString()
+                });
+            }
 
-        res.status(200).send({ success: true });
-    });
+            res.status(200).send({ success: true });
+        });
 };

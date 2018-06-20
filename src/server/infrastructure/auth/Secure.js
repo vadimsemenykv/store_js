@@ -2,7 +2,7 @@ import RouteParser from 'route-parser';
 import {urlFor} from "express-named-router-url-generator";
 
 const requiresLogin = [
-    '/account/:id/status-and-notifications'
+    // '/account/:id/status-and-notifications'
 ];
 const requiresLoggedOut = [
     '/login',
