@@ -20,6 +20,7 @@ import CompletionBar from "../CompletionBar";
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/UserInfoForm.sass';
+import {RingLoader} from "react-spinners";
 
 export default class UserInfoForm extends Component{
     constructor(props) {
@@ -181,7 +182,14 @@ export default class UserInfoForm extends Component{
         }).bind(this);
 
         return (
+
             <Form id={id} className='user-info-form'>
+                <div className='sweet-loading'>
+                    <RingLoader
+                        color={'#123abc'}
+                        loading={this.state.loading}
+                    />
+                </div>
                 <Row className="completion-bar">
                     <Col xs={{ size: 6 }} ><div className="label text-secondary success">Your Account Registration is</div></Col>
                     <Col xs={{ size: 6 }} className={'bar-wrapper'}>
