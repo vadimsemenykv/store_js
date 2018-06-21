@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import user from "../reducers/user";
+import * as UserActions from "../actions/UserActions";
 
 /** Components */
 import {
@@ -53,15 +53,14 @@ class MyAccount extends Component {
     };
 
     render () {
-        const headerLinks = this.props.header;
-        const footerLinks = this.props.footer;
-        const user = this.props.user;
-        const submitUrl = this.props.extraLinks.submitUrl;
+        const { header, footer, user} = this.props;
+        const { submitUrl } = this.props.extraLinks;
+        const { changeInfo } = this.props.userActions;
 
         return (
             <Row>
                 <Col>
-                    <Header user={user} topLinks={headerLinks.top} bottomLinks={headerLinks.bottom} />
+                    <Header user={user} topLinks={header.top} bottomLinks={header.bottom} />
                     <Container className="cm-container wrapper">
                         <Row>
                             <SideMenu/>
@@ -78,7 +77,7 @@ class MyAccount extends Component {
                                     <CardHeader>Account Information</CardHeader>
                                     <CardBody>
                                         <CardTitle tag='h6'>Your Contact Information</CardTitle>
-                                        <UserInfoForm id={'access_form'} user={user} submitUrl={submitUrl}/>
+                                        <UserInfoForm id={'access_form'} user={user} submitUrl={submitUrl} changeInfo={changeInfo}/>
                                     </CardBody>
                                 </Card>
 
@@ -161,7 +160,7 @@ class MyAccount extends Component {
                             </Col>
                         </Row>
                     </Container>
-                    <Footer links={footerLinks} />
+                    <Footer links={footer} />
                 </Col>
             </Row>
         )
@@ -179,7 +178,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        // formErrorsActions: bindActionCreators(FormErrorsActions, dispatch)
+        userActions: bindActionCreators(UserActions, dispatch)
     }
 }
 

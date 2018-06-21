@@ -14,42 +14,84 @@ import {
     Input,
     FormFeedback
 } from 'reactstrap';
-import ToggleSwitcher from "../ToggleSwitcher";
+import CompletionBar from "../CompletionBar";
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../styles/AccessForm.sass';
-import CompletionBar from "../CompletionBar";
+import '../../styles/UserInfoForm.sass';
 
 export default class UserInfoForm extends Component{
     constructor(props) {
         super(props);
 
         this.state = {
-            password: '',
             isEditMode: false,
-            likePassword: true,
             clearStart: true,
-            interacted: {}
+            interacted: {},
+            ...this.getClearUserState()
         };
     };
 
+    getClearUserState() {
+        const user = this.props.user;
+        const address = user.address ? user.address : {};
+
+        return {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            company: user.company,
+            dateOfBirth: user.dateOfBirth,
+
+            addressCountry: address.country,
+            addressStreet: address.street,
+            addressOther: address.other,
+            addressCity: address.city,
+            addressState: address.state,
+            addressZip: address.zip,
+
+            phone: user.phone,
+            primaryEmail: user.primaryEmail,
+            secondaryEmail: user.secondaryEmail
+        }
+    }
+
     changeEditMode(e) {
         e.preventDefault();
-        this.setState({ isEditMode: !this.state.isEditMode, password: '', likePassword: true, clearStart: true, interacted: {}});
-    }
-    handleSwitcher() {
-        this.setState({ likePassword: !this.state.likePassword });
+        this.setState({ isEditMode: !this.state.isEditMode, clearStart: true, interacted: {}, ...this.getClearUserState()});
     }
 
     handleSubmit(e) {
         e.preventDefault();
 
-        if (Object.getOwnPropertyNames(this.validate()).length > 0) {
-            this.setState({interacted: {password: true}, clearStart: false});
-            return false;
-        }
+        // if (Object.getOwnPropertyNames(this.validate()).length > 0) {
+        //     this.setState({interacted: {password: true}, clearStart: false});
+        //     return false;
+        // }
+
+        this.props.changeInfo(
+            {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                company: this.state.company,
+                dateOfBirth: this.state.dateOfBirth,
+
+                address: {
+                    country: this.state.addressCountry,
+                    street: this.state.addressStreet,
+                    other: this.state.addressOther,
+                    city: this.state.addressCity,
+                    state: this.state.addressState,
+                    zip: this.state.addressZip,
+                },
+
+                phone: this.state.phone,
+                primaryEmail: this.state.primaryEmail,
+                secondaryEmail: this.state.secondaryEmail
+            }
+        );
+
+        return false;
 
         const url = this.props.submitUrl;
         fetch(url, {
@@ -90,13 +132,11 @@ export default class UserInfoForm extends Component{
     }
 
     render() {
-        const errors = this.state.clearStart ? [] : this.validate();
+        const errors = this.state.clearStart ? [] : [];
         const id = this.props.id;
-        const user = this.props.user;
 
-        let passwordInput, buttonGroup = '';
+        let buttonGroup = '';
         if (!this.state.isEditMode) {
-            passwordInput = <div className='form-text value'>••••••••</div>;
             buttonGroup = <div><Button onClick={::this.changeEditMode} color="warning">Edit</Button></div>;
         } else {
             buttonGroup = (
@@ -105,25 +145,40 @@ export default class UserInfoForm extends Component{
                     <Button onClick={::this.changeEditMode} color="warning">Cancel</Button>
                 </div>
             );
-            passwordInput = (
-                <Row>
-                    <Col md={{ size: 6 }}>
-                        <Input className={'password-input'}
-                               type={ this.state.likePassword ? "password" : "text" }
-                               name="password"
-                               placeholder="Enter password"
+        }
+
+        const renderInput = (function (name, label,  placeholder, type = 'text') {
+            const value = this.state[name] ? this.state[name] : '';
+            let tpl = '';
+            if (!this.state.isEditMode) {
+                tpl = <Col><div className='form-text value'>{ value }</div></Col>;
+            } else {
+                tpl =  (
+                    <Col>
+                        <Input type={type}
+                               name={name}
+                               placeholder={placeholder}
                                onChange={ ::this.handleChangeInput }
                                onBlur={ ::this.handleFocusOut }
-                               invalid={ this.state.interacted.password && !!errors["password"] }
+                               value={value}
+                               invalid={ this.state.interacted[name] && !!errors[name] }
                         />
-                        { this.state.interacted.password ? AccessForm.formateFormErrorFeedback("password", errors) : "" }
+                        { this.state.interacted[name] ? UserInfoForm.formateFormErrorFeedback(name, errors) : "" }
                     </Col>
-                    <Col md={{ size: 6 }}>
-                        <ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>
-                    </Col>
-                </Row>
+                );
+            }
+
+            return (
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>{label}</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            {tpl}
+                        </Col>
+                    </Row>
+                </FormGroup>
             );
-        }
+        }).bind(this);
 
         return (
             <Form id={id} className='user-info-form'>
@@ -134,110 +189,20 @@ export default class UserInfoForm extends Component{
                     </Col>
                     <Col xs={{ size: 0 }} >{''}</Col>
                 </Row>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>First Name</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Last Name</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Company</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Country</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Street</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Other (If Applicable)</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>City</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Province / State</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Postal Code / Zip</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Phone</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Primary Email</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Secondary Email</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            { passwordInput }
-                        </Col>
-                    </Row>
-                </FormGroup>
+                { renderInput('firstName', 'First Name', 'Enter First Name') }
+                { renderInput('lastName', 'Last Name', 'Enter Last Name') }
+                { renderInput('company', 'Company', 'Enter Company') }
+                { renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', 'date') }
+                { renderInput('addressCountry', 'Country', 'Enter Country') }
+                { renderInput('addressStreet', 'Street', 'Enter Street') }
+                { renderInput('addressOther', 'Other (If Applicable)', 'Enter Other (If Applicable)') }
+                { renderInput('addressCity', 'City', 'Enter City') }
+                { renderInput('addressState', 'Province / State', 'Enter Province / State') }
+                { renderInput('addressZip', 'Postal Code / Zip', 'Enter Postal Code / Zip') }
+                { renderInput('phone', 'Phone', 'Enter Phone') }
+                { renderInput('primaryEmail', 'Primary Email', 'Enter Primary Email') }
+                { renderInput('secondaryEmail', 'Secondary Email', 'Enter Secondary Email') }
+
                 <Row className='form-btn-group'>
                     <Col xs={{ size: 4, offset: 8 }}>
                         { buttonGroup }
@@ -251,7 +216,8 @@ export default class UserInfoForm extends Component{
 UserInfoForm.propTypes = {
     id: PropTypes.string.isRequired,
     user: PropTypes.object.isRequired,
-    submitUrl: PropTypes.string.isRequired
+    submitUrl: PropTypes.string.isRequired,
+    changeInfo: PropTypes.func.isRequired
 };
 
 UserInfoForm.formateFormErrorFeedback = (field, errors = []) => {

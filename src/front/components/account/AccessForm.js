@@ -106,19 +106,24 @@ export default class AccessForm extends Component{
             );
             passwordInput = (
                 <Row>
-                    <Col md={{ size: 6 }}>
-                        <Input className={'password-input'}
-                               type={ this.state.likePassword ? "password" : "text" }
-                               name="password"
-                               placeholder="Enter password"
-                               onChange={ ::this.handleChangeInput }
-                               onBlur={ ::this.handleFocusOut }
-                               invalid={ this.state.interacted.password && !!errors["password"] }
-                        />
-                        { this.state.interacted.password ? AccessForm.formateFormErrorFeedback("password", errors) : "" }
-                    </Col>
-                    <Col md={{ size: 6 }}>
-                        <ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>
+                    <Col>
+                        <Row className={'password-input'}>
+                            <Col>
+                                <Input type={ this.state.likePassword ? "password" : "text" }
+                                       name="password"
+                                       placeholder="Enter password"
+                                       onChange={ ::this.handleChangeInput }
+                                       onBlur={ ::this.handleFocusOut }
+                                       invalid={ this.state.interacted.password && !!errors["password"] }
+                                />
+                                { this.state.interacted.password ? AccessForm.formateFormErrorFeedback("password", errors) : "" }
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
             );

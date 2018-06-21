@@ -1,0 +1,1 @@
+export const USER_CHANGE_INFO = 'USER_CHANGE_INFO';
