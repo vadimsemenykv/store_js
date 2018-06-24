@@ -1,7 +1,8 @@
 /** Common */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import AccountAccessFormValidation from '../../forms/AccountAccesForm';
+import * as ReactDOM from "react-dom";
+import UserInfoFormValidation from "../../forms/UserInfoForm";
 
 /** Components */
 import {
@@ -20,11 +21,29 @@ import CompletionBar from "../CompletionBar";
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/UserInfoForm.sass';
-import {RingLoader} from "react-spinners";
 
 export default class UserInfoForm extends Component{
     constructor(props) {
         super(props);
+
+        this.refStore = {};
+
+        this.refStore.firstName = React.createRef();
+        this.refStore.lastName = React.createRef();
+        this.refStore.company = React.createRef();
+        this.refStore.dateOfBirth = React.createRef();
+
+        this.refStore.address = {};
+        this.refStore.address.country = React.createRef();
+        this.refStore.address.street = React.createRef();
+        this.refStore.address.other = React.createRef();
+        this.refStore.address.city = React.createRef();
+        this.refStore.address.state = React.createRef();
+        this.refStore.address.zip = React.createRef();
+
+        this.refStore.phone = React.createRef();
+        this.refStore.primaryEmail = React.createRef();
+        this.refStore.secondaryEmail = React.createRef();
 
         this.state = {
             isEditMode: false,
@@ -65,34 +84,33 @@ export default class UserInfoForm extends Component{
     handleSubmit(e) {
         e.preventDefault();
 
-        // if (Object.getOwnPropertyNames(this.validate()).length > 0) {
-        //     this.setState({interacted: {password: true}, clearStart: false});
-        //     return false;
-        // }
+        // console.log(this.refN);
+        console.log(this.refN.current.value);
 
-        this.props.changeInfo(
-            {
-                firstName: this.state.firstName,
-                lastName: this.state.lastName,
-                company: this.state.company,
-                dateOfBirth: this.state.dateOfBirth,
+        const data = {
+            firstName: this.state.firstName,
+            // lastName: this.state.lastName,
+            // company: this.state.company,
+            // dateOfBirth: this.state.dateOfBirth,
+            //
+            // address: {
+            //     country: this.state.addressCountry,
+            //     street: this.state.addressStreet,
+            //     other: this.state.addressOther,
+            //     city: this.state.addressCity,
+            //     state: this.state.addressState,
+            //     zip: this.state.addressZip,
+            // },
+            //
+            // phone: this.state.phone,
+            // primaryEmail: this.state.primaryEmail,
+            // secondaryEmail: this.state.secondaryEmail
+        };
 
-                address: {
-                    country: this.state.addressCountry,
-                    street: this.state.addressStreet,
-                    other: this.state.addressOther,
-                    city: this.state.addressCity,
-                    state: this.state.addressState,
-                    zip: this.state.addressZip,
-                },
-
-                phone: this.state.phone,
-                primaryEmail: this.state.primaryEmail,
-                secondaryEmail: this.state.secondaryEmail
-            }
-        );
-
-        return false;
+        if (Object.getOwnPropertyNames(this.validate()).length > 0) {
+            this.setState({interacted: {password: true}, clearStart: false});
+            return false;
+        }
 
         const url = this.props.submitUrl;
         fetch(url, {
@@ -103,12 +121,13 @@ export default class UserInfoForm extends Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                form: { name: 'access_form', data: {password: this.state.password} }
+                form: { name: 'user_info_form', data: data }
             })
         })
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
+                    this.props.changeInfo(data);
                     this.setState({isEditMode: false});
                 } else {
                     this.setState({serverValidationError: response.validationErrors});
@@ -129,11 +148,11 @@ export default class UserInfoForm extends Component{
     }
 
     validate() {
-        return AccountAccessFormValidation.runValidation({password: this.state.password});
+        return UserInfoFormValidation.runValidation({firstName: this.state.firstName});
     }
 
     render() {
-        const errors = this.state.clearStart ? [] : [];
+        const errors = this.state.clearStart ? [] : this.validate();
         const id = this.props.id;
 
         let buttonGroup = '';
@@ -148,7 +167,7 @@ export default class UserInfoForm extends Component{
             );
         }
 
-        const renderInput = (function (name, label,  placeholder, type = 'text') {
+        const renderInput = (function (name, label,  placeholder, ref, type = 'text') {
             const value = this.state[name] ? this.state[name] : '';
             let tpl = '';
             if (!this.state.isEditMode) {
@@ -156,7 +175,7 @@ export default class UserInfoForm extends Component{
             } else {
                 tpl =  (
                     <Col>
-                        <Input type={type}
+                        <Input type={type} innerRef={ref}
                                name={name}
                                placeholder={placeholder}
                                onChange={ ::this.handleChangeInput }
@@ -182,14 +201,7 @@ export default class UserInfoForm extends Component{
         }).bind(this);
 
         return (
-
             <Form id={id} className='user-info-form'>
-                <div className='sweet-loading'>
-                    <RingLoader
-                        color={'#123abc'}
-                        loading={this.state.loading}
-                    />
-                </div>
                 <Row className="completion-bar">
                     <Col xs={{ size: 6 }} ><div className="label text-secondary success">Your Account Registration is</div></Col>
                     <Col xs={{ size: 6 }} className={'bar-wrapper'}>
@@ -197,19 +209,19 @@ export default class UserInfoForm extends Component{
                     </Col>
                     <Col xs={{ size: 0 }} >{''}</Col>
                 </Row>
-                { renderInput('firstName', 'First Name', 'Enter First Name') }
-                { renderInput('lastName', 'Last Name', 'Enter Last Name') }
-                { renderInput('company', 'Company', 'Enter Company') }
-                { renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', 'date') }
-                { renderInput('addressCountry', 'Country', 'Enter Country') }
-                { renderInput('addressStreet', 'Street', 'Enter Street') }
-                { renderInput('addressOther', 'Other (If Applicable)', 'Enter Other (If Applicable)') }
-                { renderInput('addressCity', 'City', 'Enter City') }
-                { renderInput('addressState', 'Province / State', 'Enter Province / State') }
-                { renderInput('addressZip', 'Postal Code / Zip', 'Enter Postal Code / Zip') }
-                { renderInput('phone', 'Phone', 'Enter Phone') }
-                { renderInput('primaryEmail', 'Primary Email', 'Enter Primary Email') }
-                { renderInput('secondaryEmail', 'Secondary Email', 'Enter Secondary Email') }
+                { renderInput('firstName', 'First Name', 'Enter First Name', this.refStore.firstName) }
+                { renderInput('lastName', 'Last Name', 'Enter Last Name', this.refStore.lastName) }
+                { renderInput('company', 'Company', 'Enter Company', this.refStore.combine) }
+                { renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', this.refStore.dateOfBirth, 'date') }
+                { renderInput('addressCountry', 'Country', 'Enter Country', this.refStore.address.country) }
+                { renderInput('addressStreet', 'Street', 'Enter Street', this.refStore.address.street) }
+                { renderInput('addressOther', 'Other (If Applicable)', 'Enter Other (If Applicable)', this.refStore.address.other) }
+                { renderInput('addressCity', 'City', 'Enter City', this.refStore.address.city) }
+                { renderInput('addressState', 'Province / State', 'Enter Province / State', this.refStore.address.state) }
+                { renderInput('addressZip', 'Postal Code / Zip', 'Enter Postal Code / Zip', this.refStore.address.zip) }
+                { renderInput('phone', 'Phone', 'Enter Phone', this.refStore.phone) }
+                { renderInput('primaryEmail', 'Primary Email', 'Enter Primary Email', this.refStore.primaryEmail) }
+                { renderInput('secondaryEmail', 'Secondary Email', 'Enter Secondary Email', this.refStore.secondaryEmail) }
 
                 <Row className='form-btn-group'>
                     <Col xs={{ size: 4, offset: 8 }}>

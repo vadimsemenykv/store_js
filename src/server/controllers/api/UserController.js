@@ -4,6 +4,7 @@ import passwordHash from "password-hash";
 import RegistrationFormValidator from "../../../front/validation/registrationFormRules";
 import UserDao from "../../dao/User";
 import AccountAccesForm from "../../../front/forms/AccountAccesForm";
+import UserInfoForm from "../../../front/forms/UserInfoForm";
 
 export default class UserController {}
 
@@ -88,8 +89,8 @@ UserController.change = (req, res) => {
     //if file - send it to storage and save result to user
 
     const validators = {
-        access_form: AccountAccesForm,
-        user_info: AccountAccesForm
+        user_access_form: AccountAccesForm,
+        user_info_form: UserInfoForm
     };
     const formName = req.body.form.name;
     const data = req.body.form.data;

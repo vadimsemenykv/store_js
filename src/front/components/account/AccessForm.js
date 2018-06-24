@@ -59,7 +59,7 @@ export default class AccessForm extends Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                form: { name: 'access_form', data: {password: this.state.password} }
+                form: { name: 'user_access_form', data: {password: this.state.password} }
             })
         })
             .then(response => response.json())
