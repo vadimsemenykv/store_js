@@ -22,6 +22,7 @@ import DatePicker from 'react-datepicker';
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/UserInfoForm.sass';
+import '../../styles/Common.sass';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export default class UserInfoForm extends Component{
@@ -49,7 +50,7 @@ export default class UserInfoForm extends Component{
         // this.refStore.secondaryEmail = React.createRef();
 
         this.state = {
-            isEditMode: false,
+            isEditMode: true,
             clearStart: true,
             interacted: {},
             data: this.getClearUserState()
@@ -149,9 +150,10 @@ export default class UserInfoForm extends Component{
         console.log(value);
         this.setState({data: {...this.state.data, [name]: value}, clearStart: false, serverValidationError: ''});
     }
+
     handleDateOfBirthChange(date) {
         console.log(date);
-        date.utc()
+        date.utc();
         this.setState({data: {...this.state.data, dateOfBirth: date}, clearStart: false, serverValidationError: ''});
     }
 
@@ -195,14 +197,39 @@ export default class UserInfoForm extends Component{
         // console.log('');
 
         let buttonGroup = '';
+        let birthDateInput = '';
         if (!this.state.isEditMode) {
             buttonGroup = <div><Button onClick={::this.changeEditMode} color="warning">Edit</Button></div>;
+            birthDateInput = (
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            <div className='form-text value'>{this.state.data.dateOfBirth ? this.state.data.dateOfBirth.toISOString() : ''}</div>
+                        </Col>
+                    </Row>
+                </FormGroup>
+            );
         } else {
             buttonGroup = (
                 <div>
                     <Button onClick={::this.handleSubmit} color="success">Save</Button>{' '}
                     <Button onClick={::this.changeEditMode} color="warning">Cancel</Button>
                 </div>
+            );
+            birthDateInput = (
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            <DatePicker className='styled-datepicker'
+                                utcOffset={0}
+                                selected={this.state.data.dateOfBirth ? moment(this.state.data.dateOfBirth) : moment()}
+                                onChange={::this.handleDateOfBirthChange}
+                            />
+                        </Col>
+                    </Row>
+                </FormGroup>
             );
         }
 
@@ -239,6 +266,7 @@ export default class UserInfoForm extends Component{
             );
         }).bind(this);
 
+
         return (
             <Form id={id} className='user-info-form'>
                 <Row className="completion-bar">
@@ -267,19 +295,7 @@ export default class UserInfoForm extends Component{
                 { renderInput('company', 'Company', 'Enter Company') }
 
                 {/*{ renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', 'date') }*/}
-                <FormGroup>
-                    <Row>
-                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
-                        <Col xs={{ size: 8 }}>
-                            <DatePicker
-                                utcOffset={0}
-                                selected={this.state.data.dateOfBirth.utc()}
-                                onChange={::this.handleDateOfBirthChange}
-                                // showMonthYearDropdown
-                            />
-                        </Col>
-                    </Row>
-                </FormGroup>
+                { birthDateInput }
 
 
                 {/*{ renderInput('addressCountry', 'Country', 'Enter Country', this.refStore.address.country) }*/}
