@@ -11,12 +11,44 @@ UserInfoForm.rules = {
     firstName: [
         {
             rule: value => validator.isByteLength(value, { min: 1 }),
-            message: "Name is required"
+            message: "First Name is required"
         },
         {
-            rule: value => validator.isByteLength(value, { min: 4 }),
-            message: "Name must be at least 4 characters"
+            rule: value => validator.isByteLength(value, { min: 3 }),
+            message: "First Name must be at least 3 characters"
         }
+    ],
+    lastName: [
+        {
+            rule: value => validator.isByteLength(value, { min: 1 }),
+            message: "Last Name is required"
+        },
+        {
+            rule: value => validator.isByteLength(value, { min: 3 }),
+            message: "Last Name must be at least 3 characters"
+        }
+    ],
+    company: [
+        {
+            rule: value => validator.isByteLength(value, { min: 1 }),
+            message: "Company is required"
+        },
+        {
+            rule: value => validator.isByteLength(value, { min: 2 }),
+            message: "Company must be at least 2 characters"
+        }
+    ],
+    dateOfBirth: [
+        {
+            rule: value => {
+                return true;
+            },
+            message: "Date of birth is required"
+        },
+        // {
+        //     rule: value => validator.isByteLength(value, { min: 2 }),
+        //     message: "Company must be at least 2 characters"
+        // }
     ],
 };
 

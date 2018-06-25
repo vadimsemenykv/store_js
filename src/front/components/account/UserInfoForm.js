@@ -1,8 +1,8 @@
 /** Common */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as ReactDOM from "react-dom";
 import UserInfoFormValidation from "../../forms/UserInfoForm";
+import moment from "moment";
 
 /** Components */
 import {
@@ -16,40 +16,43 @@ import {
     FormFeedback
 } from 'reactstrap';
 import CompletionBar from "../CompletionBar";
+import DatePicker from 'react-datepicker';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/UserInfoForm.sass';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default class UserInfoForm extends Component{
     constructor(props) {
         super(props);
 
-        this.refStore = {};
+        // this.inputHandlers = [];
 
-        this.refStore.firstName = React.createRef();
-        this.refStore.lastName = React.createRef();
-        this.refStore.company = React.createRef();
-        this.refStore.dateOfBirth = React.createRef();
-
-        this.refStore.address = {};
-        this.refStore.address.country = React.createRef();
-        this.refStore.address.street = React.createRef();
-        this.refStore.address.other = React.createRef();
-        this.refStore.address.city = React.createRef();
-        this.refStore.address.state = React.createRef();
-        this.refStore.address.zip = React.createRef();
-
-        this.refStore.phone = React.createRef();
-        this.refStore.primaryEmail = React.createRef();
-        this.refStore.secondaryEmail = React.createRef();
+        // this.refStore = {};
+        // this.refStore.firstName = React.createRef();
+        // this.refStore.lastName = React.createRef();
+        // this.refStore.company = React.createRef();
+        // this.refStore.dateOfBirth = React.createRef();
+        //
+        // this.refStore.address = {};
+        // this.refStore.address.country = React.createRef();
+        // this.refStore.address.street = React.createRef();
+        // this.refStore.address.other = React.createRef();
+        // this.refStore.address.city = React.createRef();
+        // this.refStore.address.state = React.createRef();
+        // this.refStore.address.zip = React.createRef();
+        //
+        // this.refStore.phone = React.createRef();
+        // this.refStore.primaryEmail = React.createRef();
+        // this.refStore.secondaryEmail = React.createRef();
 
         this.state = {
             isEditMode: false,
             clearStart: true,
             interacted: {},
-            ...this.getClearUserState()
+            data: this.getClearUserState()
         };
     };
 
@@ -58,62 +61,66 @@ export default class UserInfoForm extends Component{
         const address = user.address ? user.address : {};
 
         return {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            company: user.company,
-            dateOfBirth: user.dateOfBirth,
+            firstName: user.firstName ? user.firstName : '',
+            lastName: user.lastName ? user.lastName : '',
+            company: user.company ? user.company : '',
+            dateOfBirth: user.dateOfBirth ? moment(user.dateOfBirth) : '',
 
-            addressCountry: address.country,
-            addressStreet: address.street,
-            addressOther: address.other,
-            addressCity: address.city,
-            addressState: address.state,
-            addressZip: address.zip,
+            addressCountry: address.country ? address.country : '',
+            addressStreet: address.street ? address.street : '',
+            addressOther: address.other ? address.other : '',
+            addressCity: address.city ? address.city : '',
+            addressState: address.state ? address.state : '',
+            addressZip: address.zip ? address.zip : '',
 
-            phone: user.phone,
-            primaryEmail: user.primaryEmail,
-            secondaryEmail: user.secondaryEmail
+            phone: user.phone ? user.phone : '',
+            primaryEmail: user.primaryEmail ? user.primaryEmail : '',
+            secondaryEmail: user.secondaryEmail ? user.secondaryEmail : ''
         }
     }
 
     changeEditMode(e) {
         e.preventDefault();
-        this.setState({ isEditMode: !this.state.isEditMode, clearStart: true, interacted: {}, ...this.getClearUserState()});
+        // console.log(this.inputHandlers);
+        // this.inputHandlers.forEach(function (inputH) {
+        //     inputH.resetValue();
+        // });
+        this.setState({ isEditMode: !this.state.isEditMode, clearStart: true, interacted: {}, data: this.getClearUserState()});
+        // this.setState({isEditMode: !this.state.isEditMode});
+        // this.inputHandlers.forEach(function (inputH) {
+        //     inputH.resetValue();
+        // })
     }
 
     handleSubmit(e) {
         e.preventDefault();
-
-        // console.log(this.refN);
-        console.log(this.refN.current.value);
-
-        const data = {
-            firstName: this.state.firstName,
-            // lastName: this.state.lastName,
-            // company: this.state.company,
-            // dateOfBirth: this.state.dateOfBirth,
-            //
-            // address: {
-            //     country: this.state.addressCountry,
-            //     street: this.state.addressStreet,
-            //     other: this.state.addressOther,
-            //     city: this.state.addressCity,
-            //     state: this.state.addressState,
-            //     zip: this.state.addressZip,
-            // },
-            //
-            // phone: this.state.phone,
-            // primaryEmail: this.state.primaryEmail,
-            // secondaryEmail: this.state.secondaryEmail
-        };
+        const data = this.collectData();
 
         if (Object.getOwnPropertyNames(this.validate()).length > 0) {
-            this.setState({interacted: {password: true}, clearStart: false});
+            this.setState({
+                interacted: {
+                    firstName: true,
+                    lastName: true,
+                    company: true,
+                    dateOfBirth: true,
+
+                    addressCountry: true,
+                    addressStreet: true,
+                    addressOther: true,
+                    addressCity: true,
+                    addressState: true,
+                    addressZip: true,
+
+                    phone: true,
+                    primaryEmail: true,
+                    secondaryEmail: true
+                },
+                clearStart: false
+            });
             return false;
         }
 
-        const url = this.props.submitUrl;
-        fetch(url, {
+        fetch(this.props.submitUrl, {
             method: 'PATCH',
             credentials: "same-origin",
             headers: {
@@ -139,7 +146,13 @@ export default class UserInfoForm extends Component{
     handleChangeInput(e) {
         const name = e.target.name;
         const value = e.target.value;
-        this.setState({[name]: value, clearStart: false, serverValidationError: ''});
+        console.log(value);
+        this.setState({data: {...this.state.data, [name]: value}, clearStart: false, serverValidationError: ''});
+    }
+    handleDateOfBirthChange(date) {
+        console.log(date);
+        date.utc()
+        this.setState({data: {...this.state.data, dateOfBirth: date}, clearStart: false, serverValidationError: ''});
     }
 
     handleFocusOut(e) {
@@ -147,13 +160,39 @@ export default class UserInfoForm extends Component{
         this.forceUpdate();
     }
 
+    collectData() {
+        return {
+            firstName: this.state.data.firstName,
+            lastName: this.state.data.lastName,
+            company: this.state.data.company,
+            dateOfBirth: this.state.data.dateOfBirth,
+
+            // address: {
+            //     country: this.state.addressCountry,
+            //     street: this.state.addressStreet,
+            //     other: this.state.addressOther,
+            //     city: this.state.addressCity,
+            //     state: this.state.addressState,
+            //     zip: this.state.addressZip,
+            // },
+
+            // phone: this.state.phone,
+            // primaryEmail: this.state.primaryEmail,
+            // secondaryEmail: this.state.secondaryEmail
+        };
+    }
+
     validate() {
-        return UserInfoFormValidation.runValidation({firstName: this.state.firstName});
+        return UserInfoFormValidation.runValidation(this.collectData());
     }
 
     render() {
         const errors = this.state.clearStart ? [] : this.validate();
         const id = this.props.id;
+
+        // console.log(this.state.data.dateOfBirth);
+        // console.log(this.props.user.dateOfBirth);
+        // console.log('');
 
         let buttonGroup = '';
         if (!this.state.isEditMode) {
@@ -167,15 +206,15 @@ export default class UserInfoForm extends Component{
             );
         }
 
-        const renderInput = (function (name, label,  placeholder, ref, type = 'text') {
-            const value = this.state[name] ? this.state[name] : '';
+        const renderInput = (function (name, label,  placeholder, type = 'text') {
+            const value = this.state.data[name] ? this.state.data[name] : '';
             let tpl = '';
             if (!this.state.isEditMode) {
                 tpl = <Col><div className='form-text value'>{ value }</div></Col>;
             } else {
                 tpl =  (
                     <Col>
-                        <Input type={type} innerRef={ref}
+                        <Input type={type}
                                name={name}
                                placeholder={placeholder}
                                onChange={ ::this.handleChangeInput }
@@ -209,19 +248,49 @@ export default class UserInfoForm extends Component{
                     </Col>
                     <Col xs={{ size: 0 }} >{''}</Col>
                 </Row>
-                { renderInput('firstName', 'First Name', 'Enter First Name', this.refStore.firstName) }
-                { renderInput('lastName', 'Last Name', 'Enter Last Name', this.refStore.lastName) }
-                { renderInput('company', 'Company', 'Enter Company', this.refStore.combine) }
-                { renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', this.refStore.dateOfBirth, 'date') }
-                { renderInput('addressCountry', 'Country', 'Enter Country', this.refStore.address.country) }
-                { renderInput('addressStreet', 'Street', 'Enter Street', this.refStore.address.street) }
-                { renderInput('addressOther', 'Other (If Applicable)', 'Enter Other (If Applicable)', this.refStore.address.other) }
-                { renderInput('addressCity', 'City', 'Enter City', this.refStore.address.city) }
-                { renderInput('addressState', 'Province / State', 'Enter Province / State', this.refStore.address.state) }
-                { renderInput('addressZip', 'Postal Code / Zip', 'Enter Postal Code / Zip', this.refStore.address.zip) }
-                { renderInput('phone', 'Phone', 'Enter Phone', this.refStore.phone) }
-                { renderInput('primaryEmail', 'Primary Email', 'Enter Primary Email', this.refStore.primaryEmail) }
-                { renderInput('secondaryEmail', 'Secondary Email', 'Enter Secondary Email', this.refStore.secondaryEmail) }
+                {/*<InputH label="First Name" name="firstName" value={this.props.user.firstName}*/}
+                        {/*rules={UserInfoFormValidation.rules.firstName}*/}
+                        {/*isEditMode={this.state.isEditMode}*/}
+                        {/*reference={this.refStore.firstName}*/}
+                        {/*placeholder="Enter First Name"*/}
+                        {/*ref={ref => {this.inputHandlers.push(ref)}}*/}
+                {/*/>*/}
+                {/*<InputH label="Last Name" name="lastName" value={this.props.user.lastName}*/}
+                        {/*rules={UserInfoFormValidation.rules.lastName}*/}
+                        {/*isEditMode={this.state.isEditMode}*/}
+                        {/*reference={this.refStore.lastName}*/}
+                        {/*placeholder="Enter Last Name"*/}
+                        {/*ref={ref => {this.inputHandlers.push(ref)}}*/}
+                {/*/>*/}
+                { renderInput('firstName', 'First Name', 'Enter First Name') }
+                { renderInput('lastName', 'Last Name', 'Enter Last Name') }
+                { renderInput('company', 'Company', 'Enter Company') }
+
+                {/*{ renderInput('dateOfBirth', 'Date of Birth', 'Enter Date of Birth', 'date') }*/}
+                <FormGroup>
+                    <Row>
+                        <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Date of Birth</Label></Col>
+                        <Col xs={{ size: 8 }}>
+                            <DatePicker
+                                utcOffset={0}
+                                selected={this.state.data.dateOfBirth.utc()}
+                                onChange={::this.handleDateOfBirthChange}
+                                // showMonthYearDropdown
+                            />
+                        </Col>
+                    </Row>
+                </FormGroup>
+
+
+                {/*{ renderInput('addressCountry', 'Country', 'Enter Country', this.refStore.address.country) }*/}
+                {/*{ renderInput('addressStreet', 'Street', 'Enter Street', this.refStore.address.street) }*/}
+                {/*{ renderInput('addressOther', 'Other (If Applicable)', 'Enter Other (If Applicable)', this.refStore.address.other) }*/}
+                {/*{ renderInput('addressCity', 'City', 'Enter City', this.refStore.address.city) }*/}
+                {/*{ renderInput('addressState', 'Province / State', 'Enter Province / State', this.refStore.address.state) }*/}
+                {/*{ renderInput('addressZip', 'Postal Code / Zip', 'Enter Postal Code / Zip', this.refStore.address.zip) }*/}
+                {/*{ renderInput('phone', 'Phone', 'Enter Phone', this.refStore.phone) }*/}
+                {/*{ renderInput('primaryEmail', 'Primary Email', 'Enter Primary Email', this.refStore.primaryEmail) }*/}
+                {/*{ renderInput('secondaryEmail', 'Secondary Email', 'Enter Secondary Email', this.refStore.secondaryEmail) }*/}
 
                 <Row className='form-btn-group'>
                     <Col xs={{ size: 4, offset: 8 }}>

@@ -2,6 +2,11 @@ import mongoose from 'mongoose'
 
 const User = new mongoose.Schema({
     firstName: String,
+    lastName: String,
+    company: String,
+    dateOfBirth: {
+        type: Date
+    },
     email: String,
     password: String,
     createdAt: {
