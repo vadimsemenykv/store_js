@@ -105,7 +105,7 @@ UserController.change = (req, res) => {
         return;
     }
 
-    UserDao.findOneAndUpdate({ _id: req.session.userId }, data)
+    UserDao.findOneAndUpdate({ _id: req.user._id }, data)
         .catch(err => {
             res.status(500).send({
                 success: false,

@@ -11,7 +11,8 @@ module.exports = {
         registration: './src/front/registration.js',
         'account-status-and-notifications': './src/front/account-status-and-notifications.js',
         'my-account': './src/front/my-account.js',
-        'catalog': './src/front/catalog.js',
+        catalog: './src/front/catalog.js',
+        'catalog-create': './src/front/catalog-create.js',
     },
     output: {
         filename: '[name].js',

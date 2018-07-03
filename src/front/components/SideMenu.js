@@ -28,7 +28,7 @@ class SideMenu extends Component {
         return (
             <Col lg={{ size: '3' }} md={{ size: '12' }} className="side-menu menu-wrapper" >
                 <Navbar className="cm-bordered cm-content main-menu-wrapper" light expand="lg">
-                    <NavbarBrand href="/" className="mr-auto d-lg-none">Account Menu</NavbarBrand>
+                    <NavbarBrand href="/my/account" className="mr-auto d-lg-none">Account Menu</NavbarBrand>
                     <NavbarToggler onClick={::this.toggleNavbar} className="mr-2" />
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav vertical >

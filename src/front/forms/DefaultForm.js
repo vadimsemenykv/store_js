@@ -4,8 +4,6 @@ class DefaultForm {
         for (const field in data) {
             if (data.hasOwnProperty(field) && rules.hasOwnProperty(field)) {
                 const isArr = Array.isArray(rules[field]);
-                console.log(`${field} is array = ${isArr}`);
-                console.log(`${field} = ${data[field]}`);
                 if (isArr) {
                     for (let i = 0; i < rules[field].length; i++) {
                         if (!rules[field][i].rule(data[field])) {

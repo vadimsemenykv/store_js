@@ -7,6 +7,10 @@ const User = new mongoose.Schema({
     dateOfBirth: {
         type: Date
     },
+    address: {
+        country: String,
+        street: String
+    },
     email: String,
     password: String,
     createdAt: {

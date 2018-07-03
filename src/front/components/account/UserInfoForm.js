@@ -143,12 +143,12 @@ export default class UserInfoForm extends Component{
             dateOfBirth: this.state.data.dateOfBirth ? this.state.data.dateOfBirth + "T00:00:00.000Z" : "",
 
             address: {
-                country: this.state.addressCountry,
-                street: this.state.addressStreet,
-                // other: this.state.addressOther,
-                // city: this.state.addressCity,
-                // state: this.state.addressState,
-                // zip: this.state.addressZip,
+                country: this.state.data.addressCountry,
+                street: this.state.data.addressStreet,
+                // other: this.state.data.addressOther,
+                // city: this.state.data.addressCity,
+                // state: this.state.data.addressState,
+                // zip: this.state.data.addressZip,
             },
 
             // phone: this.state.phone,
@@ -191,7 +191,7 @@ export default class UserInfoForm extends Component{
                                onChange={ ::this.handleChangeInput }
                                onBlur={ ::this.handleFocusOut }
                                value={value}
-                               invalid={ this.state.interacted[name] && !!errors[name] }
+                               invalid={ this.state.interacted[name] && !!UserInfoForm.getErrorsForScope(name, errors) }
                         />
                         { this.state.interacted[name] ? UserInfoForm.formateFormErrorFeedback(name, errors) : "" }
                     </Col>
@@ -272,8 +272,24 @@ UserInfoForm.propTypes = {
     changeInfo: PropTypes.func.isRequired
 };
 
+UserInfoForm.getErrorsForScope = (field, errors = []) => {
+    const fieldPath = field.split(/(?=[A-Z])/);
+    if (fieldPath.length == 1) {
+        if (errors && errors[field] && errors[field][0]) {
+            return errors[field][0];
+        }
+    } else {
+        const scope = fieldPath.shift();
+        if (errors[scope]) {
+            let newFieldName = fieldPath.join();
+            newFieldName = newFieldName.charAt(0).toLowerCase() + newFieldName.substr(1, newFieldName.length);
+            return UserInfoForm.getErrorsForScope(newFieldName, errors[scope])
+        }
+    }
+};
 UserInfoForm.formateFormErrorFeedback = (field, errors = []) => {
-    if (errors && errors[field] && errors[field][0]) {
-        return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
+    const errorForField = UserInfoForm.getErrorsForScope(field, errors);
+    if (errorForField) {
+        return <FormFeedback>{ errorForField }</FormFeedback>;
     }
 };

@@ -9,3 +9,5 @@ docker-compose run app_node1 nmp run build:watch:all
 http://127.0.0.1:3300 - mongo client
 
 grain.dev - website - 127.0.0.1
+
+docker-compose run app_node1 npm run build:watch:all
