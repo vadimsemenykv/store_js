@@ -13,12 +13,14 @@ import Secure from './infrastructure/auth/Secure';
 import MainRouter from './routes/Main';
 import AuthRouter from './routes/Auth';
 import AccountRouter from './routes/Account';
+import CatalogRouter from './routes/Catalog';
 import PageRouter from './routes/Page';
 
 import ApiUserRouter from './routes/api/User';
 
 import Mongoose from 'mongoose';
 import DB from "./db";
+import UserDao from "./dao/User";
 
 const app = express();
 const assets = express.static(path.join(__dirname, '../'));
@@ -59,12 +61,30 @@ app.use((req, res, next) => {
     }
     next();
 });
+app.use((req, res, next) => {
+    UserDao.findOne({_id: req.session.userId}, function (err, user) {
+        if (err){
+            // console.log(err);
+            res.status(500).send({
+                success: false,
+                error: err.toString()
+            });
+            return;
+        }
+        
+        if (user) {
+            req.user = user;
+        }
+        next();
+    });
+});
 app.use(Secure);
 
 // Routes
 app.use('/', MainRouter);
 app.use('/', AuthRouter);
 app.use('/', AccountRouter);
+app.use('/', CatalogRouter);
 app.use('/', PageRouter);
 
 app.use('/', ApiUserRouter);

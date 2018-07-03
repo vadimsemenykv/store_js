@@ -1,5 +1,6 @@
 import validator from "validator";
 import DefaultForm from "./DefaultForm";
+import moment from "moment/moment";
 
 class UserInfoForm extends DefaultForm{
     static runValidation (fields) {
@@ -41,15 +42,25 @@ UserInfoForm.rules = {
     dateOfBirth: [
         {
             rule: value => {
-                return true;
+                return moment(value).isValid();
             },
             message: "Date of birth is required"
-        },
-        // {
-        //     rule: value => validator.isByteLength(value, { min: 2 }),
-        //     message: "Company must be at least 2 characters"
-        // }
+        }
     ],
+    address: {
+        country: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Country is required"
+            }
+        ],
+        street: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Street is required"
+            }
+        ],
+    },
 };
 
 export default UserInfoForm;

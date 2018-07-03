@@ -11,3 +11,12 @@ export function configureAccountStore(preloadedState) {
         )
     );
 }
+export function configureCatalogStore(preloadedState) {
+    return createStore(
+        accountRootReducer,
+        preloadedState,
+        applyMiddleware(
+            thunkMiddleware
+        )
+    );
+}

@@ -18,7 +18,6 @@ import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
 import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/MyAccount';
-import configureLandingStore from "../../front/store/configureLandingStore";
 import { configureAccountStore } from "../../front/store/configureStore";
 
 export default class AccountController {}
@@ -59,54 +58,43 @@ AccountController.statusAndNotifications = (req, res) => {
 };
 
 AccountController.myAccount  = (req, res) => {
-    UserDao.findOne({_id: req.session.userId}, function (err, user) {
-        if (err){
-            // console.log(err);
-            res.status(500).send({
-                success: false,
-                error: err
-            });
-            return;
-        }
-        if (!user) {
-            res.redirect(urlFor('main'));
-        }
+    if (!req.user) {
+        res.redirect(urlFor('main'));
+    }
 
-        const linksState = getHeaderLinks(req.session.userId);
-        let preloadedState = {
-            header: linksState.header,
-            footer: linksState.footer,
-            user: user,
-            extraLinks: { submitUrl: urlFor('api:user') }
-        };
-        //TODO pass userChange and use it at form
+    const linksState = getHeaderLinks(req.user._id);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        extraLinks: { submitUrl: urlFor('api:user') }
+    };
 
-        const store = configureAccountStore(preloadedState);
+    const store = configureAccountStore(preloadedState);
 
-        const html = renderToString(
-            <Provider store={store} >
-                <MyAccount />
-            </Provider>
-        );
+    const html = renderToString(
+        <Provider store={store} >
+            <MyAccount />
+        </Provider>
+    );
 
-        const finalState = store.getState();
+    const finalState = store.getState();
 
-        res.status(200).send(
-            renderFullPage(
-                {
-                    title: 'My account',
-                    html: html,
-                    cssTop: [
-                        '<link rel="stylesheet" href="/assets/my-account.css"/>'
-                    ],
-                    jsBottom: [
-                        '<script src="/assets/my-account.js"></script>'
-                    ]
-                },
-                finalState
-            )
-        );
-    });
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'My account',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/my-account.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/my-account.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
 };
 
 

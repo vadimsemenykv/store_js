@@ -3,12 +3,22 @@ class DefaultForm {
         let errors = {};
         for (const field in data) {
             if (data.hasOwnProperty(field) && rules.hasOwnProperty(field)) {
-                for (let i = 0; i < rules[field].length; i++) {
-                    if (!rules[field][i].rule(data[field])) {
-                        if (!errors[field]) {
-                            errors[field] = [];
+                const isArr = Array.isArray(rules[field]);
+                console.log(`${field} is array = ${isArr}`);
+                console.log(`${field} = ${data[field]}`);
+                if (isArr) {
+                    for (let i = 0; i < rules[field].length; i++) {
+                        if (!rules[field][i].rule(data[field])) {
+                            if (!errors[field]) {
+                                errors[field] = [];
+                            }
+                            errors[field].push(rules[field][i].message)
                         }
-                        errors[field].push(rules[field][i].message)
+                    }
+                } else {
+                    const fieldErrors = DefaultForm.validate(data[field], rules[field]);
+                    if (Object.getOwnPropertyNames(fieldErrors).length > 0) {
+                        errors[field] = fieldErrors;
                     }
                 }
             } else {
