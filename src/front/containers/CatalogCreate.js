@@ -40,11 +40,13 @@ import AccessForm from "../components/account/AccessForm";
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Common.sass';
-import '../styles/MyAccount.sass';
+import '../styles/CatalogCreate.sass';
+
 import UserInfoForm from "../components/account/UserInfoForm";
 import CatalogItem from "../components/catalog/CatalogItem";
+import CreateOrderForm from "../components/catalog/CreateOrderForm";
 
-class Catalog extends Component {
+class CatalogCreate extends Component {
     constructor(props) {
         super(props);
 
@@ -66,49 +68,29 @@ class Catalog extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className='content-title'>OTC Order Book</h3>
+                                <h3 className='content-title'>Create New Buy / Sell Order</h3>
                                 <Card>
-                                    <CardHeader>Select Your Filters</CardHeader>
+                                    <CardHeader>Create New Order</CardHeader>
                                     <CardBody>
-                                        {/*<CardTitle tag='h6'>Account Access</CardTitle>*/}
-                                        {/*<AccessForm id={'access_form'} user={user} submitUrl={submitUrl}/>*/}
-                                    </CardBody>
-                                </Card>
-                                <Card>
-                                    <CardHeader>Current OTC Market Contracts</CardHeader>
-                                    <CardBody>
-                                        <CatalogItem order={{
-                                            _id: "d7ash8f7dhf87",
-                                            _type: "buy",
-                                            currency: {uid: "CAD"},
-                                            collection: {uid: "Corn"},
-                                            offerOnly: false,
-                                            price: 190,
-                                            quantity: 144,
-                                            totalPrice: 27360,
-                                            isVerified: true,
-                                            availableStatus: "available"
-                                        }}/>
-                                        <CatalogItem order={{
-                                            _id: "45976hghjdhf8",
-                                            _type: "buy",
-                                            currency: {uid: "CAD"},
-                                            collection: {uid: "Corn"},
-                                            offerOnly: true,
-                                            quantity: 144,
-                                            isVerified: true,
-                                            availableStatus: "in_transaction"
-                                        }}/>
-                                        <CatalogItem order={{
-                                            _id: "4fssh8f45hf8g",
-                                            _type: "sell",
-                                            currency: {uid: "USD"},
-                                            collection: {uid: "Corn"},
-                                            offerOnly: true,
-                                            quantity: 144,
-                                            isVerified: false,
-                                            availableStatus: "available"
-                                        }}/>
+                                        <CardTitle tag='h6'>Please follow our instructions to Create a New Market Order:</CardTitle>
+                                        <Row>
+                                            <Col className="text-secondary form-description">
+                                                Using this form you are able to create a New Buy Sell Order,
+                                                that will be posted to the OTC Order Book.
+                                                Your Order will be filled by a Client agreeing to your price,
+                                                or through our Offer process, where Clients have an opportunity to send you an Offer,
+                                                at which point in turn,
+                                                you would to accept or decline the offer.
+                                                Acceptance of the Offer results in a binding Contract between the Merchant and the Client.
+                                                A binding Contract also is created when a Client accepts your price outright, as is.
+                                                When a Contract is created, the Order is removed from the Order Book.
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <CreateOrderForm id="create-order"/>
+                                            </Col>
+                                        </Row>
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -136,4 +118,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Catalog)
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogCreate)

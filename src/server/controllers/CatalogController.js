@@ -77,13 +77,13 @@ CatalogController.create = (req, res) => {
     res.status(200).send(
         renderFullPage(
             {
-                title: 'OTC Order Book',
+                title: 'Create New Buy / Sell Order',
                 html: html,
                 cssTop: [
-                    '<link rel="stylesheet" href="/assets/catalog.css"/>'
+                    '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
                 ],
                 jsBottom: [
-                    '<script src="/assets/catalog.js"></script>'
+                    '<script src="/assets/catalog-create.js"></script>'
                 ]
             },
             finalState
