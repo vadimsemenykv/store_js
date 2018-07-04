@@ -74,7 +74,7 @@ class CatalogCreate extends Component {
                                     <CardBody>
                                         <CardTitle tag='h6'>Please follow our instructions to Create a New Market Order:</CardTitle>
                                         <Row>
-                                            <Col className="text-secondary form-description">
+                                            <Col className="text-secondary form-description pad-free">
                                                 Using this form you are able to create a New Buy Sell Order,
                                                 that will be posted to the OTC Order Book.
                                                 Your Order will be filled by a Client agreeing to your price,
@@ -87,7 +87,7 @@ class CatalogCreate extends Component {
                                             </Col>
                                         </Row>
                                         <Row>
-                                            <Col>
+                                            <Col className="pad-free">
                                                 <CreateOrderForm id="create-order"/>
                                             </Col>
                                         </Row>

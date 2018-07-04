@@ -28,7 +28,8 @@ export default class CreateOrderForm extends Component{
 
         this.state = {
             clearStart: true,
-            interacted: {}
+            interacted: {},
+            confirms: {}
         };
     };
 
@@ -74,6 +75,11 @@ export default class CreateOrderForm extends Component{
         this.forceUpdate();
     }
 
+    handleChangeCheck(e) {
+        const currentValue = !!this.state.confirms[e.target.name] ;
+        this.setState({confirms: {...this.state.confirms, [e.target.name]: !currentValue}});
+    }
+
     validate() {
         return AccountAccessFormValidation.runValidation({password: this.state.password});
     }
@@ -81,6 +87,7 @@ export default class CreateOrderForm extends Component{
     render() {
         // const errors = this.state.clearStart ? [] : this.validate();
         const id = this.props.id;
+        const checksPassed = Object.getOwnPropertyNames(this.state.confirms).length === 4;
         // const user = this.props.user;
 
         // let passwordInput, buttonGroup = '';
@@ -121,12 +128,6 @@ export default class CreateOrderForm extends Component{
 
         return (
             <Form id={id} className='create-order'>
-                {/*<Row>*/}
-                    {/*<Col xs={{ size: 4 }}><div className='form-text label float-right'>Email</div></Col>*/}
-                    {/*<Col xs={{ size: 8 }}>*/}
-                        {/*<div className='form-text value'>{ user.email }</div>*/}
-                    {/*</Col>*/}
-                {/*</Row>*/}
                 <Row className="main-form">
                     <Col>
                         <FormGroup>
@@ -202,7 +203,7 @@ export default class CreateOrderForm extends Component{
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. Standard Contract Terms.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput disabled checked id="user[notify][when_a]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
+                                <CustomInput onChange={::this.handleChangeCheck} name="checkTermsAgreement" id="checkTermsAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
                             </Col>
                         </Row>
                         <Row className="">
@@ -212,24 +213,24 @@ export default class CreateOrderForm extends Component{
                                 </div>
                             </Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput id="user[notify][when_b]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
+                                <CustomInput onChange={::this.handleChangeCheck} name="checkHaveLegalAuthority" id="checkHaveLegalAuthority" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
                             </Col>
                         </Row>
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to comply with XYZ Inc. grain inventory or Funds/Credit Verification Procedure.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput id="user[notify][when_c]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
+                                <CustomInput onChange={::this.handleChangeCheck} name="checkAgreeVerification" id="checkAgreeVerification" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
                             </Col>
                         </Row>
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. KYC Policy, and will satisfy all KYC requirements.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput id="user[notify][when_c]" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="C" />
+                                <CustomInput onChange={::this.handleChangeCheck} name="checkPolicyAgreement" id="checkPolicyAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
                             </Col>
                         </Row>
                     </Col>
                 </Row>
-                <Button>Submit</Button>
+                <Button disabled={!checksPassed} color={checksPassed ? "success" : "secondary"}>Submit</Button>
             </Form>
         );
     }

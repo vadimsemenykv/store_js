@@ -56,37 +56,43 @@ CatalogController.main = (req, res) => {
 };
 
 CatalogController.create = (req, res) => {
-    const linksState = getHeaderLinks(req.user._id);
-    let preloadedState = {
-        header: linksState.header,
-        footer: linksState.footer,
-        user: req.user,
-        extraLinks: { submitUrl: urlFor('api:user') }
-    };
+    setTimeout(function () {
 
-    const store = configureCatalogStore(preloadedState);
+        const linksState = getHeaderLinks(req.user._id);
+        let preloadedState = {
+            header: linksState.header,
+            footer: linksState.footer,
+            user: req.user,
+            extraLinks: { submitUrl: urlFor('api:user') }
+        };
 
-    const html = renderToString(
-        <Provider store={store} >
-            <CatalogCreate />
-        </Provider>
-    );
 
-    const finalState = store.getState();
 
-    res.status(200).send(
-        renderFullPage(
-            {
-                title: 'Create New Buy / Sell Order',
-                html: html,
-                cssTop: [
-                    '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
-                ],
-                jsBottom: [
-                    '<script src="/assets/catalog-create.js"></script>'
-                ]
-            },
-            finalState
-        )
-    );
+        const store = configureCatalogStore(preloadedState);
+
+        const html = renderToString(
+            <Provider store={store} >
+                <CatalogCreate />
+            </Provider>
+        );
+
+        const finalState = store.getState();
+
+        res.status(200).send(
+            renderFullPage(
+                {
+                    title: 'Create New Buy / Sell Order',
+                    html: html,
+                    cssTop: [
+                        '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
+                    ],
+                    jsBottom: [
+                        '<script src="/assets/catalog-create.js"></script>'
+                    ]
+                },
+                finalState
+            )
+        );
+    }, 10000);
+
 };

@@ -37,6 +37,11 @@ DB.connect(mongo_db_url, function (err) {
         process.exit(1)
     }
 });
+process.on('SIGINT', function() {
+    DB.close(function (err) {
+        if (err) console.log('Unable to close Mongo connection.');
+    })
+});
 
 app.disable('x-powered-by');
 app.use(cors());

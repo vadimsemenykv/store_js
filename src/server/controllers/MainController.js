@@ -13,51 +13,40 @@ import UserDao from '../dao/User';
 export default class MainController {}
 
 MainController.index = (req, res) => {
-    UserDao.findOne({_id: req.session.userId}, function (err, user) {
-        if (err){
-            // console.log(err);
-            res.status(500).send({
-                success: false,
-                error: err
-            });
-            return;
-        }
+    const linksState = getHeaderLinks(req.user ? req.user._id : null);
 
-        const linksState = getHeaderLinks(req.session.userId);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+    };
 
-        let preloadedState = {
-            header: linksState.header,
-            footer: linksState.footer,
-        };
+    if (req.user) {
+        preloadedState.user = req.user;
+    }
 
-        if (user) {
-            preloadedState.user = user;
-        }
+    const store = configureLandingStore(preloadedState);
 
-        const store = configureLandingStore(preloadedState);
+    const html = renderToString(
+        <Provider store={store} >
+            <Landing />
+        </Provider>
+    );
 
-        const html = renderToString(
-            <Provider store={store} >
-                <Landing />
-            </Provider>
-        );
+    const finalState = store.getState();
 
-        const finalState = store.getState();
-
-        res.status(200).send(
-            renderFullPage(
-                {
-                    title: 'Main',
-                    html: html,
-                    cssTop: [
-                        '<link rel="stylesheet" href="/assets/landing.css"/>'
-                    ],
-                    jsBottom: [
-                        '<script src="/assets/landing.js"></script>'
-                    ]
-                },
-                finalState
-            )
-        );
-    });
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Main',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/landing.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/landing.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
 };
