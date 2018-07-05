@@ -45,4 +45,4 @@ Collection.create({
 });
 
 DB.close();
-process.exit();
+// process.exit();

@@ -125,6 +125,12 @@ export default class CreateOrderForm extends Component{
                 {/*</Row>*/}
         //     );
         // }
+        const renderSelect = (options, inputName, valueKey = "_id", labelKey = "title") => {
+            const optionsTpl = options.map((option, index) => {
+                return <option key={index} value={option[valueKey]}>{option[labelKey]}</option>;
+            });
+            return <Input type="select" name={inputName}>{optionsTpl}</Input>;
+        }; 
 
         return (
             <Form id={id} className='create-order'>
@@ -145,10 +151,7 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Currency</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="select" name="select">
-                                        <option value="fdsewffdfd32r3" >USD</option>
-                                        <option value="fw4f3e5g5grgrge">CAD</option>
-                                    </Input>
+                                    {renderSelect(this.props.currencies, "currency")}
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -156,10 +159,7 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Colection</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="select" name="select">
-                                        <option value="sdffvfdvdvfdvd4fwf">Corn</option>
-                                        <option value="us78sfndf78sd87fsd">Maize</option>
-                                    </Input>
+                                    {renderSelect(this.props.collections, "collection")}
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -237,7 +237,9 @@ export default class CreateOrderForm extends Component{
 }
 
 CreateOrderForm.propTypes = {
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    currencies: PropTypes.array.isRequired,
+    collections: PropTypes.array.isRequired
 };
 
 CreateOrderForm.formateFormErrorFeedback = (field, errors = []) => {

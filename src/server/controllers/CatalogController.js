@@ -16,15 +16,19 @@ import CatalogCreate from "../../front/containers/CatalogCreate";
 
 /** Models */
 import OrderDao from '../dao/Order';
+import CollectionDao from '../dao/Collection';
+import CurrencyDao from '../dao/Currency';
 
 export default class CatalogController {}
 
-CatalogController.main = (req, res) => {
+CatalogController.main = async (req, res) => {
     const linksState = getHeaderLinks(req.user._id);
     let preloadedState = {
         header: linksState.header,
         footer: linksState.footer,
         user: req.user,
+        collections: await getCollections(),
+        currencies: await getCurrencies(),
         extraLinks: { submitUrl: urlFor('api:user') }
     };
 
@@ -55,44 +59,42 @@ CatalogController.main = (req, res) => {
     );
 };
 
-CatalogController.create = (req, res) => {
-    setTimeout(function () {
+CatalogController.create = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        collections: await getCollections(),
+        currencies: await getCurrencies(),
+        extraLinks: { submitUrl: urlFor('api:user') }
+    };
 
-        const linksState = getHeaderLinks(req.user._id);
-        let preloadedState = {
-            header: linksState.header,
-            footer: linksState.footer,
-            user: req.user,
-            extraLinks: { submitUrl: urlFor('api:user') }
-        };
+    const store = configureCatalogStore(preloadedState);
 
+    const html = renderToString(
+        <Provider store={store} >
+            <CatalogCreate />
+        </Provider>
+    );
 
+    const finalState = store.getState();
 
-        const store = configureCatalogStore(preloadedState);
-
-        const html = renderToString(
-            <Provider store={store} >
-                <CatalogCreate />
-            </Provider>
-        );
-
-        const finalState = store.getState();
-
-        res.status(200).send(
-            renderFullPage(
-                {
-                    title: 'Create New Buy / Sell Order',
-                    html: html,
-                    cssTop: [
-                        '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
-                    ],
-                    jsBottom: [
-                        '<script src="/assets/catalog-create.js"></script>'
-                    ]
-                },
-                finalState
-            )
-        );
-    }, 10000);
-
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Create New Buy / Sell Order',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/catalog-create.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
 };
+const getCollections = () => CollectionDao.find({});
+const getCurrencies = () => CurrencyDao.find({});

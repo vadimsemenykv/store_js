@@ -88,7 +88,11 @@ class CatalogCreate extends Component {
                                         </Row>
                                         <Row>
                                             <Col className="pad-free">
-                                                <CreateOrderForm id="create-order"/>
+                                                <CreateOrderForm
+                                                    id="create-order"
+                                                    currencies={this.props.currencies}
+                                                    collections={this.props.collections}
+                                                />
                                             </Col>
                                         </Row>
                                     </CardBody>
@@ -108,7 +112,9 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        extraLinks: state.extraLinks
+        extraLinks: state.extraLinks,
+        currencies: state.currencies,
+        collections: state.collections
     }
 }
 
