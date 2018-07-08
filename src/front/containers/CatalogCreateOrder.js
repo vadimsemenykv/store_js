@@ -46,7 +46,7 @@ import UserInfoForm from "../components/account/UserInfoForm";
 import CatalogItem from "../components/catalog/CatalogItem";
 import CreateOrderForm from "../components/catalog/CreateOrderForm";
 
-class CatalogCreate extends Component {
+class CatalogCreateOrder extends Component {
     constructor(props) {
         super(props);
 
@@ -124,4 +124,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CatalogCreate)
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogCreateOrder)

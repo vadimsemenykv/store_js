@@ -1,22 +1,34 @@
 import mongoose from 'mongoose'
 
 const Order = new mongoose.Schema({
-    owner: mongoose.Schema.Types.ObjectId,
     _type: String,
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
     currency: {
-        _id: mongoose.Schema.Types.ObjectId,
-        uid: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Currency"
     },
     categoryCollection: {
-        _id: mongoose.Schema.Types.ObjectId,
-        uid: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Collection",
     },
-    offerOnly: Boolean,
+    offerOnly: {
+        type: Boolean,
+        default: false
+    },
     price: Number,
     quantity: Number,
     totalPrice: Number,
-    isVerified: Boolean,
-    availableStatus: String,
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    availableStatus: {
+        type: String,
+        default: "available"
+    },
     createdAt: {
         type: Date,
         required: true,

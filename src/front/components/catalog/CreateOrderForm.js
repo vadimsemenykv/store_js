@@ -1,7 +1,6 @@
 /** Common */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import AccountAccessFormValidation from '../../forms/AccountAccesForm';
 
 /** Components */
 import {
@@ -14,13 +13,14 @@ import {
     Input,
     FormFeedback, CustomInput
 } from 'reactstrap';
-import ToggleSwitcher from "../ToggleSwitcher";
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/CreateOrderForm.sass';
 import '../../styles/Common.sass';
+import validator from "validator";
+import DefaultForm from "../../forms/DefaultForm";
 
 export default class CreateOrderForm extends Component{
     constructor(props) {
@@ -29,29 +29,59 @@ export default class CreateOrderForm extends Component{
         this.state = {
             clearStart: true,
             interacted: {},
-            confirms: {}
+            confirms: {},
+            data: {
+                type: "buy"
+            }
         };
     };
+
+    collectData() {
+        return {
+            _type: this.state.data.type,
+            currency: this.state.data.currency ? this.state.data.currency : "",
+            categoryCollection: this.state.data.categoryCollection ? this.state.data.categoryCollection : "",
+            offerOnly: !!this.state.data.offerOnly,
+            price: this.state.data.offerOnly ? 0 : (this.state.data.price ? this.state.data.price : ""),
+            quantity: this.state.data.quantity ? this.state.data.quantity : ""
+        };
+    }
+
+    collectDataForValidation() {
+        let data = this.collectData();
+        delete data._type;
+        delete data.offerOnly;
+        if (this.state.data.offerOnly) {
+            delete data.price;
+        }
+        return data;
+    }
 
     handleSubmit(e) {
         e.preventDefault();
 
         if (Object.getOwnPropertyNames(this.validate()).length > 0) {
-            this.setState({interacted: {password: true}, clearStart: false});
+            this.setState({
+                interacted: {
+                    currency: true,
+                    categoryCollection: true,
+                    price: true,
+                    quantity: true
+                },
+                clearStart: false
+            });
             return false;
         }
 
-        const url = this.props.submitUrl;
+        const url = "/api/order";
         fetch(url, {
-            method: 'PATCH',
+            method: 'POST',
             credentials: "same-origin",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                form: { name: 'user_access_form', data: {password: this.state.password} }
-            })
+            body: JSON.stringify(this.collectData())
         })
             .then(response => response.json())
             .then(response => {
@@ -67,7 +97,7 @@ export default class CreateOrderForm extends Component{
     handleChangeInput(e) {
         const name = e.target.name;
         const value = e.target.value;
-        this.setState({[name]: value, clearStart: false, serverValidationError: ''});
+        this.setState({data: {...this.state.data, [name]: value}, clearStart: false});
     }
 
     handleFocusOut(e) {
@@ -80,56 +110,45 @@ export default class CreateOrderForm extends Component{
         this.setState({confirms: {...this.state.confirms, [e.target.name]: !currentValue}});
     }
 
+    handleChangeCheckOfferOnly() {
+        this.setState({data: {...this.state.data, offerOnly: !this.state.data.offerOnly}});
+    }
+
     validate() {
-        return AccountAccessFormValidation.runValidation({password: this.state.password});
+        let validators = CreateOrderForm.rules();
+        if (this.state.data.offerOnly) {
+            delete validators.price;
+        }
+        return DefaultForm.validate(this.collectDataForValidation(), validators);
     }
 
     render() {
-        // const errors = this.state.clearStart ? [] : this.validate();
+        const errors = this.state.clearStart ? [] : this.validate();
+        console.log(errors);
         const id = this.props.id;
         const checksPassed = Object.getOwnPropertyNames(this.state.confirms).length === 4;
-        // const user = this.props.user;
+        const price = this.state.data.price ? this.state.data.price : 0;
+        const quantity = this.state.data.quantity ? this.state.data.quantity : 0;
+        const totalPrice = !Number.isNaN(price * quantity) ? Math.round(price * quantity * 100) / 100 : 0;
+        const offerOnly = this.state.data.offerOnly;
 
-        // let passwordInput, buttonGroup = '';
-        // if (!this.state.isEditMode) {
-        //     passwordInput = <div className='form-text value'>••••••••</div>;
-        //     buttonGroup = <div><Button onClick={::this.changeEditMode} color="warning">Edit</Button></div>;
-        // } else {
-        //     buttonGroup = (
-        //         <div>
-        //             <Button onClick={::this.handleSubmit} color="success">Save</Button>{' '}
-        //             <Button onClick={::this.changeEditMode} color="warning">Cancel</Button>
-        //         </div>
-        //     );
-        //     passwordInput = (
-                {/*<Row>*/}
-                    {/*<Col>*/}
-                        {/*<Row className={'password-input'}>*/}
-                            {/*<Col>*/}
-                                {/*<Input type={ this.state.likePassword ? "password" : "text" }*/}
-                                       {/*name="password"*/}
-                                       {/*placeholder="Enter password"*/}
-                                       {/*onChange={ ::this.handleChangeInput }*/}
-                                       {/*onBlur={ ::this.handleFocusOut }*/}
-                                       {/*invalid={ this.state.interacted.password && !!errors["password"] }*/}
-                                {/*/>*/}
-                                {/*{ this.state.interacted.password ? AccessForm.formateFormErrorFeedback("password", errors) : "" }*/}
-                            {/*</Col>*/}
-                        {/*</Row>*/}
-                        {/*<Row>*/}
-                            {/*<Col>*/}
-                                {/*<ToggleSwitcher label={ this.state.likePassword ? "Show password" : "Hide password"} onChange={::this.handleSwitcher}/>*/}
-                            {/*</Col>*/}
-                        {/*</Row>*/}
-                    {/*</Col>*/}
-                {/*</Row>*/}
-        //     );
-        // }
-        const renderSelect = (options, inputName, valueKey = "_id", labelKey = "title") => {
+        const renderSelect = (options, inputName, placeHolder = "Select", valueKey = "_id", labelKey = "title") => {
             const optionsTpl = options.map((option, index) => {
                 return <option key={index} value={option[valueKey]}>{option[labelKey]}</option>;
             });
-            return <Input type="select" name={inputName}>{optionsTpl}</Input>;
+            return (
+                <Col xs={{ size: 8 }}>
+                    <Input type="select" name={inputName} defaultValue={""}
+                           onChange={::this.handleChangeInput}
+                           onBlur={::this.handleFocusOut}
+                           invalid={ this.state.interacted[inputName] && !!errors[inputName] }
+                    >
+                        <option disabled value="">{placeHolder}</option>
+                        {optionsTpl}
+                    </Input>
+                    { this.state.interacted[inputName] ? CreateOrderForm.formateFormErrorFeedback(inputName, errors) : "" }
+                </Col>
+            );
         }; 
 
         return (
@@ -140,7 +159,9 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Type</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="select" name="select">
+                                    <Input type="select" name="type"
+                                           onChange={ ::this.handleChangeInput }
+                                           onBlur={ ::this.handleFocusOut }>
                                         <option value="buy" >Buy</option>
                                         <option value="sell">Sell</option>
                                     </Input>
@@ -150,24 +171,25 @@ export default class CreateOrderForm extends Component{
                         <FormGroup>
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Currency</Label></Col>
-                                <Col xs={{ size: 8 }}>
-                                    {renderSelect(this.props.currencies, "currency")}
-                                </Col>
+                                {renderSelect(this.props.currencies, "currency", "Select currency")}
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Colection</Label></Col>
-                                <Col xs={{ size: 8 }}>
-                                    {renderSelect(this.props.collections, "collection")}
-                                </Col>
+                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Collection</Label></Col>
+                                {renderSelect(this.props.collections, "categoryCollection", "Select grain collection")}
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Price</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="text" name="text"/>
+                                    <Input type="text" name="price" disabled={offerOnly}
+                                           onChange={ ::this.handleChangeInput }
+                                           onBlur={ ::this.handleFocusOut }
+                                           invalid={ this.state.interacted.price && !!errors.price }
+                                    />
+                                    { this.state.interacted.price ? CreateOrderForm.formateFormErrorFeedback("price", errors) : "" }
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -175,7 +197,9 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><div className='form-text float-right'>Price - "Offer Only"</div></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <CustomInput id="user[notify][when_c]" type="checkbox" className="cm-hidden-text checkbox" inline bsSize="lg" label="" />
+                                    <CustomInput id="offerOnly" type="checkbox" className="cm-hidden-text checkbox" inline bsSize="lg" label=""
+                                                 name="offerOnly"
+                                                 onChange={::this.handleChangeCheckOfferOnly}/>
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -183,7 +207,12 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Quantity</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input text="select" name="text"/>
+                                    <Input text="select" name="quantity"
+                                           onChange={ ::this.handleChangeInput }
+                                           onBlur={ ::this.handleFocusOut }
+                                           invalid={ this.state.interacted.quantity && !!errors.quantity }
+                                    />
+                                    { this.state.interacted.quantity ? CreateOrderForm.formateFormErrorFeedback("quantity", errors) : "" }
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -191,7 +220,7 @@ export default class CreateOrderForm extends Component{
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Order Total</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input text="select" name="text"/>
+                                    {offerOnly ? "" : totalPrice}
                                 </Col>
                             </Row>
                         </FormGroup>
@@ -230,7 +259,7 @@ export default class CreateOrderForm extends Component{
                         </Row>
                     </Col>
                 </Row>
-                <Button disabled={!checksPassed} color={checksPassed ? "success" : "secondary"}>Submit</Button>
+                <Button  onClick={::this.handleSubmit}  disabled={!checksPassed} color={checksPassed ? "success" : "secondary"}>Submit</Button>
             </Form>
         );
     }
@@ -245,5 +274,48 @@ CreateOrderForm.propTypes = {
 CreateOrderForm.formateFormErrorFeedback = (field, errors = []) => {
     if (errors && errors[field] && errors[field][0]) {
         return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
+    }
+};
+
+CreateOrderForm.rules = () => {
+    return {
+        _type: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Select type"
+            }
+        ],
+        currency: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Select currency"
+            }
+        ],
+        categoryCollection: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Select collection"
+            }
+        ],
+        price: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Price is required"
+            },
+            {
+                rule: value => validator.isDecimal(value, { min: 1 }),
+                message: "Price must be a decimal"
+            }
+        ],
+        quantity: [
+            {
+                rule: value => validator.isByteLength(value, { min: 1 }),
+                message: "Quantity is required"
+            },
+            {
+                rule: value => validator.isInt(value, { min: 1 }),
+                message: "Quantity must be an integer and must be grater or equal 1"
+            }
+        ]
     }
 };

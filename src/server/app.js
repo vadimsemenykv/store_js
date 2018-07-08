@@ -11,6 +11,7 @@ import RedisStore from 'connect-redis'
 
 import Secure from './infrastructure/auth/Secure';
 
+/** Routers */
 import MainRouter from './routes/Main';
 import AuthRouter from './routes/Auth';
 import AccountRouter from './routes/Account';
@@ -18,6 +19,7 @@ import CatalogRouter from './routes/Catalog';
 import PageRouter from './routes/Page';
 
 import ApiUserRouter from './routes/api/User';
+import ApiOrderRouter from './routes/api/Order';
 
 import Mongoose from 'mongoose';
 import DB from "./db";
@@ -86,14 +88,16 @@ app.use((req, res, next) => {
 });
 app.use(Secure);
 
-// Routes
+// Front Routes
 app.use('/', MainRouter);
 app.use('/', AuthRouter);
 app.use('/', AccountRouter);
 app.use('/', CatalogRouter);
 app.use('/', PageRouter);
 
+//API Routes
 app.use('/', ApiUserRouter);
+app.use('/', ApiOrderRouter);
 
 Mongoose.Promise = Promise;
 

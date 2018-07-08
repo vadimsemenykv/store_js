@@ -12,7 +12,7 @@ import RegistrationFormValidator from './../../front/validation/registrationForm
 
 /** Containers */
 import Catalog from "../../front/containers/Catalog";
-import CatalogCreate from "../../front/containers/CatalogCreate";
+import CatalogCreate from "../../front/containers/CatalogCreateOrder";
 
 /** Models */
 import OrderDao from '../dao/Order';

@@ -88,6 +88,8 @@ UserController.change = (req, res) => {
     // if password - hash password
     //if file - send it to storage and save result to user
 
+    //TODO delete validation by front form validators, validate by server validators
+    //TODO maybe separate actions
     const validators = {
         user_access_form: AccountAccesForm,
         user_info_form: UserInfoForm
