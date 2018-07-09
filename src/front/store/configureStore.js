@@ -1,7 +1,7 @@
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import accountRootReducer from '../reducers/pages/account'
-import catalogRootReducer from '../reducers/pages/catalog'
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import accountRootReducer from '../reducers/pages/account';
+import catalogRootReducer from '../reducers/pages/catalog';
 
 export function configureAccountStore(preloadedState) {
     return createStore(

@@ -1,47 +1,46 @@
-import Collection from "../dao/Collection";
-import DB from "../db";
-import {urlFor} from "express-named-router-url-generator";
-import Currency from "../dao/Currency";
+import Collection from '../dao/Collection';
+import DB from '../db';
+import Currency from '../dao/Currency';
 
-const mongo_db_url = process.env.MONGO_DB_URL;
+const mongoDbUrl = process.env.MONGO_DB_URL;
 
-DB.connect(mongo_db_url, function (err) {
+DB.connect(mongoDbUrl, function (err) {
     if (err) {
-        console.log(`Unable to connect to Mongo to ${mongo_db_url}.`);
+        console.log(`Unable to connect to Mongo to ${mongoDbUrl}.`);
         console.log(err);
-        process.exit(1)
+        process.exit(1);
     }
 });
 
 Currency.create({
-    title: "USD"
+    title: 'USD'
 }).catch(err => {
-    console.error(err.toString())
+    console.error(err.toString());
 }).then(col => {
-    console.log('Success')
+    console.log('Success');
 });
 Currency.create({
-    title: "CAD"
+    title: 'CAD'
 }).catch(err => {
-    console.error(err.toString())
+    console.error(err.toString());
 }).then(col => {
-    console.log('Success')
+    console.log('Success');
 });
 
 Collection.create({
-    title: "Corn"
+    title: 'Corn'
 }).catch(err => {
-    console.error(err.toString())
+    console.error(err.toString());
 }).then(col => {
-    console.log('Success')
+    console.log('Success');
 });
 
 Collection.create({
-    title: "Maize"
+    title: 'Maize'
 }).catch(err => {
-    console.error(err.toString())
+    console.error(err.toString());
 }).then(col => {
-    console.log('Success')
+    console.log('Success');
 });
 
 DB.close();
