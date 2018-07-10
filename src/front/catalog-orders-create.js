@@ -1,9 +1,9 @@
 import React from 'react';
 import { hydrate } from 'react-dom';
-import {Provider} from 'react-redux'
-import { configureCatalogStore } from "./store/configureStore";
+import {Provider} from 'react-redux';
+import { configureCatalogStore } from './store/configureStore';
 
-import Catalog from "./containers/catalog/Catalog";
+import CatalogOrdersCreate from './containers/catalog/CatalogOrdersCreate';
 
 const state = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;
@@ -11,7 +11,7 @@ const store = configureCatalogStore(state);
 
 hydrate(
     <Provider store={store} >
-        <Catalog />
+        <CatalogOrdersCreate />
     </Provider>,
     document.getElementById('root')
 );

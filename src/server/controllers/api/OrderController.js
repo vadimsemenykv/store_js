@@ -12,8 +12,6 @@ function getCurrency(id) {
 }
 
 OrderController.create = async (req, res) => {
-    //TODO add validators for
-    //_type, offersOnly, price, quantity, currency, collectionCategory
     let errors = {};
     if (!req.body._type || !validator.isIn(req.body._type, ["buy", "sell"])) {
         errors._type = "invalid_value__type"

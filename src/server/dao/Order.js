@@ -1,18 +1,18 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const Order = new mongoose.Schema({
     _type: String,
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: 'User'
     },
     currency: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Currency"
+        ref: 'Currency'
     },
     categoryCollection: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Collection",
+        ref: 'Collection'
     },
     offerOnly: {
         type: Boolean,
@@ -27,7 +27,7 @@ const Order = new mongoose.Schema({
     },
     availableStatus: {
         type: String,
-        default: "available"
+        default: 'available'
     },
     createdAt: {
         type: Date,
@@ -41,9 +41,9 @@ const Order = new mongoose.Schema({
     }
 });
 
-Order.pre('save', function(next) {
+Order.pre('save', function (next) {
     this.updatedAt = Date.now();
-    next()
+    next();
 });
 
 mongoose.model('Order', Order);

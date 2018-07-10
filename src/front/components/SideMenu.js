@@ -39,7 +39,7 @@ class SideMenu extends Component {
                             <NavLink className="sub-link text-secondary" href='/my/account/bank-wire-instructions'>Bank Wire Instructions</NavLink>
                             <div className="dropdown-divider"/>
                             <NavLink className="sub-link text-secondary" href='/catalog'>View OTC Order Book</NavLink>
-                            <NavLink className="sub-link text-secondary" href='/catalog/create-new'>New Buy/Sell Contract</NavLink>
+                            <NavLink className="sub-link text-secondary" href='/catalog/orders/create'>New Buy/Sell Contract</NavLink>
                             <NavLink className="sub-link text-secondary" href='/my/deliveries'>Grain Deliveries</NavLink>
                             <div className="dropdown-divider"/>
                             <NavLink className="sub-link text-secondary" href='/my/orders'>My Orders</NavLink>

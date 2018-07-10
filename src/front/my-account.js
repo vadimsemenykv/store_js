@@ -3,7 +3,7 @@ import { hydrate } from 'react-dom';
 import {Provider} from 'react-redux'
 import { configureAccountStore } from './store/configureStore'
 
-import MyAccount from './containers/MyAccount';
+import MyAccount from './containers/account/MyAccount';
 
 const state = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;

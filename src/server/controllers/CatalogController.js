@@ -2,22 +2,27 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import {urlFor} from 'express-named-router-url-generator';
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
-import { configureCatalogStore } from "../../front/store/configureStore";
+import { configureCatalogStore } from '../../front/store/configureStore';
 
 /** Validators */
-import RegistrationFormValidator from './../../front/validation/registrationFormRules'
+// import RegistrationFormValidator from './../../front/validation/registrationFormRules';
 
 /** Containers */
-import Catalog from "../../front/containers/Catalog";
-import CatalogCreate from "../../front/containers/CatalogCreateOrder";
+import Catalog from '../../front/containers/catalog/Catalog';
+import CatalogOrdersCreate from '../../front/containers/catalog/CatalogOrdersCreate';
+import CatalogContractsCreate from '../../front/containers/catalog/CatalogContractsCreate';
 
 /** Models */
 import OrderDao from '../dao/Order';
 import CollectionDao from '../dao/Collection';
 import CurrencyDao from '../dao/Currency';
+
+
+const getCollections = () => CollectionDao.find({});
+const getCurrencies = () => CurrencyDao.find({});
 
 export default class CatalogController {}
 
@@ -29,7 +34,8 @@ CatalogController.main = async (req, res) => {
         user: req.user,
         collections: await getCollections(),
         currencies: await getCurrencies(),
-        extraLinks: { submitUrl: urlFor('api:user') }
+        extraLinks: { submitUrl: urlFor('api:user') },
+        ordersList: await OrderDao.find({}).populate('categoryCollection').populate('currency')
     };
 
     const store = configureCatalogStore(preloadedState);
@@ -59,7 +65,7 @@ CatalogController.main = async (req, res) => {
     );
 };
 
-CatalogController.create = async (req, res) => {
+CatalogController.createOrder = async (req, res) => {
     const linksState = getHeaderLinks(req.user._id);
     let preloadedState = {
         header: linksState.header,
@@ -74,7 +80,7 @@ CatalogController.create = async (req, res) => {
 
     const html = renderToString(
         <Provider store={store} >
-            <CatalogCreate />
+            <CatalogOrdersCreate />
         </Provider>
     );
 
@@ -86,15 +92,51 @@ CatalogController.create = async (req, res) => {
                 title: 'Create New Buy / Sell Order',
                 html: html,
                 cssTop: [
-                    '<link rel="stylesheet" href="/assets/catalog-create.css"/>'
+                    '<link rel="stylesheet" href="/assets/catalog-orders-create.css"/>'
                 ],
                 jsBottom: [
-                    '<script src="/assets/catalog-create.js"></script>'
+                    '<script src="/assets/catalog-orders-create.js"></script>'
                 ]
             },
             finalState
         )
     );
 };
-const getCollections = () => CollectionDao.find({});
-const getCurrencies = () => CurrencyDao.find({});
+
+CatalogController.createContract = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        collections: await getCollections(),
+        currencies: await getCurrencies(),
+        extraLinks: { submitUrl: urlFor('api:user') }
+    };
+
+    const store = configureCatalogStore(preloadedState);
+
+    const html = renderToString(
+        <Provider store={store} >
+            <CatalogContractsCreate />
+        </Provider>
+    );
+
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Create New Contract',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/catalog-contracts-create.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/catalog-contracts-create.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};

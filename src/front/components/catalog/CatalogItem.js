@@ -1,9 +1,9 @@
 /** Common */
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 /** Components */
-import {Badge, ButtonDropdown, Col, DropdownItem, DropdownMenu, DropdownToggle, Row} from "reactstrap";
+import {Badge, ButtonDropdown, Col, DropdownItem, DropdownMenu, DropdownToggle, Row} from 'reactstrap';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -24,21 +24,29 @@ export default class CatalogItem extends React.Component {
         });
     }
 
+    buySell() {
+        window.location.replace('/catalog/contracts/create/' + this.props.order._id.toString());
+    }
+
+    offer() {
+        window.location.replace('/catalog/offers/create/' + this.props.order._id.toString());
+    }
+
     render() {
         const order = this.props.order;
+        const id = order._id.toString();
+
         const verifyBadge = () => {
             if (order.isVerified) {
-                return <Badge color="success" pill>Verified</Badge>
-            } else {
-                return <Badge color="warning" pill>Not Verified</Badge>
+                return <Badge color="success" pill>Verified</Badge>;
             }
+            return <Badge color="warning" pill>Not Verified</Badge>;
         };
         const availableBadge = () => {
             if (order.availableStatus === 'available') {
-                return <Badge color="success" pill>Available</Badge>
-            } else {
-                return <Badge color="secondary" pill>Transaction in Progress</Badge>
+                return <Badge color="success" pill>Available</Badge>;
             }
+            return <Badge color="secondary" pill>Transaction in Progress</Badge>;
         };
 
         return (
@@ -46,22 +54,22 @@ export default class CatalogItem extends React.Component {
                 <Col>
                     <Row className="item-cell-row">
                         <Col className="item-id">
-                            #{ order._id }
+                            Order# { id }
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
-                        <Col>Type: <span className={ order._type === "buy" ? "text-success" : "text-info" }>{ order._type === "buy" ? "Buy" : "Sell" }</span></Col>
-                        <Col>Currency: { order.currency.uid }</Col>
-                        <Col>Collection: { order.collection.uid }</Col>
+                        <Col>Type: <span className={ order._type === 'buy' ? 'text-success' : 'text-info' }>{ order._type === 'buy' ? 'Buy' : 'Sell' }</span></Col>
+                        <Col>Currency: { order.currency.title }</Col>
+                        <Col>Collection: { order.categoryCollection.title }</Col>
                     </Row>
                     <Row className="item-cell-row">
-                        <Col>Price: { !order.offerOnly ? "$" + order.price : "Offer Only" }</Col>
+                        <Col>Price: { !order.offerOnly ? '$' + order.price : 'Offer Only' }</Col>
                         <Col>Quantity: { order.quantity }</Col>
-                        <Col>Order Total: { !order.offerOnly ? "$" + order.totalPrice : " - " }</Col>
+                        <Col>Order Total: { !order.offerOnly ? '$' + order.totalPrice : ' - ' }</Col>
                     </Row>
                     <Row className="item-cell-row">
                         <Col>
-                            Status:
+                             Status:
                             { verifyBadge() }
                             { availableBadge() }
                         </Col>
@@ -70,18 +78,18 @@ export default class CatalogItem extends React.Component {
                         <Col>
                             <ButtonDropdown
                                 isOpen={this.state.dropdownOpen}
-                                toggle={order.availableStatus !== "available" ? () => {} : ::this.toggle}
+                                toggle={order.availableStatus !== 'available' ? () => {} : ::this.toggle}
                             >
                                 <DropdownToggle
-                                    className={order.availableStatus !== "available" ? "disabled" : ""}
-                                    color={order.availableStatus !== "available" ? "secondary" : "info" }
+                                    className={order.availableStatus !== 'available' ? 'disabled' : ''}
+                                    color={order.availableStatus !== 'available' ? 'secondary' : 'info' }
                                     caret
                                 >
                                     Actions
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem disabled={order.availableStatus !== "available" || order.offerOnly }>Buy</DropdownItem>
-                                    <DropdownItem disabled={order.availableStatus !== "available"}>Send an Offer</DropdownItem>
+                                    <DropdownItem onClick={::this.buySell} disabled={order.availableStatus !== 'available' || order.offerOnly }>Buy</DropdownItem>
+                                    <DropdownItem onClick={::this.offer} disabled={order.availableStatus !== 'available'}>Send an Offer</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>

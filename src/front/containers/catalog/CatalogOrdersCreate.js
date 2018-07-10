@@ -1,52 +1,24 @@
 /** Common */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as UserActions from "../actions/UserActions";
+import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import * as UserActions from '../../actions/UserActions';
 
 /** Components */
-import {
-    Container,
-    Row,
-    Col,
-    Card,
-    CardTitle,
-    Button,
-    CardBody,
-    NavbarBrand,
-    NavbarToggler,
-    Collapse,
-    Nav,
-    NavLink,
-    Navbar,
-    CardHeader,
-    CardLink,
-    Badge,
-    Progress,
-    CustomInput,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    FormFeedback, Table
-} from 'reactstrap';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import SideMenu from '../components/SideMenu';
-import CompletionBar from "../components/CompletionBar";
-import AccessForm from "../components/account/AccessForm";
+import {Card, CardBody, CardHeader, CardTitle, Col, Container, Row} from 'reactstrap';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import SideMenu from '../../components/SideMenu';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/Common.sass';
-import '../styles/CatalogCreate.sass';
+import '../../styles/Common.sass';
+import '../../styles/CatalogCreate.sass';
 
-import UserInfoForm from "../components/account/UserInfoForm";
-import CatalogItem from "../components/catalog/CatalogItem";
-import CreateOrderForm from "../components/catalog/CreateOrderForm";
+import CreateOrderForm from '../../components/catalog/CreateOrderForm';
 
-class CatalogCreateOrder extends Component {
+class CatalogOrdersCreate extends Component {
     constructor(props) {
         super(props);
 
@@ -55,7 +27,7 @@ class CatalogCreateOrder extends Component {
         };
     };
 
-    render () {
+    render() {
         const { header, footer, user} = this.props;
         const { submitUrl } = this.props.extraLinks;
         const { changeInfo } = this.props.userActions;
@@ -103,7 +75,7 @@ class CatalogCreateOrder extends Component {
                     <Footer links={footer} />
                 </Col>
             </Row>
-        )
+        );
     }
 }
 
@@ -115,13 +87,13 @@ function mapStateToProps(state) {
         extraLinks: state.extraLinks,
         currencies: state.currencies,
         collections: state.collections
-    }
+    };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         userActions: bindActionCreators(UserActions, dispatch)
-    }
+    };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CatalogCreateOrder)
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogOrdersCreate);

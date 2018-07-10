@@ -4,5 +4,5 @@ const initialState = {
 };
 
 export default function header(state = initialState) {
-    return state
+    return state;
 }

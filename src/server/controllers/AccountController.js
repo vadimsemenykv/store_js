@@ -16,8 +16,8 @@ import { Provider } from 'react-redux'
 
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
-import AccountStatusAndNotifications from '../../front/containers/AccountStatusAndNotifications';
-import MyAccount from '../../front/containers/MyAccount';
+import AccountStatusAndNotifications from '../../front/containers/account/AccountStatusAndNotifications';
+import MyAccount from '../../front/containers/account/MyAccount';
 import { configureAccountStore } from "../../front/store/configureStore";
 
 export default class AccountController {}

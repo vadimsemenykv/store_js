@@ -86,6 +86,7 @@ export default class CreateOrderForm extends Component{
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
+                    //TODO redirect to orders
                     this.setState({isEditMode: false});
                 } else {
                     this.setState({serverValidationError: response.validationErrors});
@@ -124,7 +125,6 @@ export default class CreateOrderForm extends Component{
 
     render() {
         const errors = this.state.clearStart ? [] : this.validate();
-        console.log(errors);
         const id = this.props.id;
         const checksPassed = Object.getOwnPropertyNames(this.state.confirms).length === 4;
         const price = this.state.data.price ? this.state.data.price : 0;
