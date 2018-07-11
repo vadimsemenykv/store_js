@@ -24,8 +24,13 @@ export default class OrderItem extends React.Component {
         });
     }
 
-    buySell() {
-        fetch('/api/catalog/contracts/reserve', {
+    changeEditMode(e) {
+        e.preventDefault();
+        // this.setState({ isEditMode: !this.state.isEditMode, clearStart: true, interacted: {}, data: this.getClearOrderState()});
+    }
+
+    changeOrderActivationStatus() {
+        fetch('/api/catalog/orders/change-status', {
             method: 'POST',
             credentials: "same-origin",
             headers: {
@@ -33,23 +38,23 @@ export default class OrderItem extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                orderId: this.props.order._id
+                order: {
+                    id: this.props.order._id,
+                    status: this.props.order.status === 'active' ? 'deactivated' : 'active'
+                }
             })
         })
             .then((response) => response.json())
             .then((response) => {
                 if (response.success) {
-                    window.location.replace('/catalog/contracts/create/' + this.props.order._id.toString());
+                    //TODO add redux action
+                    window.location.reload();
                 } else {
                     //TODO show popup
                     console.log(response.error)
                 }
             })
             .catch((error) => console.log(error));
-    }
-
-    offer() {
-        window.location.replace('/catalog/offers/create/' + this.props.order._id.toString());
     }
 
     render() {
@@ -108,8 +113,8 @@ export default class OrderItem extends React.Component {
                                     Actions
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={::this.buySell} disabled={order.availableStatus !== 'available' || order.offerOnly }>Buy</DropdownItem>
-                                    <DropdownItem onClick={::this.offer} disabled={order.availableStatus !== 'available'}>Send an Offer</DropdownItem>
+                                    <DropdownItem onClick={::this.changeEditMode}>Edit</DropdownItem>
+                                    <DropdownItem onClick={::this.changeOrderActivationStatus}>{order.status === 'active' ? 'Deactivate' : 'Activate'}</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>

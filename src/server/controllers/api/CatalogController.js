@@ -59,6 +59,24 @@ CatalogController.create = async (req, res) => {
     res.status(200).send({success: true});
 };
 
+CatalogController.orderChangeStatus = async (req, res) => {
+    console.log(req.body.order.status);
+    console.log(['active', 'deactivated'].includes(req.body.order.status));
+    if (!['active', 'deactivated'].includes(req.body.order.status)) {
+        res.status(400).send({success: false, error: 'inappropriate_status_value'});
+    } else {
+        OrderDao.findOneAndUpdate(
+            {_id: req.body.order.id, owner: req.user._id},
+            {status: req.body.order.status}
+        ).then((order) => {
+            if (!order) {
+                res.status(404).send({success: false, error: 'failed_to_fetch_order'});
+            } else {
+                res.status(200).send({success: true});
+            }
+        });
+    }
+};
 CatalogController.reserveOrder = async (req, res) => {
     //TODO add check for already reserved orders by this user, if count > 0, then show to user popup
     //TODO add check for order not in contract
@@ -101,7 +119,9 @@ CatalogController.createContract = async (req, res) => {
         client: req.user._id,
         merchant: order.owner,
         order: order._id
-    });
+    }.then((contract) => {
+        order.update({contract: contract._id, status: 'in_contract'});
+    }));
     res.status(200).send({success: true});
 };
 

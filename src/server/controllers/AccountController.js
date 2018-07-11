@@ -101,16 +101,24 @@ AccountController.myAccount = (req, res) => {
 
 AccountController.myOrders = async (req, res) => {
     const linksState = getHeaderLinks(req.user._id);
+    const buyOrders = OrderDao.find({owner: req.user._id, status: 'active', _type: 'buy'}).populate('categoryCollection').populate('currency');
+    const sellOrders = OrderDao.find({owner: req.user._id, status: 'active', _type: 'sell'}).populate('categoryCollection').populate('currency');
+    const deactivatedOrders = OrderDao.find({owner: req.user._id, status: 'deactivated'}).populate('categoryCollection').populate('currency');
+
     let preloadedState = {
         header: linksState.header,
         footer: linksState.footer,
         user: req.user,
-        listOrders: {
-            buy: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'buy'}).populate('categoryCollection').populate('currency'),
-            sell: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'sell'}).populate('categoryCollection').populate('currency'),
-            deactivated: await OrderDao.find({owner: req.user._id, status: 'deactivated'}).populate('categoryCollection').populate('currency')
-        }
+        // listOrders: {
+        //     buy: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'buy'}).populate('categoryCollection').populate('currency'),
+        //     sell: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'sell'}).populate('categoryCollection').populate('currency'),
+        //     deactivated: await OrderDao.find({owner: req.user._id, status: 'deactivated'}).populate('categoryCollection').populate('currency')
+        // }
+        listOrders: [...(await buyOrders), ...(await sellOrders), ...(await deactivatedOrders)]
     };
+
+    // let orders = await () => {};
+
 
     const store = configureAccountStore(preloadedState);
 

@@ -4,7 +4,7 @@ const Order = new mongoose.Schema({
     _type: String,
     status: {
         type: String,
-        default: 'active'
+        default: 'deactivated'
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -35,6 +35,10 @@ const Order = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }
+    },
+    contract: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contract'
     },
     availableStatus: {
         type: String,

@@ -15,7 +15,7 @@ import {
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SideMenu from '../../components/SideMenu';
-import CatalogItem from '../../components/catalog/CatalogItem';
+import OrderItem from '../../components/account/OrderItem';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -33,9 +33,24 @@ class MyOrders extends Component {
 
     render() {
         const { header, footer, user, listOrders } = this.props;
-        const buyOrdersTpl = listOrders.buy.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
-        const sellOrdersTpl = listOrders.sell.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
-        const deactivatedOrdersTpl = listOrders.deactivated.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
+        const buyOrdersTpl = listOrders.map((item) => {
+            if (item.status === 'active' && item._type === 'buy') {
+                return <OrderItem key={item._id.toString()} order={item}/>;
+            }
+            return '';
+        });
+        const sellOrdersTpl = listOrders.map((item) => {
+            if (item.status === 'active' && item._type === 'sell') {
+                return <OrderItem key={item._id.toString()} order={item}/>;
+            }
+            return '';
+        });
+        const deactivatedOrdersTpl = listOrders.map((item) => {
+            if (item.status === 'deactivated') {
+                return <OrderItem key={item._id.toString()} order={item}/>;
+            }
+            return '';
+        });
 
         return (
             <Row className="gray-container">
@@ -81,7 +96,7 @@ MyOrders.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    listOrders: PropTypes.object.isRequired
+    listOrders: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {

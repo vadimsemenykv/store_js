@@ -1,6 +1,8 @@
 /** Common */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import validator from 'validator';
+import DefaultForm from '../../forms/DefaultForm';
 
 /** Components */
 import {
@@ -17,12 +19,10 @@ import {
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../styles/CreateOrderForm.sass';
 import '../../styles/Common.sass';
-import validator from "validator";
-import DefaultForm from "../../forms/DefaultForm";
+import '../../styles/CreateOrderForm.sass';
 
-export default class CreateOrderForm extends Component{
+export default class CreateOrderForm extends Component {
     constructor(props) {
         super(props);
 
@@ -31,19 +31,19 @@ export default class CreateOrderForm extends Component{
             interacted: {},
             confirms: {},
             data: {
-                type: "buy"
+                type: 'buy'
             }
         };
-    };
+    }
 
     collectData() {
         return {
             _type: this.state.data.type,
-            currency: this.state.data.currency ? this.state.data.currency : "",
-            categoryCollection: this.state.data.categoryCollection ? this.state.data.categoryCollection : "",
+            currency: this.state.data.currency ? this.state.data.currency : '',
+            categoryCollection: this.state.data.categoryCollection ? this.state.data.categoryCollection : '',
             offerOnly: !!this.state.data.offerOnly,
-            price: this.state.data.offerOnly ? 0 : (this.state.data.price ? this.state.data.price : ""),
-            quantity: this.state.data.quantity ? this.state.data.quantity : ""
+            price: this.state.data.offerOnly ? 0 : (this.state.data.price ? this.state.data.price : ''),
+            quantity: this.state.data.quantity ? this.state.data.quantity : ''
         };
     }
 
@@ -70,28 +70,28 @@ export default class CreateOrderForm extends Component{
                 },
                 clearStart: false
             });
-            return false;
+            return;
         }
 
-        const url = "/api/catalog/orders/create";
+        const url = '/api/catalog/orders/create';
         fetch(url, {
             method: 'POST',
-            credentials: "same-origin",
+            credentials: 'same-origin',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.collectData())
         })
-            .then(response => response.json())
-            .then(response => {
+            .then((response) => response.json())
+            .then((response) => {
                 if (response.success) {
                     window.location.replace('/my/orders');
                 } else {
                     this.setState({serverValidationError: response.validationErrors});
                 }
             })
-            .catch(error => console.log(error));
+            .catch((error) => console.log(error));
     }
 
     handleChangeInput(e) {
@@ -106,7 +106,7 @@ export default class CreateOrderForm extends Component{
     }
 
     handleChangeCheck(e) {
-        const currentValue = !!this.state.confirms[e.target.name] ;
+        const currentValue = !!this.state.confirms[e.target.name];
         this.setState({confirms: {...this.state.confirms, [e.target.name]: !currentValue}});
     }
 
@@ -131,36 +131,39 @@ export default class CreateOrderForm extends Component{
         const totalPrice = !Number.isNaN(price * quantity) ? Math.round(price * quantity * 100) / 100 : 0;
         const offerOnly = this.state.data.offerOnly;
 
-        const renderSelect = (options, inputName, placeHolder = "Select", valueKey = "_id", labelKey = "title") => {
+        const renderSelect = (options, inputName, placeHolder = 'Select', valueKey = '_id', labelKey = 'title') => {
             const optionsTpl = options.map((option, index) => {
                 return <option key={index} value={option[valueKey]}>{option[labelKey]}</option>;
             });
             return (
                 <Col xs={{ size: 8 }}>
-                    <Input type="select" name={inputName} defaultValue={""}
-                           onChange={::this.handleChangeInput}
-                           onBlur={::this.handleFocusOut}
-                           invalid={ this.state.interacted[inputName] && !!errors[inputName] }
+                    <Input
+                        type="select" name={inputName} defaultValue={''}
+                        onChange={::this.handleChangeInput}
+                        onBlur={::this.handleFocusOut}
+                        invalid={ this.state.interacted[inputName] && !!errors[inputName] }
                     >
                         <option disabled value="">{placeHolder}</option>
                         {optionsTpl}
                     </Input>
-                    { this.state.interacted[inputName] ? CreateOrderForm.formateFormErrorFeedback(inputName, errors) : "" }
+                    { this.state.interacted[inputName] ? CreateOrderForm.formateFormErrorFeedback(inputName, errors) : '' }
                 </Col>
             );
-        }; 
+        };
 
         return (
-            <Form id={id} className='create-order'>
+            <Form id={id} className={'create-order'}>
                 <Row className="main-form">
                     <Col>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Type</Label></Col>
+                                <Col xs={{ size: 4 }}><Label className={'form-text label float-right'}>Type</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="select" name="type"
-                                           onChange={ ::this.handleChangeInput }
-                                           onBlur={ ::this.handleFocusOut }>
+                                    <Input
+                                        type="select" name="type"
+                                        onChange={ ::this.handleChangeInput }
+                                        onBlur={ ::this.handleFocusOut }
+                                    >
                                         <option value="buy" >Buy</option>
                                         <option value="sell">Sell</option>
                                     </Input>
@@ -169,69 +172,74 @@ export default class CreateOrderForm extends Component{
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Currency</Label></Col>
-                                {renderSelect(this.props.currencies, "currency", "Select currency")}
+                                <Col xs={{ size: 4 }}><Label className={'form-text label float-right'}>Currency</Label></Col>
+                                {renderSelect(this.props.currencies, 'currency', 'Select currency')}
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Collection</Label></Col>
-                                {renderSelect(this.props.collections, "categoryCollection", "Select grain collection")}
+                                <Col xs={{ size: 4 }}><Label className="form-text label float-right">Collection</Label></Col>
+                                {renderSelect(this.props.collections, 'categoryCollection', 'Select grain collection')}
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Price</Label></Col>
+                                <Col xs={{ size: 4 }}><Label className="form-text label float-right">Price</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <Input type="text" name="price" disabled={offerOnly}
-                                           onChange={ ::this.handleChangeInput }
-                                           onBlur={ ::this.handleFocusOut }
-                                           invalid={ this.state.interacted.price && !!errors.price }
+                                    <Input
+                                        type="text" name="price" disabled={offerOnly}
+                                        onChange={ ::this.handleChangeInput }
+                                        onBlur={ ::this.handleFocusOut }
+                                        invalid={ this.state.interacted.price && !!errors.price }
                                     />
-                                    { this.state.interacted.price ? CreateOrderForm.formateFormErrorFeedback("price", errors) : "" }
+                                    { this.state.interacted.price ? CreateOrderForm.formateFormErrorFeedback('price', errors) : '' }
                                 </Col>
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><div className='form-text float-right'>Price - "Offer Only"</div></Col>
+                                <Col xs={{ size: 4 }}><div className="form-text float-right">Price - "Offer Only"</div></Col>
                                 <Col xs={{ size: 8 }}>
-                                    <CustomInput id="offerOnly" type="checkbox" className="cm-hidden-text checkbox" inline bsSize="lg" label=""
-                                                 name="offerOnly"
-                                                 onChange={::this.handleChangeCheckOfferOnly}/>
+                                    <CustomInput
+                                        id="offerOnly" type="checkbox" className="cm-hidden-text checkbox" inline bsSize="lg" label=""
+                                        name="offerOnly"
+                                        onChange={::this.handleChangeCheckOfferOnly}/>
                                 </Col>
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Quantity</Label></Col>
+                                <Col xs={{ size: 4 }}><Label className="form-text label float-right">Quantity</Label></Col>
                                 <Col xs={{ size: 8 }}>
                                     <Input text="select" name="quantity"
-                                           onChange={ ::this.handleChangeInput }
-                                           onBlur={ ::this.handleFocusOut }
-                                           invalid={ this.state.interacted.quantity && !!errors.quantity }
+                                        onChange={ ::this.handleChangeInput }
+                                        onBlur={ ::this.handleFocusOut }
+                                        invalid={ this.state.interacted.quantity && !!errors.quantity }
                                     />
-                                    { this.state.interacted.quantity ? CreateOrderForm.formateFormErrorFeedback("quantity", errors) : "" }
+                                    { this.state.interacted.quantity ? CreateOrderForm.formateFormErrorFeedback('quantity', errors) : '' }
                                 </Col>
                             </Row>
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col xs={{ size: 4 }}><Label className='form-text label float-right'>Order Total</Label></Col>
+                                <Col xs={{ size: 4 }}><Label className="form-text label float-right">Order Total</Label></Col>
                                 <Col xs={{ size: 8 }}>
-                                    {offerOnly ? "" : totalPrice}
+                                    {offerOnly ? '' : totalPrice}
                                 </Col>
                             </Row>
                         </FormGroup>
                     </Col>
                 </Row>
 
-                <Row className='confirms'>
+                <Row className="confirms">
                     <Col>
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. Standard Contract Terms.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput onChange={::this.handleChangeCheck} name="checkTermsAgreement" id="checkTermsAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
+                                <CustomInput
+                                    onChange={::this.handleChangeCheck} name="checkTermsAgreement" id="checkTermsAgreement"
+                                    type="checkbox" className="cm-hidden-text" inline bsSize="lg" label=""
+                                />
                             </Col>
                         </Row>
                         <Row className="">
@@ -241,24 +249,33 @@ export default class CreateOrderForm extends Component{
                                 </div>
                             </Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput onChange={::this.handleChangeCheck} name="checkHaveLegalAuthority" id="checkHaveLegalAuthority" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
+                                <CustomInput
+                                    onChange={::this.handleChangeCheck} name="checkHaveLegalAuthority" id="checkHaveLegalAuthority"
+                                    type="checkbox" className="cm-hidden-text" inline bsSize="lg" label=""
+                                />
                             </Col>
                         </Row>
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to comply with XYZ Inc. grain inventory or Funds/Credit Verification Procedure.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput onChange={::this.handleChangeCheck} name="checkAgreeVerification" id="checkAgreeVerification" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
+                                <CustomInput
+                                    onChange={::this.handleChangeCheck} name="checkAgreeVerification" id="checkAgreeVerification"
+                                    type="checkbox" className="cm-hidden-text" inline bsSize="lg" label=""
+                                />
                             </Col>
                         </Row>
                         <Row className="">
                             <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. KYC Policy, and will satisfy all KYC requirements.</div></Col>
                             <Col xs={{ size: 3 }} >
-                                <CustomInput onChange={::this.handleChangeCheck} name="checkPolicyAgreement" id="checkPolicyAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
+                                <CustomInput
+                                    onChange={::this.handleChangeCheck} name="checkPolicyAgreement" id="checkPolicyAgreement"
+                                    type="checkbox" className="cm-hidden-text" inline bsSize="lg" label=""
+                                />
                             </Col>
                         </Row>
                     </Col>
                 </Row>
-                <Button  onClick={::this.handleSubmit}  disabled={!checksPassed} color={checksPassed ? "success" : "secondary"}>Submit</Button>
+                <Button onClick={::this.handleSubmit} disabled={!checksPassed} color={checksPassed ? 'success' : 'secondary'}>Submit</Button>
             </Form>
         );
     }
@@ -274,47 +291,48 @@ CreateOrderForm.formateFormErrorFeedback = (field, errors = []) => {
     if (errors && errors[field] && errors[field][0]) {
         return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
     }
+    return '';
 };
 
 CreateOrderForm.rules = () => {
     return {
         _type: [
             {
-                rule: value => validator.isByteLength(value, { min: 1 }),
-                message: "Select type"
+                rule: (value) => validator.isByteLength(value, { min: 1 }),
+                message: 'Select type'
             }
         ],
         currency: [
             {
-                rule: value => validator.isByteLength(value, { min: 1 }),
-                message: "Select currency"
+                rule: (value) => validator.isByteLength(value, { min: 1 }),
+                message: 'Select currency'
             }
         ],
         categoryCollection: [
             {
-                rule: value => validator.isByteLength(value, { min: 1 }),
-                message: "Select collection"
+                rule: (value) => validator.isByteLength(value, { min: 1 }),
+                message: 'Select collection'
             }
         ],
         price: [
             {
-                rule: value => validator.isByteLength(value, { min: 1 }),
-                message: "Price is required"
+                rule: (value) => validator.isByteLength(value, { min: 1 }),
+                message: 'Price is required'
             },
             {
-                rule: value => validator.isDecimal(value, { min: 1 }),
-                message: "Price must be a decimal"
+                rule: (value) => validator.isDecimal(value, { min: 1 }),
+                message: 'Price must be a decimal'
             }
         ],
         quantity: [
             {
-                rule: value => validator.isByteLength(value, { min: 1 }),
-                message: "Quantity is required"
+                rule: (value) => validator.isByteLength(value, { min: 1 }),
+                message: 'Quantity is required'
             },
             {
-                rule: value => validator.isInt(value, { min: 1 }),
-                message: "Quantity must be an integer and must be grater or equal 1"
+                rule: (value) => validator.isInt(value, { min: 1 }),
+                message: 'Quantity must be an integer and must be grater or equal 1'
             }
         ]
-    }
+    };
 };
