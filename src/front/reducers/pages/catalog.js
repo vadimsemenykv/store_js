@@ -6,6 +6,7 @@ import extraLinks from '../extraLinks';
 import currencies from '../currencies';
 import collections from '../collections';
 import ordersList from '../ordersList';
+import order from '../order';
 
 export default combineReducers({
     header,
@@ -14,5 +15,6 @@ export default combineReducers({
     extraLinks,
     collections,
     currencies,
-    ordersList
+    ordersList,
+    order
 });

@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import * as UserActions from '../../actions/UserActions';
 
 /** Components */
-import {Card, CardBody, CardHeader, CardTitle, Col, Container, Row} from 'reactstrap';
+import {Button, Card, CardBody, CardHeader, Col, Container, CustomInput, Label, Row} from 'reactstrap';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SideMenu from '../../components/SideMenu';
@@ -14,9 +14,7 @@ import SideMenu from '../../components/SideMenu';
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Common.sass';
-import '../../styles/CatalogCreate.sass';
-
-import CreateOrderForm from '../../components/catalog/CreateOrderForm';
+import PropTypes from "prop-types";
 
 class CatalogContractsCreate extends Component {
     constructor(props) {
@@ -25,12 +23,10 @@ class CatalogContractsCreate extends Component {
         this.state = {
             isOpen: false
         };
-    };
+    }
 
     render() {
-        const { header, footer, user} = this.props;
-        const { submitUrl } = this.props.extraLinks;
-        const { changeInfo } = this.props.userActions;
+        const { header, footer, user, order } = this.props;
 
         return (
             <Row className="gray-container">
@@ -40,31 +36,111 @@ class CatalogContractsCreate extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className='content-title'>Create New Buy / Sell Order</h3>
+                                <h4 className="content-title">Contract Form - Buy / Sell</h4>
                                 <Card>
-                                    <CardHeader>Create New Order</CardHeader>
+                                    <CardHeader>Contract Details</CardHeader>
                                     <CardBody>
-                                        <CardTitle tag='h6'>Please follow our instructions to Create a New Market Order:</CardTitle>
                                         <Row>
-                                            <Col className="text-secondary form-description pad-free">
-                                                Using this form you are able to create a New Buy Sell Order,
-                                                that will be posted to the OTC Order Book.
-                                                Your Order will be filled by a Client agreeing to your price,
-                                                or through our Offer process, where Clients have an opportunity to send you an Offer,
-                                                at which point in turn,
-                                                you would to accept or decline the offer.
-                                                Acceptance of the Offer results in a binding Contract between the Merchant and the Client.
-                                                A binding Contract also is created when a Client accepts your price outright, as is.
-                                                When a Contract is created, the Order is removed from the Order Book.
-                                            </Col>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Order ID:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order._id.toString()}</Col>
                                         </Row>
                                         <Row>
-                                            <Col className="pad-free">
-                                                <CreateOrderForm
-                                                    id="create-order"
-                                                    currencies={this.props.currencies}
-                                                    collections={this.props.collections}
-                                                />
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Merchant User ID:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order.owner.toString()}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Client User ID:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{user._id.toString()}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Type:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order._type === 'buy' ? 'Buy' : 'Sell'}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Currency:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order.currency.title}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Collection:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order.categoryCollection.title}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Price:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>${order.price}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Quantity:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{order.quantity}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Order total:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>${order.totalPrice}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                I, Client ID: <span className={'font-weight-bold'}>{user._id.toString()}</span>, agree to enter,
+                                                execute and fully settle the Order ID: <span className={'font-weight-bold'}>{order._id.toString()}</span>,
+                                                according to Price and Quantity as specified above by the Merchant ID: <span className={'font-weight-bold'}>{order.owner.toString()}</span>,
+                                                based on the XYZ Inc. Standard Contract Terms.
+                                            </Col>
+                                        </Row>
+                                        <Row className={'links'}>
+                                            <Col>
+                                                <Row>
+                                                    <Col><a href={'#'} className={'info-link'}>Please read our Standard Contract Terms</a></Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col><a href={'#'} className={'info-link'}>Please read our Inventory and Credit Verification Policy</a></Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col><a href={'#'} className={'info-link'}>Please read our KYC Policy</a></Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                        <Row className={'confirms'}>
+                                            <Col>
+                                                <Row className="">
+                                                    <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. Standard Contract Terms.</div></Col>
+                                                    <Col xs={{ size: 3 }} >
+                                                        <CustomInput name="checkTermsAgreement" id="checkTermsAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />
+                                                    </Col>
+                                                </Row>
+                                                {/* <Row className="">*/}
+                                                {/* <Col xs={{ size: 9 }} >*/}
+                                                {/* <div className="text-secondary success" >*/}
+                                                {/* I have the legal authority to authorize payment of funds, and or to authorize or delivery of grains per contract above.*/}
+                                                {/* </div>*/}
+                                                {/* </Col>*/}
+                                                {/* <Col xs={{ size: 3 }} >*/}
+                                                {/* <CustomInput onChange={::this.handleChangeCheck} name="checkHaveLegalAuthority" id="checkHaveLegalAuthority" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />*/}
+                                                {/* </Col>*/}
+                                                {/* </Row>*/}
+                                                {/* <Row className="">*/}
+                                                {/* <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to comply with XYZ Inc. grain inventory or Funds/Credit Verification Procedure.</div></Col>*/}
+                                                {/* <Col xs={{ size: 3 }} >*/}
+                                                {/* <CustomInput onChange={::this.handleChangeCheck} name="checkAgreeVerification" id="checkAgreeVerification" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />*/}
+                                                {/* </Col>*/}
+                                                {/* </Row>*/}
+                                                {/* <Row className="">*/}
+                                                {/* <Col xs={{ size: 9 }} ><div className="text-secondary success" >I agree to the XYZ Inc. KYC Policy, and will satisfy all KYC requirements.</div></Col>*/}
+                                                {/* <Col xs={{ size: 3 }} >*/}
+                                                {/* <CustomInput onChange={::this.handleChangeCheck} name="checkPolicyAgreement" id="checkPolicyAgreement" type="checkbox" className="cm-hidden-text" inline bsSize="lg" label="" />*/}
+                                                {/* </Col>*/}
+                                                {/* </Row>*/}
+                                            </Col>
+                                        </Row>
+                                        <Row className={'payment-description'}>
+                                            <Col>
+                                                <div>
+                                                    As evidence of my legal binding, unconditional commitment to executing the contract above,
+                                                    I agree to pay a non-refundable transaction fee of $50.00 CAD.
+                                                </div>
+                                                <div>
+                                                    This payment serves as my legal signature and evidence to entering this contract.
+                                                </div>
+                                                <div>
+                                                    <Button className={'float-right'} color={'success'}>Create Contract</Button>
+                                                </div>
                                             </Col>
                                         </Row>
                                     </CardBody>
@@ -86,9 +162,17 @@ function mapStateToProps(state) {
         user: state.user,
         extraLinks: state.extraLinks,
         currencies: state.currencies,
-        collections: state.collections
+        collections: state.collections,
+        order: state.order
     };
 }
+
+CatalogContractsCreate.propTypes = {
+    header: PropTypes.any.isRequired,
+    footer: PropTypes.any.isRequired,
+    user: PropTypes.object.isRequired,
+    order: PropTypes.object.isRequired
+};
 
 function mapDispatchToProps(dispatch) {
     return {

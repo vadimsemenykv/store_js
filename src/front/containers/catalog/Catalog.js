@@ -48,7 +48,7 @@ class Catalog extends Component {
                                 lg={{ size: '8', offset: 1 }} md={{ size: '12' }}
                                 className="cm-bordered cm-content content"
                             >
-                                <h3 className={'content-title'}>OTC Order Book</h3>
+                                <h4 className={'content-title'}>OTC Order Book</h4>
                                 <Card>
                                     <CardHeader>Current OTC Market Contracts</CardHeader>
                                     <CardBody>

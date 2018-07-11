@@ -19,7 +19,7 @@ import CatalogRouter from './routes/Catalog';
 import PageRouter from './routes/Page';
 
 import ApiUserRouter from './routes/api/User';
-import ApiOrderRouter from './routes/api/Order';
+import ApiOrderRouter from './routes/api/Catalog';
 
 import Mongoose from 'mongoose';
 import DB from "./db";

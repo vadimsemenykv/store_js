@@ -40,7 +40,7 @@ class CatalogOrdersCreate extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className='content-title'>Create New Buy / Sell Order</h3>
+                                <h4 className='content-title'>Create New Buy / Sell Order</h4>
                                 <Card>
                                     <CardHeader>Create New Order</CardHeader>
                                     <CardBody>

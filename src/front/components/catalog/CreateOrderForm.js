@@ -73,7 +73,7 @@ export default class CreateOrderForm extends Component{
             return false;
         }
 
-        const url = "/api/order";
+        const url = "/api/catalog/orders";
         fetch(url, {
             method: 'POST',
             credentials: "same-origin",

@@ -111,7 +111,8 @@ CatalogController.createContract = async (req, res) => {
         user: req.user,
         collections: await getCollections(),
         currencies: await getCurrencies(),
-        extraLinks: { submitUrl: urlFor('api:user') }
+        extraLinks: { submitUrl: urlFor('api:user') },
+        order: await OrderDao.findById(req.params.orderId).populate('categoryCollection').populate('currency')
     };
 
     const store = configureCatalogStore(preloadedState);

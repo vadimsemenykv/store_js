@@ -40,7 +40,7 @@ class MyAccount extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className="content-title">My account</h3>
+                                <h4 className="content-title">My account</h4>
                                 <Card>
                                     <CardHeader>Website Access</CardHeader>
                                     <CardBody>

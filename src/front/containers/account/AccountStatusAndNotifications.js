@@ -56,7 +56,7 @@ class AccountStatusAndNotifications extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h3 className="content-title">Account Status</h3>
+                                <h4 className="content-title">Account Status</h4>
                                 <Card>
                                     <CardHeader> Welcome, </CardHeader>
                                     <CardBody>

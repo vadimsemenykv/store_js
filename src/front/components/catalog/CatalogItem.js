@@ -54,7 +54,7 @@ export default class CatalogItem extends React.Component {
                 <Col>
                     <Row className="item-cell-row">
                         <Col className="item-id">
-                            Order# { id }
+                            Order ID: { id }
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
