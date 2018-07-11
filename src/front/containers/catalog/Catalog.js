@@ -78,7 +78,7 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listOrders: state.listOrders,
+        listOrders: state.listOrders.all,
         extraLinks: state.extraLinks
     };
 }

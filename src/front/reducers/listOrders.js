@@ -1,7 +1,8 @@
 const initialState = {
     buy: [],
     sell: [],
-    deactivated: []
+    deactivated: [],
+    all: []
 };
 
 export default function listOrders(state = initialState) {
