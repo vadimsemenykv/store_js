@@ -3,6 +3,7 @@ import validator from 'validator';
 import OrderDao from '../../dao/Order';
 import CurrencyDao from '../../dao/Currency';
 import CollectionDao from '../../dao/Collection';
+import ContractDao from "../../dao/Contract";
 
 export default class CatalogController {}
 
@@ -58,8 +59,54 @@ CatalogController.create = async (req, res) => {
     res.status(200).send({success: true});
 };
 
-CatalogController.createContract = () => {
+CatalogController.reserveOrder = async (req, res) => {
+    //TODO add check for already reserved orders by this user, if count > 0, then show to user popup
+    //TODO add check for order not in contract
+    let now = new Date();
+    now.setMinutes(now.getMinutes() + 10);
+
+    OrderDao.findOneAndUpdate(
+        {
+            $and: [
+                {
+                    _id: req.body.orderId
+                },
+                {
+                    $or: [
+                        {availableStatus: 'available'},
+                        {'reserved.until': {$lte: new Date()}}
+                    ]
+                }
+            ]
+        },
+        {
+            availableStatus: 'transaction_in_progress',
+            reserved: {
+                until: now,
+                by: req.user._id
+            }
+        }
+    ).then((order) => {
+        if (!order) {
+            res.status(409).send({success: false, error: 'already_reserved'});
+        }
+        res.status(200).send({success: true});
+    });
+};
+
+CatalogController.createContract = async (req, res) => {
+    //TODO check is order reserved by this user, if not - show popup
+    const order = await OrderDao.findById(req.body.orderId);
+    ContractDao.create({
+        client: req.user._id,
+        merchant: order.owner,
+        order: order._id
+    });
+    res.status(200).send({success: true});
 };
 
 CatalogController.createOffer = () => {
+};
+
+CatalogController.acceptOffer = () => {
 };

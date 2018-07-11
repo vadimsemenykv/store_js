@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/CatalogItem.sass';
 
-export default class CatalogItem extends React.Component {
+export default class OrderItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -120,6 +120,6 @@ export default class CatalogItem extends React.Component {
     }
 }
 
-CatalogItem.propTypes = {
+OrderItem.propTypes = {
     order: PropTypes.object.isRequired
 };

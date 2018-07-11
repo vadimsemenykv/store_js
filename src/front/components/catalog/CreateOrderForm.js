@@ -73,7 +73,7 @@ export default class CreateOrderForm extends Component{
             return false;
         }
 
-        const url = "/api/catalog/orders";
+        const url = "/api/catalog/orders/create";
         fetch(url, {
             method: 'POST',
             credentials: "same-origin",
@@ -86,8 +86,7 @@ export default class CreateOrderForm extends Component{
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
-                    //TODO redirect to orders
-                    this.setState({isEditMode: false});
+                    window.location.replace('/my/orders');
                 } else {
                     this.setState({serverValidationError: response.validationErrors});
                 }

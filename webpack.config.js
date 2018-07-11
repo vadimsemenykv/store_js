@@ -1,16 +1,19 @@
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     devtool: 'inline-source-map',
-    mode: "development",
+    mode: 'development',
     entry: {
         landing: './src/front/landing.js',
         login: './src/front/login.js',
         registration: './src/front/registration.js',
+        //
         'account-status-and-notifications': './src/front/account-status-and-notifications.js',
         'my-account': './src/front/my-account.js',
+        'my-orders': './src/front/my-orders.js',
+        //
         catalog: './src/front/catalog.js',
         'catalog-orders-create': './src/front/catalog-orders-create.js',
         'catalog-contracts-create': './src/front/catalog-contracts-create.js'
@@ -21,7 +24,7 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[name].css",
+            filename: '[name].css',
         })
     ],
     module: {
@@ -39,8 +42,8 @@ module.exports = {
                 test: /\.(css|sass)$/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    "sass-loader"
+                    'css-loader',
+                    'sass-loader'
                 ]
             }
             // {

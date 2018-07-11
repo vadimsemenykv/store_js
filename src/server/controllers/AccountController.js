@@ -18,11 +18,13 @@ import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
 import AccountStatusAndNotifications from '../../front/containers/account/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/account/MyAccount';
+import MyOrders from '../../front/containers/account/MyOrders';
 import { configureAccountStore } from "../../front/store/configureStore";
+import OrderDao from "../dao/Order";
 
 export default class AccountController {}
 
-AccountController.statusAndNotifications = (req, res) => {
+AccountController.MyStatusAndNotifications = (req, res) => {
     const linksState = getHeaderLinks();
 
     let preloadedState = {
@@ -57,7 +59,7 @@ AccountController.statusAndNotifications = (req, res) => {
     );
 };
 
-AccountController.myAccount  = (req, res) => {
+AccountController.myAccount = (req, res) => {
     if (!req.user) {
         res.redirect(urlFor('main'));
     }
@@ -97,114 +99,42 @@ AccountController.myAccount  = (req, res) => {
     );
 };
 
+AccountController.myOrders = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        listOrders: {
+            buy: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'buy'}).populate('categoryCollection').populate('currency'),
+            sell: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'sell'}).populate('categoryCollection').populate('currency'),
+            deactivated: await OrderDao.find({owner: req.user._id, status: 'deactivated'}).populate('categoryCollection').populate('currency')
+        }
+    };
 
+    const store = configureAccountStore(preloadedState);
 
-// };
-//
-// AuthController.loginSubmit = (req, res) => {
-//     UserDao.findOne({ email: req.body.email })
-//         .catch(err => console.log(err))
-//         .then(user => {
-//             if (!user || !passwordHash.verify(req.body.password, user.password)) {
-//                 res.status(200).send({success: false, validationErrors: 'Incorrect username or password.' });
-//             }
-//
-//             req.session.userId = user._id;
-//             res.status(200).send({success: true, redirect: urlFor('main')});
-//         })
-// };
-//
-// AuthController.registration = (req, res) => {
-//     const linksState = getHeaderLinks();
-//
-//     let preloadedState = {
-//         header: linksState.header,
-//         footer: linksState.footer,
-//         extraLinks: { loginUrl: getLoginUrl(), registrationUrl: getRegistrationUrl() }
-//     };
-//
-//     const store = configureRegistrationStore(preloadedState);
-//
-//     const html = renderToString(<Provider store={store} ><Registration /></Provider>);
-//
-//     const finalState = store.getState();
-//
-//     res.status(200).send(
-//         renderFullPage(
-//             {
-//                 title: 'Registration',
-//                 html: html,
-//                 cssTop: [
-//                     '<link rel="stylesheet" href="/assets/registration.css"/>'
-//                 ],
-//                 jsBottom: [
-//                     '<script src="/assets/registration.js"></script>'
-//                 ]
-//             },
-//             finalState
-//         )
-//     );
-// };
-//
-// AuthController.registrationSubmit = (req, res) => {
-//     // validate input
-//     const errors = RegistrationFormValidator.run({
-//         firstName: req.body.firstName,
-//         email: req.body.email,
-//         password: req.body.password,
-//     });
-//
-//     if (Object.getOwnPropertyNames(errors).length > 0) {
-//         res.status(200).send({success: false, validationErrors: errors});
-//         return;
-//     }
-//
-//     UserDao.findOne({email: req.body.email}, function(err, results) {
-//         if (err){
-//             // console.log(err);
-//             res.status(500).send({
-//                 success: false,
-//                 error: err
-//             });
-//             return;
-//         }
-//
-//         if (results) {
-//             errors.email = ['User with such email already registered'];
-//             res.status(200).send({success: false, validationErrors: errors});
-//             return;
-//         }
-//
-//         UserDao.create(
-//             {
-//                 firstName: req.body.firstName,
-//                 email: req.body.email,
-//                 password: passwordHash.generate(req.body.password, {algorithm:'md5'})
-//
-//             }, function (err, small) {
-//                 if (err) {
-//                     res.status(500).send({
-//                         success: false,
-//                         error: err
-//                     });
-//                     return console.log(err);
-//                 }
-//                 req.session.userId = small._id;
-//                 res.status(200).send({success: true, id: small._id, redirect: urlFor('main')});
-//             }
-//         );
-//     });
-// };
-//
-// AuthController.logout = (req, res, next) => {
-//     if (req.session) {
-//         // delete session object
-//         req.session.destroy(function(err) {
-//             if(err) {
-//                 return next(err);
-//             } else {
-//                 return res.redirect('/');
-//             }
-//         });
-//     }
-// };
+    const html = renderToString(
+        <Provider store={store} >
+            <MyOrders />
+        </Provider>
+    );
+
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'My Orders',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/my-orders.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/my-orders.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};

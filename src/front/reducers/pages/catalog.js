@@ -5,7 +5,7 @@ import user from '../user';
 import extraLinks from '../extraLinks';
 import currencies from '../currencies';
 import collections from '../collections';
-import ordersList from '../ordersList';
+import listOrders from '../listOrders';
 import order from '../order';
 
 export default combineReducers({
@@ -15,6 +15,6 @@ export default combineReducers({
     extraLinks,
     collections,
     currencies,
-    ordersList,
+    listOrders,
     order
 });

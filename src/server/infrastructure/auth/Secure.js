@@ -1,6 +1,7 @@
 import RouteParser from 'route-parser';
 import {urlFor} from "express-named-router-url-generator";
 
+//TODO add links
 const requiresLogin = [
     // '/account/:id/status-and-notifications'
 ];

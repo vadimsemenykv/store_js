@@ -25,6 +25,30 @@ class CatalogContractsCreate extends Component {
         };
     }
 
+    handleSubmit() {
+        const url = "/api/catalog/contracts/create";
+        fetch(url, {
+            method: 'POST',
+            credentials: "same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId: this.props.order._id
+            })
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response.success) {
+                    window.location.replace('/my/contracts');
+                } else {
+                    console.log(response.error)
+                }
+            })
+            .catch((error) => console.log(error));
+    }
+
     render() {
         const { header, footer, user, order } = this.props;
 
@@ -139,7 +163,8 @@ class CatalogContractsCreate extends Component {
                                                     This payment serves as my legal signature and evidence to entering this contract.
                                                 </div>
                                                 <div>
-                                                    <Button className={'float-right'} color={'success'}>Create Contract</Button>
+                                                    <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Create Contract</Button>
+                                                    {/*<Button className={'float-right'} color={'warning'}>Cancel</Button>*/}
                                                 </div>
                                             </Col>
                                         </Row>

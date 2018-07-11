@@ -1,14 +1,14 @@
 /** Common */
 import React, {Component} from 'react';
-import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import * as UserActions from '../../actions/UserActions';
+import PropTypes from 'prop-types';
 
 /** Components */
 import {Card, CardBody, CardHeader, CardTitle, Col, Container, Row} from 'reactstrap';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SideMenu from '../../components/SideMenu';
+import CreateOrderForm from '../../components/catalog/CreateOrderForm';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -16,7 +16,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Common.sass';
 import '../../styles/CatalogCreate.sass';
 
-import CreateOrderForm from '../../components/catalog/CreateOrderForm';
 
 class CatalogOrdersCreate extends Component {
     constructor(props) {
@@ -25,12 +24,10 @@ class CatalogOrdersCreate extends Component {
         this.state = {
             isOpen: false
         };
-    };
+    }
 
     render() {
-        const { header, footer, user} = this.props;
-        const { submitUrl } = this.props.extraLinks;
-        const { changeInfo } = this.props.userActions;
+        const { header, footer, user, currencies, collections } = this.props;
 
         return (
             <Row className="gray-container">
@@ -40,11 +37,11 @@ class CatalogOrdersCreate extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h4 className='content-title'>Create New Buy / Sell Order</h4>
+                                <h4 className="content-title">Create New Buy / Sell Order</h4>
                                 <Card>
                                     <CardHeader>Create New Order</CardHeader>
                                     <CardBody>
-                                        <CardTitle tag='h6'>Please follow our instructions to Create a New Market Order:</CardTitle>
+                                        <CardTitle tag="h6">Please follow our instructions to Create a New Market Order:</CardTitle>
                                         <Row>
                                             <Col className="text-secondary form-description pad-free">
                                                 Using this form you are able to create a New Buy Sell Order,
@@ -62,8 +59,8 @@ class CatalogOrdersCreate extends Component {
                                             <Col className="pad-free">
                                                 <CreateOrderForm
                                                     id="create-order"
-                                                    currencies={this.props.currencies}
-                                                    collections={this.props.collections}
+                                                    currencies={currencies}
+                                                    collections={collections}
                                                 />
                                             </Col>
                                         </Row>
@@ -79,6 +76,14 @@ class CatalogOrdersCreate extends Component {
     }
 }
 
+CatalogOrdersCreate.propTypes = {
+    header: PropTypes.any.isRequired,
+    footer: PropTypes.any.isRequired,
+    user: PropTypes.object.isRequired,
+    currencies: PropTypes.array.isRequired,
+    collections: PropTypes.array.isRequired
+};
+
 function mapStateToProps(state) {
     return {
         header: state.header,
@@ -90,10 +95,8 @@ function mapStateToProps(state) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        userActions: bindActionCreators(UserActions, dispatch)
-    };
+function mapDispatchToProps() {
+    return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatalogOrdersCreate);

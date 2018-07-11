@@ -21,9 +21,8 @@ import CatalogItem from '../../components/catalog/CatalogItem';
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Common.sass';
-import '../../styles/MyAccount.sass';
 
-class Catalog extends Component {
+class MyOrders extends Component {
     constructor(props) {
         super(props);
 
@@ -34,8 +33,9 @@ class Catalog extends Component {
 
     render() {
         const { header, footer, user, listOrders } = this.props;
-        const ordersTpl = listOrders.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
-        // const ordersTpl = "";
+        const buyOrdersTpl = listOrders.buy.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
+        const sellOrdersTpl = listOrders.sell.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
+        const deactivatedOrdersTpl = listOrders.deactivated.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
 
         return (
             <Row className="gray-container">
@@ -48,11 +48,23 @@ class Catalog extends Component {
                                 lg={{ size: '8', offset: 1 }} md={{ size: '12' }}
                                 className="cm-bordered cm-content content"
                             >
-                                <h4 className={'content-title'}>OTC Order Book</h4>
+                                <h4 className={'content-title'}>My Orders</h4>
                                 <Card>
-                                    <CardHeader>Current OTC Market Contracts</CardHeader>
+                                    <CardHeader>Buy Orders</CardHeader>
                                     <CardBody>
-                                        {ordersTpl}
+                                        {buyOrdersTpl}
+                                    </CardBody>
+                                </Card>
+                                <Card>
+                                    <CardHeader>Sell Orders</CardHeader>
+                                    <CardBody>
+                                        {sellOrdersTpl}
+                                    </CardBody>
+                                </Card>
+                                <Card>
+                                    <CardHeader>Deactivated Orders</CardHeader>
+                                    <CardBody>
+                                        {deactivatedOrdersTpl}
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -65,12 +77,11 @@ class Catalog extends Component {
     }
 }
 
-Catalog.propTypes = {
+MyOrders.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    listOrders: PropTypes.array.isRequired,
-    extraLinks: PropTypes.any
+    listOrders: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -78,8 +89,7 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listOrders: state.listOrders,
-        extraLinks: state.extraLinks
+        listOrders: state.listOrders
     };
 }
 
@@ -87,5 +97,4 @@ function mapDispatchToProps() {
     return {};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Catalog)
-
+export default connect(mapStateToProps, mapDispatchToProps)(MyOrders);

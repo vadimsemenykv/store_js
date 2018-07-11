@@ -108,12 +108,12 @@ UserController.change = (req, res) => {
     }
 
     UserDao.findOneAndUpdate({ _id: req.user._id }, data)
-        .catch(err => {
+        .catch((err) => {
             res.status(500).send({
                 success: false,
                 error: err.toString()
             });
-        }).then(user => {
+        }).then((user) => {
             if (!user) {
                 res.status(400).send({
                     success: false,

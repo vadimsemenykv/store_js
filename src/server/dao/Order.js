@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 const Order = new mongoose.Schema({
     _type: String,
+    status: {
+        type: String,
+        default: 'active'
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -24,6 +28,13 @@ const Order = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    reserved: {
+        until: Date,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
     },
     availableStatus: {
         type: String,
