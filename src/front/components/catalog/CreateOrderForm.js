@@ -223,7 +223,7 @@ export default class CreateOrderForm extends Component {
                         <FormGroup>
                             <Row>
                                 <Col xs={{ size: 4 }}><Label className="form-text label float-right">Order Total</Label></Col>
-                                <Col xs={{ size: 8 }}>
+                                <Col xs={{ size: 8 }} className={'total-value'}>
                                     {offerOnly ? '' : totalPrice}
                                 </Col>
                             </Row>

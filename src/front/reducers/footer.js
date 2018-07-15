@@ -3,5 +3,5 @@ const initialState = {
 };
 
 export default function footer(state = initialState) {
-    return state
+    return state;
 }
