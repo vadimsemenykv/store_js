@@ -109,25 +109,17 @@ AccountController.myOrders = async (req, res) => {
         header: linksState.header,
         footer: linksState.footer,
         user: req.user,
-        // listOrders: {
-        //     buy: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'buy'}).populate('categoryCollection').populate('currency'),
-        //     sell: await OrderDao.find({owner: req.user._id, status: 'active', _type: 'sell'}).populate('categoryCollection').populate('currency'),
-        //     deactivated: await OrderDao.find({owner: req.user._id, status: 'deactivated'}).populate('categoryCollection').populate('currency')
-        // }
-        listOrders: [...(await buyOrders), ...(await sellOrders), ...(await deactivatedOrders)]
+        listOrders: {
+            list: [...(await buyOrders), ...(await sellOrders), ...(await deactivatedOrders)]
+        }
     };
 
-    // let orders = await () => {};
-
-
     const store = configureAccountStore(preloadedState);
-
     const html = renderToString(
         <Provider store={store} >
             <MyOrders />
         </Provider>
     );
-
     const finalState = store.getState();
 
     res.status(200).send(

@@ -13,6 +13,8 @@ import {
     DropdownToggle, Form, FormGroup, Input, Label, Popover, PopoverBody, PopoverHeader,
     Row
 } from 'reactstrap';
+import PreloaderIcon from 'react-preloader-icon';
+import Oval from 'react-preloader-icon/loaders/Oval';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -20,6 +22,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Common.sass';
 import '../../styles/CatalogItem.sass';
 import '../../styles/CreateOrderForm.sass';
+import '../../styles/account/OrderItem.sass';
 
 export default class OrderItem extends React.Component {
     constructor(props) {
@@ -56,31 +59,10 @@ export default class OrderItem extends React.Component {
     }
 
     changeOrderActivationStatus() {
-        fetch('/api/catalog/orders/change-status', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                order: {
-                    id: this.props.order._id,
-                    status: this.props.order.status === 'active' ? 'deactivated' : 'active'
-                }
-            })
-        })
-            .then((response) => response.json())
-            .then((response) => {
-                if (response.success) {
-                    // TODO add redux action
-                    window.location.reload();
-                } else {
-                    // TODO show popup
-                    console.log(response.error);
-                }
-            })
-            .catch((error) => console.log(error));
+        this.props.changeStatus({
+            id: this.props.order._id,
+            status: this.props.order.status === 'active' ? 'deactivated' : 'active'
+        });
     }
 
     handleChangeCheckOfferOnly() {
@@ -126,9 +108,25 @@ export default class OrderItem extends React.Component {
             return <Badge color="secondary" pill>Transaction in Progress</Badge>;
         };
 
+        let preloader = '';
+        if (order.requestLoading) {
+            preloader = (
+                <div className={'preloader-wrapper'}>
+                    <PreloaderIcon
+                        loader={Oval}
+                        size={60}
+                        strokeWidth={10}
+                        strokeColor="#28a745"
+                        duration={800}
+                    />
+                </div>
+            );
+        }
+
         return (
             <Row className="catalog-item">
                 <Col>
+                    {preloader}
                     <Row className="item-cell-row">
                         <Col className="item-id">
                             Order ID: { id }
@@ -248,5 +246,6 @@ export default class OrderItem extends React.Component {
 }
 
 OrderItem.propTypes = {
-    order: PropTypes.object.isRequired
+    order: PropTypes.object.isRequired,
+    changeStatus: PropTypes.func.isRequired
 };

@@ -1,7 +1,9 @@
 /** Common */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+import * as OrderActions from '../../actions/OrderActions';
 
 /** Components */
 import {
@@ -33,21 +35,23 @@ class MyOrders extends Component {
 
     render() {
         const { header, footer, user, listOrders } = this.props;
+        const { changeOrderStatus } = this.props.orderActions;
+
         const buyOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'active' && item._type === 'buy') {
-                return <OrderItem key={index} order={item}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
             }
             return '';
         });
         const sellOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'active' && item._type === 'sell') {
-                return <OrderItem key={index} order={item}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
             }
             return '';
         });
         const deactivatedOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'deactivated') {
-                return <OrderItem key={index} order={item}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
             }
             return '';
         });
@@ -96,7 +100,9 @@ MyOrders.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    listOrders: PropTypes.array.isRequired
+    listOrders: PropTypes.array.isRequired,
+    orderActions: PropTypes.any,
+    changedAt: PropTypes.string
 };
 
 function mapStateToProps(state) {
@@ -104,12 +110,15 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listOrders: state.listOrders
+        listOrders: state.listOrders.list,
+        changedAt: state.listOrders.changedAt
     };
 }
 
-function mapDispatchToProps() {
-    return {};
+function mapDispatchToProps(dispatch) {
+    return {
+        orderActions: bindActionCreators(OrderActions, dispatch)
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyOrders);

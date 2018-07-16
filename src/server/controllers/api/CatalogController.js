@@ -1,9 +1,9 @@
 /** Common */
 import validator from 'validator';
-import OrderDao from '../../dao/Order';
 import CurrencyDao from '../../dao/Currency';
 import CollectionDao from '../../dao/Collection';
-import ContractDao from "../../dao/Contract";
+import OrderDao from '../../dao/Order';
+import ContractDao from '../../dao/Contract';
 
 export default class CatalogController {}
 
@@ -60,17 +60,15 @@ CatalogController.create = async (req, res) => {
 };
 
 CatalogController.orderChangeStatus = async (req, res) => {
-    console.log(req.body.order.status);
-    console.log(['active', 'deactivated'].includes(req.body.order.status));
     if (!['active', 'deactivated'].includes(req.body.order.status)) {
-        res.status(400).send({success: false, error: 'inappropriate_status_value'});
+        res.status(400).send({success: false, errors: ['inappropriate_status_value']});
     } else {
         OrderDao.findOneAndUpdate(
             {_id: req.body.order.id, owner: req.user._id},
             {status: req.body.order.status}
         ).then((order) => {
             if (!order) {
-                res.status(404).send({success: false, error: 'failed_to_fetch_order'});
+                res.status(404).send({success: false, errors: ['failed_to_fetch_order']});
             } else {
                 res.status(200).send({success: true});
             }
