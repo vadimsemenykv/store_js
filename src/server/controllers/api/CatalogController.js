@@ -59,7 +59,7 @@ CatalogController.create = async (req, res) => {
     res.status(200).send({success: true});
 };
 
-CatalogController.orderChangeStatus = async (req, res) => {
+CatalogController.orderUpdateStatus = async (req, res) => {
     if (!['active', 'deactivated'].includes(req.body.order.status)) {
         res.status(400).send({success: false, errors: ['inappropriate_status_value']});
     } else {
@@ -70,11 +70,31 @@ CatalogController.orderChangeStatus = async (req, res) => {
             if (!order) {
                 res.status(404).send({success: false, errors: ['failed_to_fetch_order']});
             } else {
-                res.status(200).send({success: true});
+                order.status = req.body.order.status;
+                res.status(200).send({success: true, order: order});
             }
         });
     }
 };
+
+CatalogController.orderUpdate = async (req, res) => {
+    OrderDao.findOne(
+        {_id: req.body.order.id, owner: req.user._id},
+    ).then((order) => {
+        if (!order) {
+            res.status(404).send({success: false, errors: ['failed_to_fetch_order']});
+        } else {
+            let updatingData = req.body.order.data;
+            if (order.quantity !== parseInt(updatingData.quantity, 10)) {
+                updatingData.isVerified = false;
+            }
+            order.set(updatingData);
+            order.save();
+            res.status(200).send({success: true, order: order});
+        }
+    });
+};
+
 CatalogController.reserveOrder = async (req, res) => {
     //TODO add check for already reserved orders by this user, if count > 0, then show to user popup
     //TODO add check for order not in contract

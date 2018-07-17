@@ -35,23 +35,23 @@ class MyOrders extends Component {
 
     render() {
         const { header, footer, user, listOrders } = this.props;
-        const { changeOrderStatus } = this.props.orderActions;
+        const { changeOrderStatus, changeOrder } = this.props.orderActions;
 
         const buyOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'active' && item._type === 'buy') {
-                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus} changeOrder={changeOrder}/>;
             }
             return '';
         });
         const sellOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'active' && item._type === 'sell') {
-                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus} changeOrder={changeOrder}/>;
             }
             return '';
         });
         const deactivatedOrdersTpl = listOrders.map((item, index) => {
             if (item.status === 'deactivated') {
-                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus}/>;
+                return <OrderItem key={index} order={item} changeStatus={changeOrderStatus} changeOrder={changeOrder}/>;
             }
             return '';
         });

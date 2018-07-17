@@ -1,4 +1,4 @@
-import {CHANGE_ORDER_STATUS_REQUEST, CHANGE_ORDER_STATUS_SUCCESS} from '../constants/Order';
+import {CHANGE_ORDER_REQUEST, CHANGE_ORDER_SUCCESS, CHANGE_ORDER_STATUS_REQUEST, CHANGE_ORDER_STATUS_SUCCESS} from '../constants/Order';
 
 const initialState = {
     list: [],
@@ -19,7 +19,22 @@ export default function listOrders(state = initialState, action) {
             orderIndex = state.list.findIndex((order) => {
                 return action.payload.id === order._id.toString();
             });
-            state.list[orderIndex].status = action.payload.status;
+            state.list[orderIndex] = action.payload.order;
+            state.list[orderIndex].requestLoading = false;
+            return {...state, changedAt: (new Date()).toISOString()};
+
+        case CHANGE_ORDER_REQUEST:
+            orderIndex = state.list.findIndex((order) => {
+                return action.payload.id === order._id.toString();
+            });
+            state.list[orderIndex].requestLoading = true;
+            return {...state, changedAt: (new Date()).toISOString()};
+
+        case CHANGE_ORDER_SUCCESS:
+            orderIndex = state.list.findIndex((order) => {
+                return action.payload.id === order._id.toString();
+            });
+            state.list[orderIndex] = action.payload.order;
             state.list[orderIndex].requestLoading = false;
             return {...state, changedAt: (new Date()).toISOString()};
 
