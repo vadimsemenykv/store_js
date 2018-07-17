@@ -35,7 +35,9 @@ CatalogController.main = async (req, res) => {
         collections: await getCollections(),
         currencies: await getCurrencies(),
         extraLinks: { submitUrl: urlFor('api:user') },
-        listOrders: await OrderDao.find({status: 'active'}).populate('categoryCollection').populate('currency')
+        listOrders: {
+            list: await OrderDao.find({status: 'active'}).populate('categoryCollection').populate('currency')
+        }
     };
 
     const store = configureCatalogStore(preloadedState);

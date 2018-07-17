@@ -13,6 +13,9 @@ const Contract = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order'
     },
+    price: Number,
+    quantity: Number,
+    totalPrice: Number,
     // transaction: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Transaction'

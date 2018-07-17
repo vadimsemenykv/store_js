@@ -13,6 +13,7 @@ module.exports = {
         'account-status-and-notifications': './src/front/account-status-and-notifications.js',
         'my-account': './src/front/my-account.js',
         'my-orders': './src/front/my-orders.js',
+        'my-contracts': './src/front/my-contracts.js',
         //
         catalog: './src/front/catalog.js',
         'catalog-orders-create': './src/front/catalog-orders-create.js',

@@ -11,5 +11,6 @@ Router.get(
     { name: 'account:statusAndNotifications' }
 );
 Router.get('/my/orders', AccountController.myOrders, { name: 'account:myOrders' });
+Router.get('/my/contracts', AccountController.myContracts, { name: 'account:myContracts' });
 
 export default Router.expressRouter;

@@ -3,24 +3,21 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import renderFullPage from './renderFullPage';
 import {urlFor} from 'express-named-router-url-generator';
-import passwordHash from 'password-hash';
-
-/** Validators */
-import RegistrationFormValidator from './../../front/validation/registrationFormRules'
-
-/** Models */
-import UserDao from '../dao/User';
-
-
-import { Provider } from 'react-redux'
-
+import { Provider } from 'react-redux';
+import { configureAccountStore } from '../../front/store/configureStore';
 import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 
+/** Validators */
+
+/** Models */
+import OrderDao from '../dao/Order';
+import ContractDao from '../dao/Contract';
+
+/** Containers */
 import AccountStatusAndNotifications from '../../front/containers/account/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/account/MyAccount';
 import MyOrders from '../../front/containers/account/MyOrders';
-import { configureAccountStore } from "../../front/store/configureStore";
-import OrderDao from "../dao/Order";
+import MyContracts from '../../front/containers/account/MyContracts';
 
 export default class AccountController {}
 
@@ -132,6 +129,58 @@ AccountController.myOrders = async (req, res) => {
                 ],
                 jsBottom: [
                     '<script src="/assets/my-orders.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};
+
+AccountController.myContracts = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+
+    const merchantContracts = ContractDao.find({merchant: req.user._id}).populate('order').populate('order.currency').populate({
+        path: 'order',
+        populate: {path: 'currency'}
+    }).populate({
+        path: 'order',
+        populate: {path: 'categoryCollection'}
+    });
+    const clientContracts = ContractDao.find({client: req.user._id}).populate('order').populate({
+        path: 'order',
+        populate: {path: 'currency'}
+    }).populate({
+        path: 'order',
+        populate: {path: 'categoryCollection'}
+    });
+
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        listContracts: {
+            list: [...(await merchantContracts), ...(await clientContracts)]
+        }
+    };
+
+    const store = configureAccountStore(preloadedState);
+    const html = renderToString(
+        <Provider store={store} >
+            <MyContracts />
+        </Provider>
+    );
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'My Orders',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/my-contracts.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/my-contracts.js"></script>'
                 ]
             },
             finalState

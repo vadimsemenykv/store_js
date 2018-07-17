@@ -15,7 +15,7 @@ import {
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SideMenu from '../../components/SideMenu';
-import OrderItem from '../../components/account/OrderItem';
+import ContractItem from '../../components/account/ContractItem';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -33,9 +33,16 @@ class MyContracts extends Component {
 
     render() {
         const { header, footer, user, listContracts } = this.props;
-        const buyOrdersTpl = listContracts.map((item) => {
-            if (item.status === 'active' && item._type === 'buy') {
-                return <OrderItem key={item._id.toString()} order={item}/>;
+
+        const merchantContractsTpl = listContracts.map((contract, index) => {
+            if (contract.merchant === user._id.toString()) {
+                return <ContractItem key={index} contract={contract}/>;
+            }
+            return '';
+        });
+        const clientContractsTpl = listContracts.map((contract, index) => {
+            if (contract.client === user._id.toString()) {
+                return <ContractItem key={index} contract={contract}/>;
             }
             return '';
         });
@@ -51,25 +58,19 @@ class MyContracts extends Component {
                                 lg={{ size: '8', offset: 1 }} md={{ size: '12' }}
                                 className="cm-bordered cm-content content"
                             >
-                                <h4 className={'content-title'}>My Orders</h4>
+                                <h4 className={'content-title'}>My Contracts</h4>
                                 <Card>
-                                    <CardHeader>Buy Orders</CardHeader>
+                                    <CardHeader>Merchant</CardHeader>
                                     <CardBody>
-                                        {buyOrdersTpl}
+                                        {merchantContractsTpl}
                                     </CardBody>
                                 </Card>
-                                {/*<Card>*/}
-                                    {/*<CardHeader>Sell Orders</CardHeader>*/}
-                                    {/*<CardBody>*/}
-                                        {/*{sellOrdersTpl}*/}
-                                    {/*</CardBody>*/}
-                                {/*</Card>*/}
-                                {/*<Card>*/}
-                                    {/*<CardHeader>Deactivated Orders</CardHeader>*/}
-                                    {/*<CardBody>*/}
-                                        {/*{deactivatedOrdersTpl}*/}
-                                    {/*</CardBody>*/}
-                                {/*</Card>*/}
+                                <Card>
+                                    <CardHeader>Client</CardHeader>
+                                    <CardBody>
+                                        {clientContractsTpl}
+                                    </CardBody>
+                                </Card>
                             </Col>
                         </Row>
                     </Container>
@@ -92,7 +93,7 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listContracts: state.listContracts
+        listContracts: state.listContracts.list
     };
 }
 

@@ -34,7 +34,7 @@ class Catalog extends Component {
 
     render() {
         const { header, footer, user, listOrders } = this.props;
-        const ordersTpl = listOrders.map((item) => <CatalogItem key={item._id.toString()} order={item}/>);
+        const ordersTpl = listOrders.map((item) => <CatalogItem key={item._id.toString()} order={item} user={user}/>);
         // const ordersTpl = "";
 
         return (
@@ -78,7 +78,7 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listOrders: state.listOrders,
+        listOrders: state.listOrders.list,
         extraLinks: state.extraLinks
     };
 }

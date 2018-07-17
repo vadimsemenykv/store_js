@@ -7,7 +7,7 @@ import ContractDao from '../../dao/Contract';
 
 export default class CatalogController {}
 
-CatalogController.create = async (req, res) => {
+CatalogController.orderCreate = async (req, res) => {
     let errors = {};
     if (!req.body._type || !validator.isIn(req.body._type, ['buy', 'sell'])) {
         errors._type = 'invalid_value__type';
@@ -95,7 +95,7 @@ CatalogController.orderUpdate = async (req, res) => {
     });
 };
 
-CatalogController.reserveOrder = async (req, res) => {
+CatalogController.contractReserveOrder = async (req, res) => {
     //TODO add check for already reserved orders by this user, if count > 0, then show to user popup
     //TODO add check for order not in contract
     let now = new Date();
@@ -130,16 +130,21 @@ CatalogController.reserveOrder = async (req, res) => {
     });
 };
 
-CatalogController.createContract = async (req, res) => {
+CatalogController.contractCreateFromOrder = async (req, res) => {
     //TODO check is order reserved by this user, if not - show popup
+    //TODO check is order have price
     const order = await OrderDao.findById(req.body.orderId);
     ContractDao.create({
         client: req.user._id,
         merchant: order.owner,
-        order: order._id
-    }.then((contract) => {
-        order.update({contract: contract._id, status: 'in_contract'});
-    }));
+        order: order._id,
+        price: order.price,
+        quantity: order.quantity,
+        totalPrice: order.totalPrice
+    }).then((contract) => {
+        order.set({contract: contract._id, status: 'in_contract'});
+        order.save();
+    });
     res.status(200).send({success: true});
 };
 

@@ -54,7 +54,9 @@ export default class CatalogItem extends React.Component {
 
     render() {
         const order = this.props.order;
+        const user = this.props.user;
         const id = order._id.toString();
+        const disabledActions = order.availableStatus !== 'available' || user._id.toString() === order.owner;
 
         const verifyBadge = () => {
             if (order.isVerified) {
@@ -74,7 +76,7 @@ export default class CatalogItem extends React.Component {
                 <Col>
                     <Row className="item-cell-row">
                         <Col className="item-id">
-                            Order ID: { id }
+                            Order ID: { id } {user._id.toString() === order.owner ? 'Your order' : ''}
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
@@ -121,5 +123,6 @@ export default class CatalogItem extends React.Component {
 }
 
 CatalogItem.propTypes = {
-    order: PropTypes.object.isRequired
+    order: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired
 };
