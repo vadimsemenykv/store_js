@@ -14,10 +14,13 @@ module.exports = {
         'my-account': './src/front/my-account.js',
         'my-orders': './src/front/my-orders.js',
         'my-contracts': './src/front/my-contracts.js',
+        'my-offers': './src/front/my-offers.js',
         //
         catalog: './src/front/catalog.js',
         'catalog-orders-create': './src/front/catalog-orders-create.js',
-        'catalog-contracts-create': './src/front/catalog-contracts-create.js'
+        'catalog-contracts-create': './src/front/catalog-contracts-create.js',
+        'catalog-offers-create': './src/front/catalog-offers-create.js',
+        'catalog-offers-accept': './src/front/catalog-offers-accept.js'
     },
     output: {
         filename: '[name].js',

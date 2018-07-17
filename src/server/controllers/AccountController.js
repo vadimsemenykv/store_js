@@ -12,12 +12,14 @@ import { getLinks as getHeaderLinks } from '../infrastructure/url/HeaderLinks';
 /** Models */
 import OrderDao from '../dao/Order';
 import ContractDao from '../dao/Contract';
+import OfferDao from '../dao/Offer';
 
 /** Containers */
 import AccountStatusAndNotifications from '../../front/containers/account/AccountStatusAndNotifications';
 import MyAccount from '../../front/containers/account/MyAccount';
 import MyOrders from '../../front/containers/account/MyOrders';
 import MyContracts from '../../front/containers/account/MyContracts';
+import MyOffers from '../../front/containers/account/MyOffers';
 
 export default class AccountController {}
 
@@ -174,13 +176,75 @@ AccountController.myContracts = async (req, res) => {
     res.status(200).send(
         renderFullPage(
             {
-                title: 'My Orders',
+                title: 'My Contracts',
                 html: html,
                 cssTop: [
                     '<link rel="stylesheet" href="/assets/my-contracts.css"/>'
                 ],
                 jsBottom: [
                     '<script src="/assets/my-contracts.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};
+
+AccountController.myOffers = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+    let expiredFrom = new Date();
+    expiredFrom.setDate(expiredFrom.getDate() - 1);
+
+    // const receivedOffers = OfferDao.find({merchant: req.user._id, createdAt: {$gte: expiredFrom}}).populate('order').populate('order.currency').populate({
+    const receivedOffers = OfferDao.find({merchant: req.user._id, status: 'active'}).populate('order').populate('order.currency').populate({
+        path: 'order',
+        populate: {path: 'currency'}
+    }).populate({
+        path: 'order',
+        populate: {path: 'categoryCollection'}
+    });
+    const sentOffers = OfferDao.find({client: req.user._id, status: 'active'}).populate('order').populate({
+        path: 'order',
+        populate: {path: 'currency'}
+    }).populate({
+        path: 'order',
+        populate: {path: 'categoryCollection'}
+    });
+    const declinedExpiredOffers = OfferDao.find({client: req.user._id, status: {$ne: 'active'}}).populate('order').populate({
+        path: 'order',
+        populate: {path: 'currency'}
+    }).populate({
+        path: 'order',
+        populate: {path: 'categoryCollection'}
+    });
+
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        listOffers: {
+            list: [...(await receivedOffers), ...(await sentOffers), ...(await declinedExpiredOffers)]
+        }
+    };
+
+    const store = configureAccountStore(preloadedState);
+    const html = renderToString(
+        <Provider store={store} >
+            <MyOffers />
+        </Provider>
+    );
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'My Offers',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/my-offers.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/my-offers.js"></script>'
                 ]
             },
             finalState

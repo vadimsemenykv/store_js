@@ -12,5 +12,6 @@ Router.get(
 );
 Router.get('/my/orders', AccountController.myOrders, { name: 'account:myOrders' });
 Router.get('/my/contracts', AccountController.myContracts, { name: 'account:myContracts' });
+Router.get('/my/offers', AccountController.myOffers, { name: 'account:myOffers' });
 
 export default Router.expressRouter;

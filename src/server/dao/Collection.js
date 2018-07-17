@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const Collection = new mongoose.Schema({
     title: String,
@@ -16,7 +16,7 @@ const Collection = new mongoose.Schema({
 
 Collection.pre('save', function(next) {
     this.updatedAt = Date.now();
-    next()
+    next();
 });
 
 mongoose.model('Collection', Collection);

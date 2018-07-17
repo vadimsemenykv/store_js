@@ -4,6 +4,7 @@ import CurrencyDao from '../../dao/Currency';
 import CollectionDao from '../../dao/Collection';
 import OrderDao from '../../dao/Order';
 import ContractDao from '../../dao/Contract';
+import OfferDao from '../../dao/Offer';
 
 export default class CatalogController {}
 
@@ -148,7 +149,23 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
     res.status(200).send({success: true});
 };
 
-CatalogController.createOffer = () => {
+CatalogController.createOffer = async (req, res) => {
+    if (!validator.isDecimal(req.body.price)) {
+        res.status(400).send({success: false, errors: {price: 'invalid_value_price'}});
+        return;
+    }
+
+    //TODO add checks
+    const order = await OrderDao.findById(req.body.orderId);
+    OfferDao.create({
+        client: req.user._id,
+        merchant: order.owner,
+        order: order._id,
+        price: req.body.price,
+        totalPrice: Math.round(req.body.price * order.quantity * 100) / 100
+    }).then((offer) => {
+        res.status(200).send({success: true, offer: offer});
+    });
 };
 
 CatalogController.acceptOffer = () => {

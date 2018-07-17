@@ -14,6 +14,7 @@ import { configureCatalogStore } from '../../front/store/configureStore';
 import Catalog from '../../front/containers/catalog/Catalog';
 import CatalogOrdersCreate from '../../front/containers/catalog/CatalogOrdersCreate';
 import CatalogContractsCreate from '../../front/containers/catalog/CatalogContractsCreate';
+import CatalogOffersCreate from '../../front/containers/catalog/CatalogOffersCreate';
 
 /** Models */
 import OrderDao from '../dao/Order';
@@ -137,6 +138,45 @@ CatalogController.createContract = async (req, res) => {
                 ],
                 jsBottom: [
                     '<script src="/assets/catalog-contracts-create.js"></script>'
+                ]
+            },
+            finalState
+        )
+    );
+};
+
+CatalogController.createOffer = async (req, res) => {
+    const linksState = getHeaderLinks(req.user._id);
+    let preloadedState = {
+        header: linksState.header,
+        footer: linksState.footer,
+        user: req.user,
+        collections: await getCollections(),
+        currencies: await getCurrencies(),
+        extraLinks: { submitUrl: urlFor('api:user') },
+        order: await OrderDao.findById(req.params.orderId).populate('categoryCollection').populate('currency')
+    };
+
+    const store = configureCatalogStore(preloadedState);
+
+    const html = renderToString(
+        <Provider store={store} >
+            <CatalogOffersCreate />
+        </Provider>
+    );
+
+    const finalState = store.getState();
+
+    res.status(200).send(
+        renderFullPage(
+            {
+                title: 'Create New Offer',
+                html: html,
+                cssTop: [
+                    '<link rel="stylesheet" href="/assets/catalog-offers-create.css"/>'
+                ],
+                jsBottom: [
+                    '<script src="/assets/catalog-offers-create.js"></script>'
                 ]
             },
             finalState
