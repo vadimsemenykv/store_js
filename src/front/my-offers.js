@@ -1,6 +1,6 @@
 import React from 'react';
 import { hydrate } from 'react-dom';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import { configureAccountStore } from './store/configureStore';
 
 import MyOffers from './containers/account/MyOffers';

@@ -134,6 +134,7 @@ CatalogController.contractReserveOrder = async (req, res) => {
 CatalogController.contractCreateFromOrder = async (req, res) => {
     //TODO check is order reserved by this user, if not - show popup
     //TODO check is order have price
+    //TODO cancel all offers
     const order = await OrderDao.findById(req.body.orderId);
     ContractDao.create({
         client: req.user._id,
@@ -168,5 +169,63 @@ CatalogController.createOffer = async (req, res) => {
     });
 };
 
-CatalogController.acceptOffer = () => {
+CatalogController.acceptOffer = async (req, res) => {
+    const offer = await OfferDao.findOne({_id: req.body.offer.id, merchant: req.user._id}).populate('order');
+    if (!offer) {
+        res.status(400).send({success: false, errors: {offer: 'failed_to_fetch_offer'}});
+    }
+    if (offer.status !== 'active') {
+        res.status(400).send({success: false, errors: {offer: 'offer_is_not_active'}});
+    }
+    if (offer.order.availableStatus !== 'available') {
+        res.status(400).send({success: false, errors: {order: 'order_is_not_available'}});
+    }
+
+    const client = offer.client !== offer.order.owner ? offer.client : offer.merchant;
+    ContractDao.create({
+        client: client,
+        merchant: offer.order.owner,
+        order: offer.order._id,
+        price: offer.price,
+        quantity: offer.quantity,
+        totalPrice: offer.totalPrice
+    }).then((contract) => {
+        offer.set({contract: contract._id, status: 'in_contract'});
+        offer.save();
+
+        offer.order.set({contract: contract._id, status: 'in_contract'});
+        offer.order.save();
+
+        res.status(200).send({success: true, contract: contract});
+    });
+};
+
+CatalogController.declineOffer = async (req, res) => {
+    const offer = await OfferDao.findOne(
+        {
+            $and: [
+                {
+                    _id: req.body.offer.id
+                },
+                {
+                    $or: [
+                        {merchant: req.user._id},
+                        {client: req.user._id}
+                    ]
+                }
+            ]
+        }
+    ).populate('order');
+
+    if (!offer) {
+        res.status(400).send({success: false, errors: {offer: 'failed_to_fetch_offer'}});
+    }
+    if (offer.status !== 'active') {
+        res.status(400).send({success: false, errors: {offer: 'offer_is_not_active'}});
+    }
+
+    offer.status = offer.merchant === req.user._id ? 'rejected' : 'declined';
+    offer.save();
+
+    res.status(200).send({success: true, offer: offer});
 };

@@ -17,6 +17,10 @@ const Offer = new mongoose.Schema({
         type: String,
         default: 'active'
     },
+    contract: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contract'
+    },
     price: Number,
     totalPrice: Number,
     createdAt: {

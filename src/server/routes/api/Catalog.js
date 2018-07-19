@@ -13,5 +13,6 @@ Router.post('/api/catalog/contracts/create', CatalogController.contractCreateFro
 
 Router.post('/api/catalog/offers/create', CatalogController.createOffer, { name: 'api:catalog:offer:create' });
 Router.post('/api/catalog/offers/accept', CatalogController.acceptOffer, { name: 'api:catalog:offer:accept' });
+Router.post('/api/catalog/offers/decline', CatalogController.declineOffer, { name: 'api:catalog:offer:decline' });
 
 export default Router.expressRouter;

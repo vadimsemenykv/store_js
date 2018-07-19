@@ -10,7 +10,7 @@ import {
     Col,
     Card,
     CardBody,
-    CardHeader
+    CardHeader, CardFooter
 } from 'reactstrap';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -35,13 +35,13 @@ class MyOffers extends Component {
         const { header, footer, user, listOffers } = this.props;
 
         const receivedOffersTpl = listOffers.map((offer, index) => {
-            if (offer.merchant === user._id.toString() && offer.status === 'active') {
+            if (offer.merchant.toString() === user._id.toString() && offer.status === 'active') {
                 return <OfferItem key={index} offer={offer} user={user}/>;
             }
             return '';
         });
         const sentOffersTpl = listOffers.map((offer, index) => {
-            if (offer.client === user._id.toString() && offer.status === 'active') {
+            if (offer.client.toString() === user._id.toString() && offer.status === 'active') {
                 return <OfferItem key={index} offer={offer} user={user}/>;
             }
             return '';
@@ -70,18 +70,28 @@ class MyOffers extends Component {
                                     <CardBody>
                                         {receivedOffersTpl}
                                     </CardBody>
+                                    <CardFooter className={'text-secondary'}>
+                                        This dashboard shows all of the Offers that you received from Clients,
+                                        with an offer of a new price. Using the offers platform, only price can be offered, not the quantity.
+                                    </CardFooter>
                                 </Card>
                                 <Card>
                                     <CardHeader>My Sent Offers</CardHeader>
                                     <CardBody>
                                         {sentOffersTpl}
                                     </CardBody>
+                                    <CardFooter className={'text-secondary'}>
+                                        This dashboard shows all of the Offers that you sent to Merchants, offering them a new price.
+                                    </CardFooter>
                                 </Card>
                                 <Card>
                                     <CardHeader>Expired, Declined, and Retracted Offers</CardHeader>
                                     <CardBody>
                                         {expiredDeclinedOffersTpl}
                                     </CardBody>
+                                    <CardFooter className={'text-secondary'}>
+                                        This dashboard shows all of the Offers that Expired, Declined or Retracted.
+                                    </CardFooter>
                                 </Card>
                             </Col>
                         </Row>
