@@ -4,8 +4,6 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as UserActions from '../../actions/UserActions';
 import PropTypes from 'prop-types';
-import validator from 'validator';
-import DefaultForm from '../../forms/DefaultForm';
 
 /** Components */
 import {
@@ -16,8 +14,6 @@ import {
     Col,
     Container,
     CustomInput,
-    FormFeedback,
-    Input,
     Label,
     Row
 } from 'reactstrap';
@@ -30,69 +26,33 @@ import 'bootstrap/dist/css/bootstrap-reboot.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Common.sass';
 
-class CatalogOffersCreate extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            isOpen: false,
-            data: {
-                price: this.props.order.price
-            },
-            interacted: {
-                price: false
-            }
-        };
-    }
-
+class CatalogOffersAccept extends Component {
     handleSubmit() {
-        const url = '/api/catalog/offers/create';
-        fetch(url, {
+        fetch('/api/catalog/offers/accept', {
             method: 'POST',
             credentials: 'same-origin',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                price: this.state.data.price,
-                orderId: this.props.order._id
-            })
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+            body: JSON.stringify({offer: {id: this.props.offer._id}})
         })
             .then((response) => response.json())
             .then((response) => {
                 if (response.success) {
-                    window.location.replace('/my/offers');
+                    window.location.replace('/my/contracts');
                 } else {
+                    //TODO show modal
                     console.log(response.error);
                 }
             })
             .catch((error) => console.log(error));
     }
 
-    handleChangeInput(e) {
-        const name = e.target.name;
-        const value = e.target.value;
-        this.setState({data: {...this.state.data, [name]: value}, clearStart: false});
-    }
-
-    handleFocusOut(e) {
-        this.setState({interacted: {...this.state.interacted, [e.target.name]: true}, clearStart: false});
-        this.forceUpdate();
-    }
-
-    validate() {
-        let validators = CatalogOffersCreate.rules();
-        return DefaultForm.validate({price: '' + this.state.data.price}, validators);
-    }
-
     render() {
-        const { header, footer, user, order } = this.props;
-        const errors = this.validate();
-
-        const price = this.state.data.price ? this.state.data.price : 0;
-        const quantity = this.props.order.quantity;
-        const totalPrice = !Number.isNaN(price * quantity) ? Math.round(price * quantity * 100) / 100 : 0;
+        const { header, footer, user, offer } = this.props;
+        // const errors = this.validate();
+        //
+        // const price = this.state.data.price ? this.state.data.price : 0;
+        // const quantity = this.props.order.quantity;
+        // const totalPrice = !Number.isNaN(price * quantity) ? Math.round(price * quantity * 100) / 100 : 0;
 
         return (
             <Row className="gray-container">
@@ -102,70 +62,48 @@ class CatalogOffersCreate extends Component {
                         <Row>
                             <SideMenu/>
                             <Col lg={{ size: '8', offset: 1 }} md={{ size: '12' }} className="cm-bordered cm-content content" >
-                                <h4 className="content-title">Contract Form - Send Offer</h4>
+                                <h4 className="content-title">Contract Form - Accept Offer</h4>
                                 <Card>
                                     <CardHeader>Offer Details</CardHeader>
                                     <CardBody>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Order ID:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{order._id.toString()}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.order._id.toString()}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Merchant User ID:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{order.owner.toString()}</Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={{ size: 4 }}><Label className="label float-right">Client User ID:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{user._id.toString()}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.client.toString()}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Type:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{order._type === 'buy' ? 'Buy' : 'Sell'}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.order._type === 'buy' ? 'Buy' : 'Sell'}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Currency:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{order.currency.title}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.order.currency.title}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Collection:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{order.categoryCollection.title}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.order.categoryCollection.title}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Price:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{ price }</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.price}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Quantity:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{quantity}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.quantity}</Col>
                                         </Row>
                                         <Row>
-                                            <Col xs={{ size: 4 }}><Label className="label float-right">Order total:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{ totalPrice }</Col>
-                                        </Row>
-                                        <Row>
-                                            <Col>
-                                                I, Client ID: <span className={'font-weight-bold'}>{user._id.toString()}</span>,
-                                                propose and offer a new price of,
-                                                <Row>
-                                                    <Col xs={{ size: 4 }}>
-                                                        <Input
-                                                            type="text" name="price"
-                                                            onChange={ ::this.handleChangeInput }
-                                                            onBlur={ ::this.handleFocusOut }
-                                                            value={this.state.data.price}
-                                                            invalid={ this.state.interacted.price && !!errors.price }
-                                                        />
-                                                        { this.state.interacted.price ? CatalogOffersCreate.formateFormErrorFeedback('price', errors) : '' }
-                                                    </Col>
-                                                </Row>
-                                                per each 1 unit, of the quantity as stated above.
-                                            </Col>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Offer total:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.totalPrice}</Col>
                                         </Row>
                                         <Row>
                                             <Col>
-                                                If my price is accepted by the Merchant ID: <span className={'font-weight-bold'}>{order.owner.toString()}</span>,
-                                                I agree to enter, execute and fully settle the Order ID: {order._id.toString()} above,
-                                                based on the new price specified in this Offer, and XYZ Inc. Standard Contract Terms.
+                                                I, Client ID: <span className={'font-weight-bold'}>{offer.merchant.toString()}</span>,
+                                                agree to enter, execute and fully settle the Order ID: <span className={'font-weight-bold'}>{offer.order._id.toString()}</span>,
+                                                according to Price and Quantity as specified above by the Merchant ID: <span className={'font-weight-bold'}>{offer.client.toString()}</span>,
+                                                based on the XYZ Inc. Standard Contract Terms.
                                             </Col>
                                         </Row>
                                         <Row className={'links'}>
@@ -211,7 +149,7 @@ class CatalogOffersCreate extends Component {
                                                     This payment serves as my legal signature and evidence to entering this contract.
                                                 </div>
                                                 <div>
-                                                    <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Send Offer</Button>
+                                                    <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Create Contract</Button>
                                                 </div>
                                             </Col>
                                         </Row>
@@ -227,29 +165,6 @@ class CatalogOffersCreate extends Component {
     }
 }
 
-CatalogOffersCreate.formateFormErrorFeedback = (field, errors = []) => {
-    if (errors && errors[field] && errors[field][0]) {
-        return <FormFeedback key={0} >{ errors[field][0] }</FormFeedback>;
-    }
-    return '';
-};
-
-CatalogOffersCreate.rules = () => {
-    return {
-        price: [
-            {
-                rule: (value) => validator.isByteLength(value, { min: 1 }),
-                message: 'Price is required'
-            },
-            {
-                rule: (value) => validator.isDecimal(value, { min: 1 }),
-                message: 'Price must be a decimal'
-            }
-        ]
-    };
-};
-
-
 function mapStateToProps(state) {
     return {
         header: state.header,
@@ -258,15 +173,15 @@ function mapStateToProps(state) {
         extraLinks: state.extraLinks,
         currencies: state.currencies,
         collections: state.collections,
-        order: state.order
+        offer: state.offer
     };
 }
 
-CatalogOffersCreate.propTypes = {
+CatalogOffersAccept.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    order: PropTypes.object.isRequired
+    offer: PropTypes.object.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
@@ -275,4 +190,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CatalogOffersCreate);
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogOffersAccept);

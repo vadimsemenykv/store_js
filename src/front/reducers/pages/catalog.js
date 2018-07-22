@@ -7,6 +7,7 @@ import currencies from '../currencies';
 import collections from '../collections';
 import listOrders from '../listOrders';
 import order from '../order';
+import offer from '../offer';
 
 export default combineReducers({
     header,
@@ -16,5 +17,6 @@ export default combineReducers({
     collections,
     currencies,
     listOrders,
-    order
+    order,
+    offer
 });

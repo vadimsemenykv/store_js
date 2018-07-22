@@ -5,6 +5,7 @@ import CollectionDao from '../../dao/Collection';
 import OrderDao from '../../dao/Order';
 import ContractDao from '../../dao/Contract';
 import OfferDao from '../../dao/Offer';
+import order from "../../../front/reducers/order";
 
 export default class CatalogController {}
 
@@ -177,7 +178,7 @@ CatalogController.acceptOffer = async (req, res) => {
     if (offer.status !== 'active') {
         res.status(400).send({success: false, errors: {offer: 'offer_is_not_active'}});
     }
-    if (offer.order.availableStatus !== 'available') {
+    if (offer.order.availableStatus !== 'transaction_in_progress' || offer.order.reserved.by.toString() !== req.user._id.toString()) {
         res.status(400).send({success: false, errors: {order: 'order_is_not_available'}});
     }
 
@@ -187,7 +188,7 @@ CatalogController.acceptOffer = async (req, res) => {
         merchant: offer.order.owner,
         order: offer.order._id,
         price: offer.price,
-        quantity: offer.quantity,
+        quantity: offer.order.quantity,
         totalPrice: offer.totalPrice
     }).then((contract) => {
         offer.set({contract: contract._id, status: 'in_contract'});

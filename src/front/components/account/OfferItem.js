@@ -45,12 +45,22 @@ export default class OfferItem extends React.Component {
     }
 
     accept() {
-        fetch('/api/catalog/offers/accept', {
+        fetch('/api/catalog/contracts/reserve', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify({offer: {id: this.props.offer._id}})
-        });
+            body: JSON.stringify({orderId: this.props.offer.order._id})
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response.success) {
+                    window.location.replace('/catalog/offers/accept/' + this.props.offer._id.toString());
+                } else {
+                    //TODO show popup
+                    console.log(response.error);
+                }
+            })
+            .catch((error) => console.log(error));
     }
 
     decline() {

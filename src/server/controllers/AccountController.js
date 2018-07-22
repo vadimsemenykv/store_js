@@ -141,7 +141,7 @@ AccountController.myOrders = async (req, res) => {
 AccountController.myContracts = async (req, res) => {
     const linksState = getHeaderLinks(req.user._id);
 
-    const merchantContracts = ContractDao.find({merchant: req.user._id}).populate('order').populate('order.currency').populate({
+    const merchantContracts = ContractDao.find({merchant: req.user._id}).populate('order').populate({
         path: 'order',
         populate: {path: 'currency'}
     }).populate({

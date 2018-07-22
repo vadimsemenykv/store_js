@@ -27,11 +27,8 @@ export default class CatalogItem extends React.Component {
     buySell() {
         fetch('/api/catalog/contracts/reserve', {
             method: 'POST',
-            credentials: "same-origin",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({
                 orderId: this.props.order._id
             })
