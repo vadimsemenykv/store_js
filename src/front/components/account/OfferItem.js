@@ -55,6 +55,7 @@ export default class OfferItem extends React.Component {
     }
 
     declineAndPropose() {
+        alert('In the deployment process');
         console.log('declineAndPropose');
     }
 
