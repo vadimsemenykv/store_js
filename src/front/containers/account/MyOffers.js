@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {bindActionCreators} from 'redux';
+import * as OfferActions from '../../actions/OfferActions';
 
 /** Components */
 import {
@@ -33,22 +35,23 @@ class MyOffers extends Component {
 
     render() {
         const { header, footer, user, listOffers } = this.props;
+        const { startAcceptingOffer, declineOffer } = this.props.offerActions;
 
         const receivedOffersTpl = listOffers.map((offer, index) => {
             if (offer.merchant.toString() === user._id.toString() && offer.status === 'active') {
-                return <OfferItem key={index} offer={offer} user={user}/>;
+                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
             }
             return '';
         });
         const sentOffersTpl = listOffers.map((offer, index) => {
             if (offer.client.toString() === user._id.toString() && offer.status === 'active') {
-                return <OfferItem key={index} offer={offer} user={user}/>;
+                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
             }
             return '';
         });
         const expiredDeclinedOffersTpl = listOffers.map((offer, index) => {
             if (offer.status !== 'active') {
-                return <OfferItem key={index} offer={offer} user={user}/>;
+                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
             }
             return '';
         });
@@ -107,7 +110,9 @@ MyOffers.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    listOffers: PropTypes.array.isRequired
+    listOffers: PropTypes.array.isRequired,
+    offerActions: PropTypes.any,
+    changedAt: PropTypes.string
 };
 
 function mapStateToProps(state) {
@@ -115,12 +120,16 @@ function mapStateToProps(state) {
         header: state.header,
         footer: state.footer,
         user: state.user,
-        listOffers: state.listOffers.list
+        listOffers: state.listOffers.list,
+        changedAt: state.listOffers.changedAt
     };
 }
 
-function mapDispatchToProps() {
-    return {};
+function mapDispatchToProps(dispatch) {
+    return {
+        offerActions: bindActionCreators(OfferActions, dispatch)
+    };
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyOffers);

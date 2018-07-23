@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import location from '../location';
 import header from '../header';
 import footer from '../footer';
 import user from '../user';
@@ -10,6 +11,7 @@ import order from '../order';
 import offer from '../offer';
 
 export default combineReducers({
+    location,
     header,
     footer,
     user,

@@ -13,6 +13,8 @@ import {
     DropdownToggle,
     Row
 } from 'reactstrap';
+import PreloaderIcon from 'react-preloader-icon';
+import Oval from 'react-preloader-icon/loaders/Oval';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -41,30 +43,15 @@ export default class OfferItem extends React.Component {
     }
 
     retract() {
-        console.log('retract');
+        this.props.declineFunc(this.props.offer);
     }
 
     accept() {
-        fetch('/api/catalog/contracts/reserve', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify({orderId: this.props.offer.order._id})
-        })
-            .then((response) => response.json())
-            .then((response) => {
-                if (response.success) {
-                    window.location.replace('/catalog/offers/accept/' + this.props.offer._id.toString());
-                } else {
-                    //TODO show popup
-                    console.log(response.error);
-                }
-            })
-            .catch((error) => console.log(error));
+        this.props.acceptFunc(this.props.offer);
     }
 
     decline() {
-        console.log('decline');
+        this.props.declineFunc(this.props.offer);
     }
 
     declineAndPropose() {
@@ -119,13 +106,33 @@ export default class OfferItem extends React.Component {
             buttonDropdownTpl = <Button onClick={::this.viewTransaction} color={'info'}>View Transaction</Button>;
         }
 
+        let preloader = '';
+        if (offer.requestLoading) {
+            preloader = (
+                <div className={'preloader-wrapper'}>
+                    <PreloaderIcon
+                        loader={Oval}
+                        size={60}
+                        strokeWidth={10}
+                        strokeColor="#28a745"
+                        duration={800}
+                    />
+                </div>
+            );
+        }
 
         return (
             <Row className="catalog-item">
                 <Col>
+                    {preloader}
                     <Row className="item-cell-row">
                         <Col>
                             Offer ID: { offer._id.toString() }
+                        </Col>
+                    </Row>
+                    <Row className="item-cell-row">
+                        <Col>
+                            Status: { offer.status }
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
@@ -165,5 +172,7 @@ export default class OfferItem extends React.Component {
 
 OfferItem.propTypes = {
     offer: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    declineFunc: PropTypes.func.isRequired,
+    acceptFunc: PropTypes.func.isRequired
 };

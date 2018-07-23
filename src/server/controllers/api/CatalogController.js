@@ -5,7 +5,6 @@ import CollectionDao from '../../dao/Collection';
 import OrderDao from '../../dao/Order';
 import ContractDao from '../../dao/Contract';
 import OfferDao from '../../dao/Offer';
-import order from "../../../front/reducers/order";
 
 export default class CatalogController {}
 
@@ -112,7 +111,8 @@ CatalogController.contractReserveOrder = async (req, res) => {
                 {
                     $or: [
                         {availableStatus: 'available'},
-                        {'reserved.until': {$lte: new Date()}}
+                        {'reserved.until': {$lte: new Date()}},
+                        {'reserved.by': req.user._id}
                     ]
                 }
             ]
@@ -216,16 +216,24 @@ CatalogController.declineOffer = async (req, res) => {
                 }
             ]
         }
-    ).populate('order');
+    )
+        .populate('order')
+        .populate({
+            path: 'order',
+            populate: {path: 'currency'}
+        }).populate({
+            path: 'order',
+            populate: {path: 'categoryCollection'}
+        });
 
     if (!offer) {
-        res.status(400).send({success: false, errors: {offer: 'failed_to_fetch_offer'}});
+        res.status(400).send({success: false, offer: {}, errors: {offer: 'failed_to_fetch_offer'}});
     }
     if (offer.status !== 'active') {
-        res.status(400).send({success: false, errors: {offer: 'offer_is_not_active'}});
+        res.status(400).send({success: false, offer: offer, errors: {offer: 'offer_is_not_active'}});
     }
 
-    offer.status = offer.merchant === req.user._id ? 'rejected' : 'declined';
+    offer.status = offer.client.toString() === req.user._id.toString() ? 'retracted' : 'declined';
     offer.save();
 
     res.status(200).send({success: true, offer: offer});

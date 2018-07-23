@@ -210,7 +210,7 @@ AccountController.myOffers = async (req, res) => {
         path: 'order',
         populate: {path: 'categoryCollection'}
     });
-    const declinedExpiredOffers = OfferDao.find({client: req.user._id, status: {$ne: 'active'}}).populate('order').populate({
+    const declinedExpiredOffers = OfferDao.find({client: req.user._id, status: {$nin: ['active', 'in_contract']}}).populate('order').populate({
         path: 'order',
         populate: {path: 'currency'}
     }).populate({
