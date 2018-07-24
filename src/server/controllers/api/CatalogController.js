@@ -152,19 +152,21 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
 };
 
 CatalogController.createOffer = async (req, res) => {
-    if (!validator.isDecimal(req.body.price)) {
+    if (!req.body.offer.price || !validator.isDecimal(req.body.offer.price.toString())) {
         res.status(400).send({success: false, errors: {price: 'invalid_value_price'}});
         return;
     }
 
     //TODO add checks
-    const order = await OrderDao.findById(req.body.orderId);
+    const order = await OrderDao.findById(req.body.offer.order._id);
+    const basedOnOffer = await OfferDao.findById(req.body.offer.basedOnOffer);
     OfferDao.create({
         client: req.user._id,
-        merchant: order.owner,
+        merchant: basedOnOffer ? basedOnOffer.client : order.owner,
         order: order._id,
-        price: req.body.price,
-        totalPrice: Math.round(req.body.price * order.quantity * 100) / 100
+        price: req.body.offer.price,
+        totalPrice: Math.round(req.body.offer.price * order.quantity * 100) / 100,
+        basedOnOffer: req.body.offer.basedOnOffer
     }).then((offer) => {
         res.status(200).send({success: true, offer: offer});
     });
