@@ -157,7 +157,8 @@ CatalogController.createOffer = async (req, res) => {
         // collections: await getCollections(),
         // currencies: await getCurrencies(),
         // extraLinks: { submitUrl: urlFor('api:user') },
-        order: await OrderDao.findById(req.params.orderId).populate('categoryCollection').populate('currency')
+        order: await OrderDao.findById(req.params.orderId).populate('categoryCollection').populate('currency'),
+        offer: await OfferDao.findById(req.query.offer)
     };
 
     const store = configureCatalogStore(preloadedState);

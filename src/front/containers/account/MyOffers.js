@@ -35,23 +35,34 @@ class MyOffers extends Component {
 
     render() {
         const { header, footer, user, listOffers } = this.props;
-        const { startAcceptingOffer, declineOffer } = this.props.offerActions;
+        const { startAcceptingOffer, declineOffer, declineAndProposeNewOffer } = this.props.offerActions;
+
+        const renderOfferItem = (index, offer, user, declineOffer, startAcceptingOffer, declineAndProposeNewOffer) => {
+            return (
+                <OfferItem
+                    key={index} offer={offer} user={user}
+                    declineFunc={declineOffer}
+                    acceptFunc={startAcceptingOffer}
+                    declineAndProposeNewFunc={declineAndProposeNewOffer}
+                />
+            );
+        };
 
         const receivedOffersTpl = listOffers.map((offer, index) => {
             if (offer.merchant.toString() === user._id.toString() && offer.status === 'active') {
-                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
+                return renderOfferItem(index, offer, user, declineOffer, startAcceptingOffer, declineAndProposeNewOffer);
             }
             return '';
         });
         const sentOffersTpl = listOffers.map((offer, index) => {
             if (offer.client.toString() === user._id.toString() && offer.status === 'active') {
-                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
+                return renderOfferItem(index, offer, user, declineOffer, startAcceptingOffer, declineAndProposeNewOffer);
             }
             return '';
         });
         const expiredDeclinedOffersTpl = listOffers.map((offer, index) => {
             if (offer.status !== 'active') {
-                return <OfferItem key={index} offer={offer} user={user} declineFunc={declineOffer} acceptFunc={startAcceptingOffer}/>;
+                return renderOfferItem(index, offer, user, declineOffer, startAcceptingOffer, declineAndProposeNewOffer);
             }
             return '';
         });

@@ -37,7 +37,7 @@ class CatalogOffersCreate extends Component {
         this.state = {
             isOpen: false,
             data: {
-                price: this.props.order.price
+                price: this.props.basedOnOffer ? this.props.basedOnOffer.price : this.props.order.price
             },
             interacted: {
                 price: false
@@ -55,8 +55,11 @@ class CatalogOffersCreate extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                price: this.state.data.price,
-                orderId: this.props.order._id
+                offer: {
+                    order: {_id: this.props.order._id},
+                    price: this.state.data.price,
+                    basedOnOffer: this.props.basedOnOffer ? this.props.basedOnOffer._id.toString() : null
+                }
             })
         })
             .then((response) => response.json())
@@ -258,7 +261,8 @@ function mapStateToProps(state) {
         extraLinks: state.extraLinks,
         currencies: state.currencies,
         collections: state.collections,
-        order: state.order
+        order: state.order,
+        basedOnOffer: state.offer
     };
 }
 
@@ -266,7 +270,8 @@ CatalogOffersCreate.propTypes = {
     header: PropTypes.any.isRequired,
     footer: PropTypes.any.isRequired,
     user: PropTypes.object.isRequired,
-    order: PropTypes.object.isRequired
+    order: PropTypes.object.isRequired,
+    basedOnOffer: PropTypes.object
 };
 
 function mapDispatchToProps(dispatch) {

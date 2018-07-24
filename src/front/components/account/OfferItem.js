@@ -55,8 +55,7 @@ export default class OfferItem extends React.Component {
     }
 
     declineAndPropose() {
-        alert('In the deployment process');
-        console.log('declineAndPropose');
+        this.props.declineAndProposeNewFunc(this.props.offer);
     }
 
     render() {
@@ -175,5 +174,6 @@ OfferItem.propTypes = {
     offer: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     declineFunc: PropTypes.func.isRequired,
-    acceptFunc: PropTypes.func.isRequired
+    acceptFunc: PropTypes.func.isRequired,
+    declineAndProposeNewFunc: PropTypes.func.isRequired
 };

@@ -39,6 +39,42 @@ export function declineOffer(offer) {
     };
 }
 
+export function declineAndProposeNewOffer(offer) {
+    return (dispatch) => {
+        dispatch({
+            type: DECLINE_REJECT_OFFER_REQUEST,
+            payload: offer
+        });
+
+        fetch('/api/catalog/offers/decline', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+            body: JSON.stringify({offer: {id: offer._id}})
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response.success) {
+                    dispatch({
+                        type: DECLINE_REJECT_OFFER_SUCCESS,
+                        payload: response.offer
+                    });
+                    window.location.replace('/catalog/offers/create/' + offer.order._id.toString() + '?offer=' + offer._id.toString());
+                } else {
+                    dispatch({
+                        type: DECLINE_REJECT_OFFER_FAIL,
+                        payload: {offer: response.offer, errors: response.errors}
+                    });
+                }
+            })
+            .catch((error) => {
+                dispatch({
+                    type: DECLINE_REJECT_OFFER_FAIL,
+                    payload: {offer: offer, errors: [error.toString()]}
+                });
+            });
+    };
+}
 
 export function startAcceptingOffer(offer) {
     return (dispatch) => {
