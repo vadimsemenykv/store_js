@@ -184,7 +184,7 @@ CatalogController.acceptOffer = async (req, res) => {
         res.status(400).send({success: false, errors: {order: 'order_is_not_available'}});
     }
 
-    const client = offer.client !== offer.order.owner ? offer.client : offer.merchant;
+    const client = offer.client.toString() !== offer.order.owner.toString() ? offer.client : offer.merchant;
     ContractDao.create({
         client: client,
         merchant: offer.order.owner,
