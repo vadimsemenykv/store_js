@@ -45,5 +45,5 @@ Offer.pre('save', function (next) {
 });
 
 mongoose.model('Offer', Offer);
-
 export default mongoose.model('Offer');
+

@@ -92,7 +92,7 @@ class CatalogOffersAccept extends Component {
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Quantity:</Label></Col>
-                                            <Col xs={{ size: 7, offset: 0 }}>{offer.quantity}</Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{offer.order.quantity}</Col>
                                         </Row>
                                         <Row>
                                             <Col xs={{ size: 4 }}><Label className="label float-right">Offer total:</Label></Col>

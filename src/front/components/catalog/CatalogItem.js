@@ -53,7 +53,7 @@ export default class CatalogItem extends React.Component {
         const order = this.props.order;
         const user = this.props.user;
         const id = order._id.toString();
-        const disabledActions = order.availableStatus !== 'available' || user._id.toString() === order.owner;
+        const disabledActions = order.availableStatus !== 'available' || user._id.toString() === order.owner.toString();
 
         const verifyBadge = () => {
             if (order.isVerified) {
@@ -73,7 +73,7 @@ export default class CatalogItem extends React.Component {
                 <Col>
                     <Row className="item-cell-row">
                         <Col className="item-id">
-                            Order ID: { id } {user._id.toString() === order.owner ? 'Your order' : ''}
+                            Order ID: { id } {user._id.toString() === order.owner ? '- Your order' : ''}
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
@@ -97,18 +97,18 @@ export default class CatalogItem extends React.Component {
                         <Col>
                             <ButtonDropdown
                                 isOpen={this.state.dropdownOpen}
-                                toggle={order.availableStatus !== 'available' ? () => {} : ::this.toggle}
+                                toggle={disabledActions ? () => {} : ::this.toggle}
                             >
                                 <DropdownToggle
-                                    className={order.availableStatus !== 'available' ? 'disabled' : ''}
-                                    color={order.availableStatus !== 'available' ? 'secondary' : 'info' }
+                                    className={disabledActions ? 'disabled' : ''}
+                                    color={disabledActions ? 'secondary' : 'info' }
                                     caret
                                 >
                                     Actions
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={::this.buySell} disabled={order.availableStatus !== 'available' || order.offerOnly }>Buy</DropdownItem>
-                                    <DropdownItem onClick={::this.offer} disabled={order.availableStatus !== 'available'}>Send an Offer</DropdownItem>
+                                    <DropdownItem onClick={::this.buySell} disabled={disabledActions || order.offerOnly }>Buy</DropdownItem>
+                                    <DropdownItem onClick={::this.offer} disabled={disabledActions}>Send an Offer</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>

@@ -40,7 +40,7 @@ CatalogController.main = async (req, res) => {
         currencies: await getCurrencies(),
         // extraLinks: { submitUrl: urlFor('api:user') },
         listOrders: {
-            list: await OrderDao.find({status: 'active', owner: {$ne: req.user._id}}).populate('categoryCollection').populate('currency')
+            list: await OrderDao.find({status: 'active'}).sort({createdAt: -1}).populate('categoryCollection').populate('currency')
         }
     };
 
@@ -219,7 +219,7 @@ CatalogController.acceptOffer = async (req, res) => {
     res.status(200).send(
         renderFullPage(
             {
-                title: 'Create New Offer',
+                title: 'Accept Offer',
                 html: html,
                 cssTop: [
                     '<link rel="stylesheet" href="/assets/catalog-offers-accept.css"/>'

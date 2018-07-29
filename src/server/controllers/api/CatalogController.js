@@ -132,25 +132,6 @@ CatalogController.contractReserveOrder = async (req, res) => {
     });
 };
 
-CatalogController.contractCreateFromOrder = async (req, res) => {
-    //TODO check is order reserved by this user, if not - show popup
-    //TODO check is order have price
-    //TODO cancel all offers
-    const order = await OrderDao.findById(req.body.orderId);
-    ContractDao.create({
-        client: req.user._id,
-        merchant: order.owner,
-        order: order._id,
-        price: order.price,
-        quantity: order.quantity,
-        totalPrice: order.totalPrice
-    }).then((contract) => {
-        order.set({contract: contract._id, status: 'in_contract'});
-        order.save();
-    });
-    res.status(200).send({success: true});
-};
-
 CatalogController.createOffer = async (req, res) => {
     if (!req.body.offer.price || !validator.isDecimal(req.body.offer.price.toString())) {
         res.status(400).send({success: false, errors: {price: 'invalid_value_price'}});
@@ -170,6 +151,33 @@ CatalogController.createOffer = async (req, res) => {
     }).then((offer) => {
         res.status(200).send({success: true, offer: offer});
     });
+};
+
+
+
+CatalogController.contractCreateFromOrder = async (req, res) => {
+    //TODO check is order reserved by this user, if not - show popup
+    //TODO check is order have price
+    //TODO cancel all offers
+    const order = await OrderDao.findById(req.body.orderId);
+    ContractDao.create({
+        client: req.user._id,
+        merchant: order.owner,
+        order: order._id,
+        price: order.price,
+        quantity: order.quantity,
+        totalPrice: order.totalPrice
+    }).then((contract) => {
+        order.set({contract: contract._id, status: 'in_contract'});
+        order.save();
+
+        OfferDao.update(
+            {status: 'active', order: order._id},
+            {$set: {status: 'expired'}},
+            {multi: true}
+        ).exec();
+    });
+    res.status(200).send({success: true});
 };
 
 CatalogController.acceptOffer = async (req, res) => {
@@ -198,6 +206,12 @@ CatalogController.acceptOffer = async (req, res) => {
 
         offer.order.set({contract: contract._id, status: 'in_contract'});
         offer.order.save();
+
+        OfferDao.update(
+            {status: 'active', order: offer.order._id},
+            {$set: {status: 'expired'}},
+            {multi: true}
+        ).exec();
 
         res.status(200).send({success: true, contract: contract});
     });

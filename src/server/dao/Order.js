@@ -62,5 +62,4 @@ Order.pre('save', function (next) {
 });
 
 mongoose.model('Order', Order);
-
 export default mongoose.model('Order');

@@ -5,6 +5,7 @@ import moment from 'moment/moment';
 
 /** Components */
 import {
+    Badge,
     Button,
     ButtonDropdown,
     Col,
@@ -121,6 +122,14 @@ export default class OfferItem extends React.Component {
             );
         }
 
+        const status = offer.status.charAt(0).toUpperCase() + offer.status.slice(1);
+        let statusTpl = '';
+        if (offer.status === 'active') {
+            statusTpl = <Badge color="success" pill>{status}</Badge>;
+        } else {
+            statusTpl = <Badge color="warning" pill>{status}</Badge>;
+        }
+
         return (
             <Row className="catalog-item">
                 <Col>
@@ -132,7 +141,7 @@ export default class OfferItem extends React.Component {
                     </Row>
                     <Row className="item-cell-row">
                         <Col>
-                            Status: { offer.status }
+                            Status: { statusTpl }
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
