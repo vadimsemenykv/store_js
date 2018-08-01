@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment/moment';
+import {numberWithCommas} from '../../utils/formater';
 
 /** Components */
 import {
@@ -161,9 +162,9 @@ export default class OfferItem extends React.Component {
                         <Col>Collection: { offer.order.categoryCollection.title }</Col>
                     </Row>
                     <Row className="item-cell-row">
-                        <Col>Price: { '$' + offer.price }</Col>
+                        <Col>Price: { '$' + numberWithCommas(offer.price) }</Col>
                         <Col>Quantity: { offer.quantity }</Col>
-                        <Col>Total: { '$' + offer.totalPrice }</Col>
+                        <Col>Total: { '$' + numberWithCommas(offer.totalPrice) }</Col>
                     </Row>
                     <Row className="item-cell-row">
                         <Col>Offer Date (MST): { createdAt.utcOffset(-7).format('YYYY-MM-DD HH:mm:ss') }</Col>

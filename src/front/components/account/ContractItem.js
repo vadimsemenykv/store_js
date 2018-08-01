@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment/moment';
+import {numberWithCommas} from '../../utils/formater';
 
 /** Components */
 import {
@@ -65,9 +66,9 @@ export default class ContractItem extends React.Component {
                         <Col>Collection: { contract.order.categoryCollection.title }</Col>
                     </Row>
                     <Row className="item-cell-row">
-                        <Col>Price: { '$' + contract.price }</Col>
+                        <Col>Price: { '$' + numberWithCommas(contract.price) }</Col>
                         <Col>Quantity: { contract.quantity }</Col>
-                        <Col>Total: { '$' + contract.totalPrice }</Col>
+                        <Col>Total: { '$' + numberWithCommas(contract.totalPrice) }</Col>
                     </Row>
                     <Row className="item-cell-row">
                         <Col>Contract Date (MST): { createdAt.utcOffset(-7).format('YYYY-MM-DD HH:mm:ss') }</Col>

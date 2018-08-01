@@ -93,6 +93,7 @@ class CatalogOffersCreate extends Component {
         const { header, footer, user, order } = this.props;
         const errors = this.validate();
 
+        const oldPrice = this.props.basedOnOffer ? this.props.basedOnOffer.price : this.props.order.price;
         const price = this.state.data.price ? this.state.data.price : 0;
         const quantity = this.props.order.quantity;
         const totalPrice = !Number.isNaN(price * quantity) ? Math.round(price * quantity * 100) / 100 : 0;
@@ -134,7 +135,11 @@ class CatalogOffersCreate extends Component {
                                             <Col xs={{ size: 7, offset: 0 }}>{order.categoryCollection.title}</Col>
                                         </Row>
                                         <Row>
-                                            <Col xs={{ size: 4 }}><Label className="label float-right">Price:</Label></Col>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">Old Price:</Label></Col>
+                                            <Col xs={{ size: 7, offset: 0 }}>{ oldPrice }</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={{ size: 4 }}><Label className="label float-right">New Price:</Label></Col>
                                             <Col xs={{ size: 7, offset: 0 }}>{ price }</Col>
                                         </Row>
                                         <Row>

@@ -1,6 +1,7 @@
 /** Common */
 import React from 'react';
 import PropTypes from 'prop-types';
+import {numberWithCommas} from '../../utils/formater';
 
 /** Components */
 import {Badge, ButtonDropdown, Col, DropdownItem, DropdownMenu, DropdownToggle, Row} from 'reactstrap';
@@ -82,9 +83,9 @@ export default class CatalogItem extends React.Component {
                         <Col>Collection: { order.categoryCollection.title }</Col>
                     </Row>
                     <Row className="item-cell-row">
-                        <Col>Price: { !order.offerOnly ? '$' + order.price : 'Offer Only' }</Col>
+                        <Col>Price: { !order.offerOnly ? '$' + numberWithCommas(order.price) : 'Offer Only' }</Col>
                         <Col>Quantity: { order.quantity }</Col>
-                        <Col>Order Total: { !order.offerOnly ? '$' + order.totalPrice : ' - ' }</Col>
+                        <Col>Order Total: { !order.offerOnly ? '$' + numberWithCommas(order.totalPrice) : ' - ' }</Col>
                     </Row>
                     <Row className="item-cell-row">
                         <Col>
