@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DefaultForm from '../../forms/DefaultForm';
 import validator from 'validator';
-import {numberWithCommas} from '../../utils/formater';
+import {idFormatter, numberWithCommas} from '../../utils/formater';
 
 /** Components */
 import {
@@ -183,7 +183,7 @@ export default class OrderItem extends React.Component {
                     {preloader}
                     <Row className="item-cell-row">
                         <Col className="item-id">
-                            Order ID: { id }
+                            Order ID: { idFormatter(id) }
                         </Col>
                     </Row>
                     <Row className="item-cell-row">
