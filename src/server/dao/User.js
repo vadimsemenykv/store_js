@@ -1,4 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import Counter from './Counter';
+import {randomAlphabetical} from './helper/generators';
 
 const User = new mongoose.Schema({
     firstName: String,
@@ -25,17 +27,22 @@ const User = new mongoose.Schema({
     }
 });
 
-User.pre('save', function(next) {
-    this.updatedAt = Date.now();
-    next()
+User.pre('save', (next) => {
+    Counter.findByIdAndUpdate({_id: 'userId'}, {$inc: { seq: 1} })
+        .then((counter) => {
+            this.updatedAt = Date.now();
+            this._id = counter.seq + randomAlphabetical(2);
+            next();
+        }).catch((error) => {
+            next(error);
+        });
 });
 
-User.methods.toJSON = function() {
+User.methods.toJSON = () => {
     let obj = this.toObject();
     delete obj.password;
     return obj;
 };
 
 mongoose.model('User', User);
-
 export default mongoose.model('User');

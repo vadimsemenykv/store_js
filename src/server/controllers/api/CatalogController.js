@@ -5,6 +5,7 @@ import CollectionDao from '../../dao/Collection';
 import OrderDao from '../../dao/Order';
 import ContractDao from '../../dao/Contract';
 import OfferDao from '../../dao/Offer';
+import user from "../../../front/reducers/user";
 
 export default class CatalogController {}
 
@@ -153,13 +154,41 @@ CatalogController.createOffer = async (req, res) => {
     });
 };
 
-
-
 CatalogController.contractCreateFromOrder = async (req, res) => {
-    //TODO check is order reserved by this user, if not - show popup
-    //TODO check is order have price
-    //TODO cancel all offers
     const order = await OrderDao.findById(req.body.orderId);
+    if (!order) {
+        res.status(404).send({success: false, errors: 'failed_to_fetch_offer'});
+        return;
+    }
+
+    if (order.status !== 'active'
+        || order.availableStatus !== 'transaction_in_progress'
+        || !order.reserved
+        || order.reserved.until >= new Date()
+        || order.reserved.by.toString() !== req.user._id.toString()
+    ) {
+        res.status(200).send({success: false, errors: 'order_is_not_available'});
+        return;
+    }
+
+    const catalogAuditTrail = [
+        {
+            entityType: 'Order',
+            eventName: 'FLowStarted',
+            data: order
+        },
+        {
+            entityType: 'Offer',
+            eventName: 'SentOffer',
+            data: offer
+        },
+        {
+            entityType: 'Offer',
+            eventName: 'SentOffer',
+            data: offer
+        }
+    ];
+
     ContractDao.create({
         client: req.user._id,
         merchant: order.owner,
@@ -183,13 +212,22 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
 CatalogController.acceptOffer = async (req, res) => {
     const offer = await OfferDao.findOne({_id: req.body.offer.id, merchant: req.user._id}).populate('order');
     if (!offer) {
-        res.status(400).send({success: false, errors: {offer: 'failed_to_fetch_offer'}});
+        res.status(404).send({success: false, errors: 'failed_to_fetch_offer'});
+        return;
     }
+
     if (offer.status !== 'active') {
-        res.status(400).send({success: false, errors: {offer: 'offer_is_not_active'}});
+        res.status(200).send({success: false, errors: 'offer_is_not_active'});
+        return;
     }
-    if (offer.order.availableStatus !== 'transaction_in_progress' || offer.order.reserved.by.toString() !== req.user._id.toString()) {
-        res.status(400).send({success: false, errors: {order: 'order_is_not_available'}});
+    if (offer.order.status !== 'active'
+        || offer.order.availableStatus !== 'transaction_in_progress'
+        || !offer.order.reserved
+        || offer.order.reserved.until >= new Date()
+        || offer.order.reserved.by.toString() !== req.user._id.toString()
+    ) {
+        res.status(200).send({success: false, errors: 'order_is_not_available'});
+        return;
     }
 
     const client = offer.client.toString() !== offer.order.owner.toString() ? offer.client : offer.merchant;

@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import Counter from './Counter';
+import {randomAlphabetical} from './helper/generators';
 
 const Offer = new mongoose.Schema({
     client: {
@@ -39,9 +41,15 @@ const Offer = new mongoose.Schema({
     }
 });
 
-Offer.pre('save', function (next) {
-    this.updatedAt = Date.now();
-    next();
+Offer.pre('save', (next) => {
+    Counter.findByIdAndUpdate({_id: 'offerId'}, {$inc: { seq: 1} })
+        .then((counter) => {
+            this.updatedAt = Date.now();
+            this._id = counter.seq + randomAlphabetical(2);
+            next();
+        }).catch((error) => {
+            next(error);
+        });
 });
 
 mongoose.model('Offer', Offer);

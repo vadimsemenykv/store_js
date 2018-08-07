@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Counter from './Counter';
 import {randomAlphabetical} from './helper/generators';
 
-const Contract = new mongoose.Schema({
+const ContractAudit = new mongoose.Schema({
     client: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

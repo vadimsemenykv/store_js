@@ -1,4 +1,5 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import Counter from './Counter';
 
 const Currency = new mongoose.Schema({
     title: String,
@@ -14,11 +15,16 @@ const Currency = new mongoose.Schema({
     }
 });
 
-Currency.pre('save', function(next) {
-    this.updatedAt = Date.now();
-    next()
+Currency.pre('save', (next) => {
+    Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
+        .then((counter) => {
+            this.updatedAt = Date.now();
+            this._id = counter.seq;
+            next();
+        }).catch((error) => {
+            next(error);
+        });
 });
 
 mongoose.model('Currency', Currency);
-
 export default mongoose.model('Currency');

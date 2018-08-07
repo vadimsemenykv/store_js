@@ -59,8 +59,7 @@ const Order = new mongoose.Schema({
     }
 });
 
-Order.pre('save', function (next) {
-    // let order = this;
+Order.pre('save', (next) => {
     Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
         .then((counter) => {
             this.updatedAt = Date.now();
