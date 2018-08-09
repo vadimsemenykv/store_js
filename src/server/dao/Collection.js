@@ -17,7 +17,7 @@ const Collection = new mongoose.Schema({
 });
 
 Collection.pre('save', function (next) {
-    Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
+    Counter.findByIdAndUpdate({_id: 'collectionId'}, {$inc: { seq: 1} })
         .then((counter) => {
             this.updatedAt = Date.now();
             this._id = counter.seq;
