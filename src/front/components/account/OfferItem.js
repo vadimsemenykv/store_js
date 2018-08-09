@@ -13,7 +13,8 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownToggle,
-    Row
+    Row,
+    Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import PreloaderIcon from 'react-preloader-icon';
 import Oval from 'react-preloader-icon/loaders/Oval';
@@ -30,7 +31,9 @@ export default class OfferItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dropdownOpen: false
+            dropdownOpen: false,
+            auditModal: false,
+            auditData: []
         };
     }
 
@@ -40,8 +43,39 @@ export default class OfferItem extends React.Component {
         });
     }
 
-    viewTransaction() {
-        console.log('view');
+    toggleAuditModal() {
+        this.setState({
+            auditModal: !this.state.auditModal
+        });
+    }
+
+    viewTransactions() {
+        fetch('/api/catalog/audit/' + this.props.offer.audit.toString(), {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'}
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                // if (response.success) {
+                this.toggleAuditModal();
+                this.setState({
+                    auditData: response.audit
+                });
+                console.log(response.audit);
+                // } else {
+                // dispatch({
+                //     type: DECLINE_REJECT_OFFER_FAIL,
+                //     payload: {offer: response.offer, errors: response.errors}
+                // });
+                // }
+            });
+        // .catch((error) => {
+        // dispatch({
+        //     type: DECLINE_REJECT_OFFER_FAIL,
+        //     payload: {offer: offer, errors: [error.toString()]}
+        // });
+        // });
     }
 
     retract() {
@@ -79,7 +113,7 @@ export default class OfferItem extends React.Component {
                         Actions
                     </DropdownToggle>
                     <DropdownMenu>
-                        <DropdownItem onClick={::this.viewTransaction}>View Transaction</DropdownItem>
+                        <DropdownItem onClick={::this.viewTransactions}>View Transactions</DropdownItem>
                         <DropdownItem onClick={::this.accept}>Accept Offer</DropdownItem>
                         <DropdownItem onClick={::this.decline}>Decline Offer</DropdownItem>
                         <DropdownItem onClick={::this.declineAndPropose}>Decline & propose new Offer</DropdownItem>
@@ -99,13 +133,13 @@ export default class OfferItem extends React.Component {
                         Actions
                     </DropdownToggle>
                     <DropdownMenu>
-                        <DropdownItem onClick={::this.viewTransaction}>View Transaction</DropdownItem>
+                        <DropdownItem onClick={::this.viewTransactions}>View Transactions</DropdownItem>
                         <DropdownItem onClick={::this.retract}>Retract Your Offer</DropdownItem>
                     </DropdownMenu>
                 </ButtonDropdown>
             );
         } else {
-            buttonDropdownTpl = <Button onClick={::this.viewTransaction} color={'info'}>View Transaction</Button>;
+            buttonDropdownTpl = <Button onClick={::this.viewTransactions} color={'info'}>View Transactions</Button>;
         }
 
         let preloader = '';
@@ -130,6 +164,27 @@ export default class OfferItem extends React.Component {
         } else {
             statusTpl = <Badge color="warning" pill>{status}</Badge>;
         }
+
+        const auditTpl = this.state.auditData.map((auditEvent, index) => {
+            return (
+                <Row key={index}>
+                    <Col>
+                        <Row>
+                            Created: {auditEvent.createdAt}
+                        </Row>
+                        <Row>
+                            Type: {auditEvent.eventType}
+                        </Row>
+                        <Row>
+                            Name: {auditEvent.eventName}
+                        </Row>
+                        <Row style={{overflow: 'auto'}}>
+                            Data: {JSON.stringify(auditEvent.data)}
+                        </Row>
+                    </Col>
+                </Row>
+            );
+        });
 
         return (
             <Row className="catalog-item">
@@ -175,6 +230,14 @@ export default class OfferItem extends React.Component {
                         </Col>
                     </Row>
                 </Col>
+
+                <Modal isOpen={this.state.auditModal} toggle={::this.toggleAuditModal}>
+                    <ModalHeader toggle={this.toggle}>Transactions</ModalHeader>
+                    <ModalBody>{auditTpl}</ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={::this.toggleAuditModal}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
             </Row>
         );
     }

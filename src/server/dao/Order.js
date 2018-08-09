@@ -10,15 +10,15 @@ const Order = new mongoose.Schema({
         default: 'deactivated'
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User'
     },
     currency: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Currency'
     },
     categoryCollection: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Collection'
     },
     offerOnly: {
@@ -35,12 +35,12 @@ const Order = new mongoose.Schema({
     reserved: {
         until: Date,
         by: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: 'User'
         }
     },
     contract: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Contract'
     },
     availableStatus: {
@@ -59,7 +59,7 @@ const Order = new mongoose.Schema({
     }
 });
 
-Order.pre('save', (next) => {
+Order.pre('save', function (next) {
     Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
         .then((counter) => {
             this.updatedAt = Date.now();

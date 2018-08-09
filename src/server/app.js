@@ -1,4 +1,5 @@
-import "regenerator-runtime/runtime";
+/* eslint-disable no-console */
+import 'regenerator-runtime/runtime';
 import path from 'path';
 import express from 'express';
 import cors from 'cors';
@@ -7,7 +8,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import session from 'express-session';
-import RedisStore from 'connect-redis'
+import RedisStore from 'connect-redis';
 
 import Secure from './infrastructure/auth/Secure';
 
@@ -22,28 +23,30 @@ import ApiUserRouter from './routes/api/User';
 import ApiOrderRouter from './routes/api/Catalog';
 
 import Mongoose from 'mongoose';
-import DB from "./db";
-import UserDao from "./dao/User";
+import DB from './db';
+import UserDao from './dao/User';
 
 const app = express();
 const assets = express.static(path.join(__dirname, '../'));
 
-const mongo_db_url = process.env.MONGO_DB_URL;
-const redis_url = process.env.REDIS_SESSION_URL;
-const redis_port = process.env.REDIS_SESSION_PORT;
-const session_secret = process.env.SESSION_SECRET;
+const mongoDbUrl = process.env.MONGO_DB_URL;
+const redisUrl = process.env.REDIS_SESSION_URL;
+const redisPort = process.env.REDIS_SESSION_PORT;
+const sessionSecret = process.env.SESSION_SECRET;
 
-DB.connect(mongo_db_url, function (err) {
+DB.connect(mongoDbUrl, function (err) {
     if (err) {
-        console.log(`Unable to connect to Mongo to ${mongo_db_url}.`);
+        console.log(`Unable to connect to Mongo to ${mongoDbUrl}.`);
         console.log(err);
-        process.exit(1)
+        process.exit(1);
     }
 });
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
     DB.close(function (err) {
-        if (err) console.log('Unable to close Mongo connection.');
-    })
+        if (err) {
+            console.log('Unable to close Mongo connection.');
+        }
+    });
 });
 
 app.disable('x-powered-by');
@@ -55,11 +58,11 @@ app.use(assets);
 
 let redisStore = RedisStore(session);
 app.use(session({
-    secret: session_secret,
-    store: new redisStore({ host: redis_url, port: redis_port }),
+    secret: sessionSecret,
+    store: new redisStore({ host: redisUrl, port: redisPort }),
     saveUninitialized: false,
     resave: false,
-    name: "NGS_SID",
+    name: 'NGS_SID'
     // cookie: { domain: "grain.dev" }
 }));
 
@@ -71,7 +74,7 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
     UserDao.findOne({_id: req.session.userId}, function (err, user) {
-        if (err){
+        if (err) {
             // console.log(err);
             res.status(500).send({
                 success: false,
@@ -79,7 +82,7 @@ app.use((req, res, next) => {
             });
             return;
         }
-        
+
         if (user) {
             req.user = user;
         }
@@ -95,7 +98,7 @@ app.use('/', AccountRouter);
 app.use('/', CatalogRouter);
 app.use('/', PageRouter);
 
-//API Routes
+// API Routes
 app.use('/', ApiUserRouter);
 app.use('/', ApiOrderRouter);
 

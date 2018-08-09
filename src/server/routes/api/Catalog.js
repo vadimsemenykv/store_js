@@ -15,4 +15,6 @@ Router.post('/api/catalog/offers/create', CatalogController.createOffer, { name:
 Router.post('/api/catalog/offers/accept', CatalogController.acceptOffer, { name: 'api:catalog:offer:accept' });
 Router.post('/api/catalog/offers/decline', CatalogController.declineOffer, { name: 'api:catalog:offer:decline' });
 
+Router.get('/api/catalog/audit/:auditId', CatalogController.catalogAudit, { name: 'api:catalog:audit' });
+
 export default Router.expressRouter;

@@ -3,20 +3,21 @@ import Counter from './Counter';
 import {randomAlphabetical} from './helper/generators';
 
 const Offer = new mongoose.Schema({
+    _id: String,
     client: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User'
     },
     merchant: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'User'
     },
     order: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Order'
     },
     basedOnOffer: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Offer'
     },
     status: {
@@ -24,11 +25,15 @@ const Offer = new mongoose.Schema({
         default: 'active'
     },
     contract: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Contract'
     },
     price: Number,
     totalPrice: Number,
+    audit: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ContractAudit'
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -41,7 +46,7 @@ const Offer = new mongoose.Schema({
     }
 });
 
-Offer.pre('save', (next) => {
+Offer.pre('save', function (next) {
     Counter.findByIdAndUpdate({_id: 'offerId'}, {$inc: { seq: 1} })
         .then((counter) => {
             this.updatedAt = Date.now();

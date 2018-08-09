@@ -11,7 +11,8 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownToggle,
-    Row
+    Row,
+    Modal, ModalHeader, ModalBody, ModalFooter, Button
 } from 'reactstrap';
 
 /** Styles */
@@ -26,7 +27,9 @@ export default class ContractItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dropdownOpen: false
+            dropdownOpen: false,
+            auditModal: false,
+            auditData: []
         };
     }
 
@@ -36,10 +39,66 @@ export default class ContractItem extends React.Component {
         });
     }
 
+    toggleAuditModal() {
+        this.setState({
+            auditModal: !this.state.auditModal
+        });
+    }
+
+    viewTransactions() {
+        fetch('/api/catalog/audit/' + this.props.contract.audit.toString(), {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'}
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                // if (response.success) {
+                this.toggleAuditModal();
+                this.setState({
+                    auditData: response.audit
+                });
+                    console.log(response.audit);
+                // } else {
+                    // dispatch({
+                    //     type: DECLINE_REJECT_OFFER_FAIL,
+                    //     payload: {offer: response.offer, errors: response.errors}
+                    // });
+                // }
+            });
+            // .catch((error) => {
+                // dispatch({
+                //     type: DECLINE_REJECT_OFFER_FAIL,
+                //     payload: {offer: offer, errors: [error.toString()]}
+                // });
+            // });
+    }
+
     render() {
         const contract = this.props.contract;
         const id = contract._id.toString();
         let createdAt = moment(contract.createdAt);
+
+        const auditTpl = this.state.auditData.map((auditEvent, index) => {
+            return (
+                <Row key={index}>
+                    <Col>
+                        <Row>
+                            Created: {auditEvent.createdAt}
+                        </Row>
+                        <Row>
+                            Type: {auditEvent.eventType}
+                        </Row>
+                        <Row>
+                            Name: {auditEvent.eventName}
+                        </Row>
+                        <Row style={{overflow: 'auto'}}>
+                            Data: {JSON.stringify(auditEvent.data)}
+                        </Row>
+                    </Col>
+                </Row>
+            );
+        });
 
         return (
             <Row className="catalog-item">
@@ -86,13 +145,21 @@ export default class ContractItem extends React.Component {
                                     Actions
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem>View Contract</DropdownItem>
+                                    <DropdownItem onClick={::this.viewTransactions}>View Transactions</DropdownItem>
                                     <DropdownItem>Create a Delivery Ticket</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>
                     </Row>
                 </Col>
+
+                <Modal isOpen={this.state.auditModal} toggle={::this.toggleAuditModal}>
+                    <ModalHeader toggle={this.toggle}>Transactions</ModalHeader>
+                    <ModalBody>{auditTpl}</ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={::this.toggleAuditModal}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
             </Row>
         );
     }

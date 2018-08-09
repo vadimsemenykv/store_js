@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Counter from './Counter';
 
 const Collection = new mongoose.Schema({
+    _id: String,
     title: String,
     createdAt: {
         type: Date,
@@ -15,7 +16,7 @@ const Collection = new mongoose.Schema({
     }
 });
 
-Collection.pre('save', (next) => {
+Collection.pre('save', function (next) {
     Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
         .then((counter) => {
             this.updatedAt = Date.now();

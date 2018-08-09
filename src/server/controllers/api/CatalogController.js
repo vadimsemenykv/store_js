@@ -1,11 +1,13 @@
 /** Common */
 import validator from 'validator';
+
 import CurrencyDao from '../../dao/Currency';
 import CollectionDao from '../../dao/Collection';
 import OrderDao from '../../dao/Order';
 import ContractDao from '../../dao/Contract';
 import OfferDao from '../../dao/Offer';
-import user from "../../../front/reducers/user";
+
+import ContractAuditModel from '../../model/ContractAuditModel';
 
 export default class CatalogController {}
 
@@ -140,16 +142,23 @@ CatalogController.createOffer = async (req, res) => {
     }
 
     //TODO add checks
-    const order = await OrderDao.findById(req.body.offer.order._id);
-    const basedOnOffer = await OfferDao.findById(req.body.offer.basedOnOffer);
+    const [order, basedOnOffer] = await Promise.all([
+        OrderDao.findById(req.body.offer.order._id),
+        OfferDao.findById(req.body.offer.basedOnOffer)
+    ]);
+
+    let audit = await ContractAuditModel.initAudit(order);
+
     OfferDao.create({
         client: req.user._id,
         merchant: basedOnOffer ? basedOnOffer.client : order.owner,
         order: order._id,
         price: req.body.offer.price,
         totalPrice: Math.round(req.body.offer.price * order.quantity * 100) / 100,
-        basedOnOffer: req.body.offer.basedOnOffer
+        basedOnOffer: req.body.offer.basedOnOffer,
+        audit: audit.dao._id
     }).then((offer) => {
+        audit.createOffer(offer);
         res.status(200).send({success: true, offer: offer});
     });
 };
@@ -164,30 +173,14 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
     if (order.status !== 'active'
         || order.availableStatus !== 'transaction_in_progress'
         || !order.reserved
-        || order.reserved.until >= new Date()
+        || order.reserved.until < new Date()
         || order.reserved.by.toString() !== req.user._id.toString()
     ) {
         res.status(200).send({success: false, errors: 'order_is_not_available'});
         return;
     }
 
-    const catalogAuditTrail = [
-        {
-            entityType: 'Order',
-            eventName: 'FLowStarted',
-            data: order
-        },
-        {
-            entityType: 'Offer',
-            eventName: 'SentOffer',
-            data: offer
-        },
-        {
-            entityType: 'Offer',
-            eventName: 'SentOffer',
-            data: offer
-        }
-    ];
+    let audit = await ContractAuditModel.initAudit(order);
 
     ContractDao.create({
         client: req.user._id,
@@ -195,7 +188,8 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
         order: order._id,
         price: order.price,
         quantity: order.quantity,
-        totalPrice: order.totalPrice
+        totalPrice: order.totalPrice,
+        audit: audit.dao._id
     }).then((contract) => {
         order.set({contract: contract._id, status: 'in_contract'});
         order.save();
@@ -205,6 +199,8 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
             {$set: {status: 'expired'}},
             {multi: true}
         ).exec();
+
+        audit.createContract(contract);
     });
     res.status(200).send({success: true});
 };
@@ -223,13 +219,14 @@ CatalogController.acceptOffer = async (req, res) => {
     if (offer.order.status !== 'active'
         || offer.order.availableStatus !== 'transaction_in_progress'
         || !offer.order.reserved
-        || offer.order.reserved.until >= new Date()
+        || offer.order.reserved.until < new Date()
         || offer.order.reserved.by.toString() !== req.user._id.toString()
     ) {
         res.status(200).send({success: false, errors: 'order_is_not_available'});
         return;
     }
 
+    let audit = await ContractAuditModel.getById(offer.audit);
     const client = offer.client.toString() !== offer.order.owner.toString() ? offer.client : offer.merchant;
     ContractDao.create({
         client: client,
@@ -237,7 +234,8 @@ CatalogController.acceptOffer = async (req, res) => {
         order: offer.order._id,
         price: offer.price,
         quantity: offer.order.quantity,
-        totalPrice: offer.totalPrice
+        totalPrice: offer.totalPrice,
+        audit: audit.dao._id
     }).then((contract) => {
         offer.set({contract: contract._id, status: 'in_contract'});
         offer.save();
@@ -250,6 +248,8 @@ CatalogController.acceptOffer = async (req, res) => {
             {$set: {status: 'expired'}},
             {multi: true}
         ).exec();
+
+        audit.createContract(contract);
 
         res.status(200).send({success: true, contract: contract});
     });
@@ -291,4 +291,9 @@ CatalogController.declineOffer = async (req, res) => {
     offer.save();
 
     res.status(200).send({success: true, offer: offer});
+};
+
+CatalogController.catalogAudit = async (req, res) => {
+    const audit = await ContractAuditModel.getById(req.params.auditId);
+    res.status(200).send({success: true, audit: audit.dao.events});
 };

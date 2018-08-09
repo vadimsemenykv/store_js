@@ -1,31 +1,19 @@
 import mongoose from 'mongoose';
-import Counter from './Counter';
-import {randomAlphabetical} from './helper/generators';
+
+const EventSchema = new mongoose.Schema({
+    entityType: String,
+    eventName: String,
+    data: mongoose.Schema.Types.Mixed,
+    meta: mongoose.Schema.Types.Mixed,
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+});
 
 const ContractAudit = new mongoose.Schema({
-    client: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    merchant: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    order: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order'
-    },
-    price: Number,
-    quantity: Number,
-    totalPrice: Number,
-    // transaction: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Transaction'
-    // },
-    audit: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ContractAudit'
-    },
+    events: [EventSchema],
     createdAt: {
         type: Date,
         required: true,
@@ -38,16 +26,10 @@ const ContractAudit = new mongoose.Schema({
     }
 });
 
-Contract.pre('save', (next) => {
-    Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
-        .then((counter) => {
-            this.updatedAt = Date.now();
-            this._id = counter.seq + randomAlphabetical(2);
-            next();
-        }).catch((error) => {
-            next(error);
-        });
+ContractAudit.pre('save', function (next) {
+    this.updatedAt = Date.now();
+    next();
 });
 
-mongoose.model('Contract', Contract);
-export default mongoose.model('Contract');
+mongoose.model('ContractAudit', ContractAudit);
+export default mongoose.model('ContractAudit');
