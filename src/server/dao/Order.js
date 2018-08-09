@@ -60,14 +60,19 @@ const Order = new mongoose.Schema({
 });
 
 Order.pre('save', function (next) {
-    Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
-        .then((counter) => {
-            this.updatedAt = Date.now();
-            this._id = counter.seq + randomAlphabetical(2);
-            next();
-        }).catch((error) => {
-            next(error);
-        });
+    if (this.isNew) {
+        Counter.findByIdAndUpdate({_id: 'orderId'}, {$inc: { seq: 1} })
+            .then((counter) => {
+                this.updatedAt = Date.now();
+                this._id = counter.seq + randomAlphabetical(2);
+                next();
+            }).catch((error) => {
+                next(error);
+            });
+    } else {
+        this.updatedAt = Date.now();
+        next();
+    }
 });
 
 mongoose.model('Order', Order);

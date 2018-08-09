@@ -47,14 +47,19 @@ const Offer = new mongoose.Schema({
 });
 
 Offer.pre('save', function (next) {
-    Counter.findByIdAndUpdate({_id: 'offerId'}, {$inc: { seq: 1} })
-        .then((counter) => {
-            this.updatedAt = Date.now();
-            this._id = counter.seq + randomAlphabetical(2);
-            next();
-        }).catch((error) => {
-            next(error);
-        });
+    if (this.isNew) {
+        Counter.findByIdAndUpdate({_id: 'offerId'}, {$inc: { seq: 1} })
+            .then((counter) => {
+                this.updatedAt = Date.now();
+                this._id = counter.seq + randomAlphabetical(2);
+                next();
+            }).catch((error) => {
+                next(error);
+            });
+    } else {
+        this.updatedAt = Date.now();
+        next();
+    }
 });
 
 mongoose.model('Offer', Offer);

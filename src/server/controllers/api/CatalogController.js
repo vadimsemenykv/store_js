@@ -244,7 +244,7 @@ CatalogController.acceptOffer = async (req, res) => {
         offer.order.save();
 
         OfferDao.update(
-            {status: 'active', order: offer.order._id},
+            {status: 'active', order: offer.order._id, _id: {$ne: offer._id}},
             {$set: {status: 'expired'}},
             {multi: true}
         ).exec();

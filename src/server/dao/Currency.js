@@ -17,14 +17,19 @@ const Currency = new mongoose.Schema({
 });
 
 Currency.pre('save', function (next) {
-    Counter.findByIdAndUpdate({_id: 'currencyId'}, {$inc: { seq: 1} })
-        .then((counter) => {
-            this.updatedAt = Date.now();
-            this._id = counter.seq;
-            next();
-        }).catch((error) => {
-            next(error);
-        });
+    if (this.isNew) {
+        Counter.findByIdAndUpdate({_id: 'currencyId'}, {$inc: { seq: 1} })
+            .then((counter) => {
+                this.updatedAt = Date.now();
+                this._id = counter.seq;
+                next();
+            }).catch((error) => {
+                next(error);
+            });
+    } else {
+        this.updatedAt = Date.now();
+        next();
+    }
 });
 
 mongoose.model('Currency', Currency);
