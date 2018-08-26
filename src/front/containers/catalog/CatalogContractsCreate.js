@@ -25,15 +25,30 @@ class CatalogContractsCreate extends Component {
         };
     }
 
+    handleCancel() {
+        fetch('/api/catalog/contracts/free-reservation', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                order: {_id: this.props.order._id}
+            })
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                window.location.replace('/catalog');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     handleSubmit() {
-        const url = "/api/catalog/contracts/create";
+        const url = '/api/catalog/contracts/create';
         fetch(url, {
             method: 'POST',
-            credentials: "same-origin",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
+            credentials: 'same-origin',
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({
                 orderId: this.props.order._id
             })
@@ -43,7 +58,7 @@ class CatalogContractsCreate extends Component {
                 if (response.success) {
                     window.location.replace('/my/contracts');
                 } else {
-                    console.log(response.error)
+                    console.log(response.error);
                 }
             })
             .catch((error) => console.log(error));
@@ -155,16 +170,24 @@ class CatalogContractsCreate extends Component {
                                         </Row>
                                         <Row className={'payment-description'}>
                                             <Col>
-                                                <div>
-                                                    As evidence of my legal binding, unconditional commitment to executing the contract above,
-                                                    I agree to pay a non-refundable transaction fee of $50.00 CAD.
+                                                <div className={'rules mb-4'}>
+                                                    <div>
+                                                        As evidence of my legal binding, unconditional commitment to executing the contract above,
+                                                        I agree to pay a non-refundable transaction fee of $50.00 CAD.
+                                                    </div>
+                                                    <div>
+                                                        This payment serves as my legal signature and evidence to entering this contract.
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    This payment serves as my legal signature and evidence to entering this contract.
-                                                </div>
-                                                <div>
-                                                    <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Create Contract</Button>
-                                                    {/*<Button className={'float-right'} color={'warning'}>Cancel</Button>*/}
+                                                <div className={'action-buttons'}>
+                                                    <Row className={'no-gutters'}>
+                                                        <Col sm={{ size: 8 }} className={'mb-3'}>
+                                                            <Button onClick={::this.handleCancel} className={'float-right'} color={'warning'}>Cancel</Button>
+                                                        </Col>
+                                                        <Col sm={{ size: 4 }}>
+                                                            <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Create Contract</Button>
+                                                        </Col>
+                                                    </Row>
                                                 </div>
                                             </Col>
                                         </Row>

@@ -102,6 +102,10 @@ CatalogController.orderUpdate = async (req, res) => {
 CatalogController.contractReserveOrder = async (req, res) => {
     //TODO add check for already reserved orders by this user, if count > 0, then show to user popup
     //TODO add check for order not in contract
+    //TODO rewrite request req.body.order._id
+    //TODO rewrite works from dao to model
+    //TODO in all response errors is array of messages
+    //TODO rewrite all text values to constants
     let now = new Date();
     now.setMinutes(now.getMinutes() + 10);
 
@@ -130,6 +134,18 @@ CatalogController.contractReserveOrder = async (req, res) => {
     ).then((order) => {
         if (!order) {
             res.status(409).send({success: false, error: 'already_reserved'});
+        }
+        res.status(200).send({success: true});
+    });
+};
+
+CatalogController.freeReservation = async (req, res) => {
+    OrderDao.findOneAndUpdate(
+        {$and: [{_id: req.body.order._id}, {'reserved.by': req.user._id}]},
+        {availableStatus: 'available', reserved: null}
+    ).then((order) => {
+        if (!order) {
+            res.status(404).send({success: false, errors: [{code: 'order_not_found', attribute: 'order'}]});
         }
         res.status(200).send({success: true});
     });
