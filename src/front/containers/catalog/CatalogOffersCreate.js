@@ -73,6 +73,10 @@ class CatalogOffersCreate extends Component {
             .catch((error) => console.log(error));
     }
 
+    handleCancel() {
+        window.location.replace('/catalog');
+    }
+
     handleChangeInput(e) {
         const name = e.target.name;
         const value = e.target.value;
@@ -211,15 +215,24 @@ class CatalogOffersCreate extends Component {
                                         </Row>
                                         <Row className={'payment-description'}>
                                             <Col>
-                                                <div>
-                                                    As evidence of my legal binding, unconditional commitment to executing the contract above,
-                                                    I agree to pay a non-refundable transaction fee of $50.00 CAD.
+                                                <div className={'rules mb-4'}>
+                                                    <div>
+                                                        As evidence of my legal binding, unconditional commitment to executing the contract above,
+                                                        I agree to pay a non-refundable transaction fee of $50.00 CAD.
+                                                    </div>
+                                                    <div>
+                                                        This payment serves as my legal signature and evidence to entering this contract.
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    This payment serves as my legal signature and evidence to entering this contract.
-                                                </div>
-                                                <div>
-                                                    <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Send Offer</Button>
+                                                <div className={'action-buttons'}>
+                                                    <Row className={'no-gutters'}>
+                                                        <Col sm={{ size: 8 }} className={'mb-3'}>
+                                                            <Button onClick={::this.handleCancel} className={'float-right'} color={'warning'}>Cancel</Button>
+                                                        </Col>
+                                                        <Col sm={{ size: 4 }}>
+                                                            <Button onClick={::this.handleSubmit} className={'float-right'} color={'success'}>Send Offer</Button>
+                                                        </Col>
+                                                    </Row>
                                                 </div>
                                             </Col>
                                         </Row>
