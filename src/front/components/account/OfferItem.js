@@ -16,6 +16,7 @@ import {
     Row,
     Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+import AuditRow from './audit/AuditRow';
 import PreloaderIcon from 'react-preloader-icon';
 import Oval from 'react-preloader-icon/loaders/Oval';
 
@@ -167,22 +168,7 @@ export default class OfferItem extends React.Component {
 
         const auditTpl = this.state.auditData.map((auditEvent, index) => {
             return (
-                <Row key={index}>
-                    <Col>
-                        <Row>
-                            Created: {auditEvent.createdAt}
-                        </Row>
-                        <Row>
-                            Type: {auditEvent.eventType}
-                        </Row>
-                        <Row>
-                            Name: {auditEvent.eventName}
-                        </Row>
-                        <Row style={{overflow: 'auto'}}>
-                            Data: {JSON.stringify(auditEvent.data)}
-                        </Row>
-                    </Col>
-                </Row>
+                <AuditRow key={index} auditEvent={auditEvent}/>
             );
         });
 
@@ -231,7 +217,7 @@ export default class OfferItem extends React.Component {
                     </Row>
                 </Col>
 
-                <Modal isOpen={this.state.auditModal} toggle={::this.toggleAuditModal}>
+                <Modal isOpen={this.state.auditModal} toggle={::this.toggleAuditModal} size={'lg'}>
                     <ModalHeader toggle={this.toggle}>Transactions</ModalHeader>
                     <ModalBody>{auditTpl}</ModalBody>
                     <ModalFooter>
