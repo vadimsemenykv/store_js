@@ -20,23 +20,27 @@ export default class AuditRow extends React.Component {
         return (
             <Row className={'audit-row'}>
                 <Col xs={{size: 3}}>{auditEvent.entityType}</Col>
-                <Col xs={{size: 9}}>{AuditRow.renderData(auditEvent.eventName, auditEvent.data)}</Col>
+                <Col xs={{size: 9}}>{AuditRow.renderData(auditEvent)}</Col>
             </Row>
         );
     }
 
-    static renderData(eventName, data) {
-        switch (eventName) {
+    static renderData(auditEvent) {
+        switch (auditEvent.eventName) {
             case 'Init':
-                return AuditRow.renderInitEvent(data);
+                return AuditRow.renderInitEvent(auditEvent);
             case 'SentOffer':
-                return AuditRow.renderSentOfferEvent(data);
+                return AuditRow.renderSentOfferEvent(auditEvent);
+            case 'CreateContract':
+                return AuditRow.renderCreateContractEvent(auditEvent);
             default:
                 return '';
         }
     }
 
-    static renderInitEvent(data) {
+    static renderInitEvent(auditEvent) {
+        const data = auditEvent.data;
+        const meta = auditEvent.meta;
         return (
             <Row className={'no-gutters'}>
                 <Col>
@@ -48,8 +52,8 @@ export default class AuditRow extends React.Component {
                     </Row>
                     <Row>
                         <Col>Type: {data._type === 'buy' ? 'Buy' : 'Sell'}</Col>
-                        <Col>Currency: {data.currency}</Col>
-                        <Col>Collection: {data.categoryCollection}</Col>
+                        <Col>Currency: {meta.currency.title}</Col>
+                        <Col>Collection: {meta.collection.title}</Col>
                     </Row>
                     <Row>
                         <Col>Price: { !data.offerOnly ? '$' + numberWithCommas(data.price) : 'Offer Only' }</Col>
@@ -61,7 +65,8 @@ export default class AuditRow extends React.Component {
         );
     }
 
-    static renderSentOfferEvent(data) {
+    static renderSentOfferEvent(auditEvent) {
+        const data = auditEvent.data;
         return (
             <Row className={'no-gutters'}>
                 <Col>
@@ -83,16 +88,42 @@ export default class AuditRow extends React.Component {
                     <Row>
                         <Col>Payment information:</Col>
                     </Row>
-                    {/*<Row>*/}
-                        {/*<Col>Type: {data._type === 'buy' ? 'Buy' : 'Sell'}</Col>*/}
-                        {/*<Col>Currency: {data.currency}</Col>*/}
-                        {/*<Col>Collection: {data.categoryCollection}</Col>*/}
-                    {/*</Row>*/}
-                    {/*<Row>*/}
-                        {/*<Col>Price: { !data.offerOnly ? '$' + numberWithCommas(data.price) : 'Offer Only' }</Col>*/}
-                        {/*<Col>Quantity: { data.quantity }</Col>*/}
-                        {/*<Col>Order Total: { !data.offerOnly ? '$' + numberWithCommas(data.totalPrice) : ' - ' }</Col>*/}
-                    {/*</Row>*/}
+                </Col>
+            </Row>
+        );
+    }
+
+    static renderCreateContractEvent(auditEvent) {
+        const data = auditEvent.data;
+        const meta = auditEvent.meta;
+        return (
+            <Row className={'no-gutters'}>
+                <Col>
+                    <Row>
+                        <Col>Contract ID: {data._id}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Workflow was sent from Client ID: {meta.acceptedBy}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Order ID: {data.order}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Client ID: {data.client}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Merchant ID: {data.merchant}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Type: {meta.order._type === 'buy' ? 'Buy' : 'Sell'}</Col>
+                        <Col>Currency: {meta.currency.title}</Col>
+                        <Col>Collection: {meta.collection.title}</Col>
+                    </Row>
+                    <Row>
+                        <Col>Price: {'$' + numberWithCommas(data.price)}</Col>
+                        <Col>Quantity: {data.quantity}</Col>
+                        <Col>Order Total: {'$' + numberWithCommas(data.totalPrice)}</Col>
+                    </Row>
                 </Col>
             </Row>
         );

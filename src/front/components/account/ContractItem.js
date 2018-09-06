@@ -14,6 +14,7 @@ import {
     Row,
     Modal, ModalHeader, ModalBody, ModalFooter, Button
 } from 'reactstrap';
+import AuditRow from './audit/AuditRow';
 
 /** Styles */
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
@@ -81,22 +82,7 @@ export default class ContractItem extends React.Component {
 
         const auditTpl = this.state.auditData.map((auditEvent, index) => {
             return (
-                <Row key={index}>
-                    <Col>
-                        <Row>
-                            Created: {auditEvent.createdAt}
-                        </Row>
-                        <Row>
-                            Type: {auditEvent.eventType}
-                        </Row>
-                        <Row>
-                            Name: {auditEvent.eventName}
-                        </Row>
-                        <Row style={{overflow: 'auto'}}>
-                            Data: {JSON.stringify(auditEvent.data)}
-                        </Row>
-                    </Col>
-                </Row>
+                <AuditRow key={index} auditEvent={auditEvent}/>
             );
         });
 
@@ -153,7 +139,7 @@ export default class ContractItem extends React.Component {
                     </Row>
                 </Col>
 
-                <Modal isOpen={this.state.auditModal} toggle={::this.toggleAuditModal}>
+                <Modal size={'lg'} isOpen={this.state.auditModal} toggle={::this.toggleAuditModal}>
                     <ModalHeader toggle={this.toggle}>Transactions</ModalHeader>
                     <ModalBody>{auditTpl}</ModalBody>
                     <ModalFooter>

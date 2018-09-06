@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const EventSchema = new mongoose.Schema({
     entityType: String,
     eventName: String,
+    order: mongoose.Schema.Types.Mixed,
     data: mongoose.Schema.Types.Mixed,
     meta: mongoose.Schema.Types.Mixed,
     createdAt: {

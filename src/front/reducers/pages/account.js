@@ -6,7 +6,6 @@ import extraLinks from '../extraLinks';
 import listOrders from '../listOrders';
 import listContracts from '../listContracts';
 import listOffers from '../listOffers';
-import auditModal from '../auditModal';
 
 export default combineReducers({
     header,
@@ -15,6 +14,5 @@ export default combineReducers({
     extraLinks,
     listOrders,
     listContracts,
-    listOffers,
-    auditModal
+    listOffers
 });

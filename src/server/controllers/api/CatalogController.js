@@ -157,7 +157,6 @@ CatalogController.createOffer = async (req, res) => {
         return;
     }
 
-    //TODO add checks
     const [order, basedOnOffer] = await Promise.all([
         OrderDao.findById(req.body.offer.order._id),
         OfferDao.findById(req.body.offer.basedOnOffer)
@@ -216,7 +215,7 @@ CatalogController.contractCreateFromOrder = async (req, res) => {
             {multi: true}
         ).exec();
 
-        audit.createContract(contract);
+        audit.createContract(contract, req.user._id);
     });
     res.status(200).send({success: true});
 };
@@ -265,7 +264,7 @@ CatalogController.acceptOffer = async (req, res) => {
             {multi: true}
         ).exec();
 
-        audit.createContract(contract);
+        audit.createContract(contract, req.user._id);
 
         res.status(200).send({success: true, contract: contract});
     });
