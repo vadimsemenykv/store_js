@@ -27,7 +27,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 10080:10080
+      - 10081:10081
       - 5858:5858
       - 9229:9229
     environment:

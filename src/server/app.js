@@ -22,6 +22,10 @@ import PageRouter from './routes/Page';
 import ApiUserRouter from './routes/api/User';
 import ApiOrderRouter from './routes/api/Catalog';
 
+import ApiV1OrderRouter from './routes/api/v1/Order';
+import ApiV1OfferRouter from './routes/api/v1/Offer';
+import ApiV1ContractRouter from './routes/api/v1/Contract';
+
 import Mongoose from 'mongoose';
 import DB from './db';
 import UserDao from './dao/User';
@@ -101,6 +105,10 @@ app.use('/', PageRouter);
 // API Routes
 app.use('/', ApiUserRouter);
 app.use('/', ApiOrderRouter);
+
+app.use('api/v1/orders', ApiV1OrderRouter);
+app.use('api/v1/offers', ApiV1OfferRouter);
+app.use('api/v1/contracts', ApiV1ContractRouter);
 
 Mongoose.Promise = Promise;
 
